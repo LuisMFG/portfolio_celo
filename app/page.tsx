@@ -165,8 +165,8 @@ export default function Home() {
                 viewport={{ once: true }}
                 className="border-l-2 border-primary pl-6"
               >
-                <h3 className="text-xl font-semibold">Desenvolvedor Full Stack Senior</h3>
-                <p className="text-muted-foreground mb-2">Empresa Tecnologia • 2022 - Presente</p>
+                <h3 className="text-xl font-semibold">Estagiário de Desenvolvimento Full Stack</h3>
+                <p className="text-muted-foreground mb-2">CGE/RO - Controladoria Geral do Estado de Rondônia • abr de 2025 - Presente</p>
                 <p className="text-muted-foreground">
                   Desenvolvimento de aplicações web escaláveis, liderança técnica de equipe
                   e implementação de arquiteturas modernas.
@@ -180,11 +180,10 @@ export default function Home() {
                 viewport={{ once: true }}
                 className="border-l-2 border-primary pl-6"
               >
-                <h3 className="text-xl font-semibold">Desenvolvedor Full Stack</h3>
-                <p className="text-muted-foreground mb-2">Startup Inovadora • 2020 - 2022</p>
+                <h3 className="text-xl font-semibold">Estagiário de TI</h3>
+                <p className="text-muted-foreground mb-2">CGE/RO - Controladoria Geral do Estado de Rondônia • out de 2024 - abr de 2025</p>
                 <p className="text-muted-foreground">
-                  Desenvolvimento de features full stack, integração com APIs externas
-                  e otimização de performance.
+                  Suporte e infraestrutura de TI
                 </p>
               </motion.div>
             </div>
