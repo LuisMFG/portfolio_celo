@@ -17,7 +17,7 @@ export function ParticlesBackground() {
       init={particlesInit}
       options={{
         background: {
-          color: {
+          color:  {
             value: "transparent",
           },
         },

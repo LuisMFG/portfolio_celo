@@ -4,44 +4,51 @@ import { motion } from "framer-motion"
 import { Sidebar } from "@/components/sidebar"
 import { ParticlesBackground } from "@/components/particles-background"
 import Image from "next/image"
-import { Code2, Database, Globe2 } from "lucide-react"
 
 const technologies = [
   {
-    name: "React",
-    icon: "/icons/react.svg",
-  },
-  {
-    name: "Next.js",
-    icon: "/icons/nextjs.svg",
-  },
-  {
-    name: "TypeScript",
-    icon: "/icons/typescript.svg",
+    name: ".NET",
+    icon: "",
   },
   {
     name: "Node.js",
-    icon: "/icons/nodejs.svg",
+    icon: "",
   },
   {
-    name: "Python",
-    icon: "/icons/python.svg",
+    name: "TypeScript",
+    icon: "",
   },
   {
-    name: "Java",
-    icon: "/icons/java.svg",
+    name: "Next.js",
+    icon: "",
+  },
+  {
+    name: "React",
+    icon: "",
+  },
+  {
+    name: "Angular",
+    icon: "",
+  },
+  {
+    name: "Spring",
+    icon: "",
+  },
+  {
+    name: "Tailwind",
+    icon: "",
+  },
+  {
+    name: "Git",
+    icon: "",
+  },
+  {
+    name: "Docker",
+    icon: "",
   },
   {
     name: "PostgreSQL",
-    icon: "/icons/postgresql.svg",
-  },
-  {
-    name: "MongoDB",
-    icon: "/icons/mongodb.svg",
-  },
-  {
-    name: "Redis",
-    icon: "/icons/redis.svg",
+    icon: "",
   }
 ]
 
@@ -61,7 +68,7 @@ export default function Home() {
           >
             <div className="relative w-48 h-48 mx-auto mb-8">
               <Image
-                src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&q=80"
+                src=""
                 alt="Luis Marcelo"
                 fill
                 className="rounded-full object-cover border-4 border-primary"
@@ -89,13 +96,14 @@ export default function Home() {
           >
             <h2 className="text-3xl font-bold mb-8">Sobre Mim</h2>
             <p className="text-lg text-muted-foreground mb-6">
-              Sou um desenvolvedor Full Stack apaixonado por criar soluções tecnológicas inovadoras.
-              Com experiência em desenvolvimento web e mobile, busco sempre aprender novas tecnologias
-              e enfrentar desafios complexos.
+            Entusiasta da tecnologia apaixonado por programação e infraestrutura de TI. 
+            Atualmente, sou estagiário em Desenvolvimento Full Stack na CGE/RO, 
+            atuando no Núcleo de Inovação e Prevenção à Corrupção.
             </p>
             <p className="text-lg text-muted-foreground">
-              Meu objetivo é desenvolver aplicações que não apenas funcionem perfeitamente,
-              mas também proporcionem uma excelente experiência ao usuário.
+            Estou sempre em busca de aprimorar minhas habilidades e contribuir com soluções inovadoras, 
+            unindo conhecimento acadêmico à experiência prática 
+            para enfrentar desafios e criar impacto positivo.
             </p>
           </motion.div>
         </section>
