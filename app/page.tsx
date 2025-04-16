@@ -4,61 +4,16 @@ import { motion } from "framer-motion"
 import { Sidebar } from "@/components/sidebar"
 import { ParticlesBackground } from "@/components/particles-background"
 import Image from "next/image"
-import { Code2, Database, Globe2 } from "lucide-react"
+import { technologies } from "@/components/technologies"
 
-const technologies = [
-  {
-    name: ".NET",
-    icon: "/icons/dotnet.svg",
-  },
-  {
-    name: "Node.js",
-    icon: "/icons/nodejs.svg",
-  },
-  {
-    name: "TypeScript",
-    icon: "/icons/typescript.svg",
-  },
-  {
-    name: "Next.js",
-    icon: "/icons/nextjs.svg",
-  },
-  {
-    name: "React",
-    icon: "/icons/react.svg",
-  },
-  {
-    name: "Angular",
-    icon: "/icons/angular.svg",
-  },
-  {
-    name: "Spring",
-    icon: "/icons/spring.svg",
-  },
-  {
-    name: "Tailwind",
-    icon: "/icons/tailwind.svg",
-  },
-  {
-    name: "Git",
-    icon: "/icons/git.svg",
-  },
-  {
-    name: "Docker",
-    icon: "/icons/docker.svg",
-  },
-  {
-    name: "PostgreSQL",
-    icon: "/icons/postgresql.svg",
-  }
-]
+import { Code2, Database, Globe2 } from "lucide-react"
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <ParticlesBackground />
       <Sidebar />
-      
+
       <div className="pl-16 md:pl-20 h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth">
         <section id="home" className="min-h-screen snap-start flex items-center justify-center p-8">
           <motion.div
@@ -97,14 +52,14 @@ export default function Home() {
           >
             <h2 className="text-3xl font-bold mb-8">Sobre Mim</h2>
             <p className="text-lg text-muted-foreground mb-6">
-            Entusiasta da tecnologia apaixonado por programação e infraestrutura de TI. 
-            Atualmente, sou estagiário em Desenvolvimento Full Stack na CGE/RO, 
-            atuando no Núcleo de Inovação e Prevenção à Corrupção.
+              Entusiasta da tecnologia apaixonado por programação e infraestrutura de TI.
+              Atualmente, sou estagiário em Desenvolvimento Full Stack na CGE/RO,
+              atuando no Núcleo de Inovação e Prevenção à Corrupção.
             </p>
             <p className="text-lg text-muted-foreground">
-            Estou sempre em busca de aprimorar minhas habilidades e contribuir com soluções inovadoras, 
-            unindo conhecimento acadêmico à experiência prática 
-            para enfrentar desafios e criar impacto positivo.
+              Estou sempre em busca de aprimorar minhas habilidades e contribuir com soluções inovadoras,
+              unindo conhecimento acadêmico à experiência prática
+              para enfrentar desafios e criar impacto positivo.
             </p>
           </motion.div>
         </section>
@@ -134,17 +89,11 @@ export default function Home() {
                   }}
                   className="flex flex-col items-center gap-3 p-4 rounded-xl bg-card hover:bg-accent transition-colors"
                 >
-                  <div className="relative w-16 h-16 [&>img]:dark:invert [&>img]:dark:brightness-0 [&>img]:brightness-0">
-                    <Image
-                      src={tech.icon}
-                      alt={tech.name}
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
+                  <div className="text-foreground">{tech.icon}</div>
                   <span className="text-sm font-medium">{tech.name}</span>
                 </motion.div>
               ))}
+
             </div>
           </motion.div>
         </section>
