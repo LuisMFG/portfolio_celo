@@ -14,9 +14,9 @@ const menuItems = [
 ]
 
 const socialLinks = [
-  { href: "https://github.com/yourusername", icon: Github, label: "GitHub" },
-  { href: "https://linkedin.com/in/yourusername", icon: Linkedin, label: "LinkedIn" },
-  { href: "https://instagram.com/yourusername", icon: Instagram, label: "Instagram" },
+  { href: "https://github.com/LuisMFG", icon: Github, label: "GitHub" },
+  { href: "https://linkedin.com/in/celodev11", icon: Linkedin, label: "LinkedIn" },
+  { href: "https://instagram.com/celo11_", icon: Instagram, label: "Instagram" },
 ]
 
 export function Sidebar() {
