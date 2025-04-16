@@ -20,18 +20,27 @@ const socialLinks = [
 ]
 
 export function Sidebar() {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault()
+    const element = document.querySelector(href)
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" })
+    }
+  }
+
   return (
     <motion.nav
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="fixed left-0 top-0 h-screen w-16 flex flex-col items-center py-8 bg-background border-r border-border md:w-20"
+      className="fixed left-0 top-0 h-screen w-16 flex flex-col items-center py-8 bg-background/80 backdrop-blur-sm border-r border-border md:w-20 z-50"
     >
       <div className="flex-1 flex flex-col gap-4">
         {menuItems.map((item, index) => (
           <Link
             key={item.href}
             href={item.href}
+            onClick={(e) => handleClick(e, item.href)}
             className="p-3 hover:bg-accent rounded-lg transition-colors relative group"
           >
             <motion.div

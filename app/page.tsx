@@ -4,51 +4,52 @@ import { motion } from "framer-motion"
 import { Sidebar } from "@/components/sidebar"
 import { ParticlesBackground } from "@/components/particles-background"
 import Image from "next/image"
+import { Code2, Database, Globe2 } from "lucide-react"
 
 const technologies = [
   {
     name: ".NET",
-    icon: "",
+    icon: "/icons/dotnet.svg",
   },
   {
     name: "Node.js",
-    icon: "",
+    icon: "/icons/nodejs.svg",
   },
   {
     name: "TypeScript",
-    icon: "",
+    icon: "/icons/typescript.svg",
   },
   {
     name: "Next.js",
-    icon: "",
+    icon: "/icons/nextjs.svg",
   },
   {
     name: "React",
-    icon: "",
+    icon: "/icons/react.svg",
   },
   {
     name: "Angular",
-    icon: "",
+    icon: "/icons/angular.svg",
   },
   {
     name: "Spring",
-    icon: "",
+    icon: "/icons/spring.svg",
   },
   {
     name: "Tailwind",
-    icon: "",
+    icon: "/icons/tailwind.svg",
   },
   {
     name: "Git",
-    icon: "",
+    icon: "/icons/git.svg",
   },
   {
     name: "Docker",
-    icon: "",
+    icon: "/icons/docker.svg",
   },
   {
     name: "PostgreSQL",
-    icon: "",
+    icon: "/icons/postgresql.svg",
   }
 ]
 
@@ -58,7 +59,7 @@ export default function Home() {
       <ParticlesBackground />
       <Sidebar />
       
-      <div className="pl-16 md:pl-20 snap-y snap-mandatory h-screen overflow-y-scroll">
+      <div className="pl-16 md:pl-20 h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth">
         <section id="home" className="min-h-screen snap-start flex items-center justify-center p-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -68,7 +69,7 @@ export default function Home() {
           >
             <div className="relative w-48 h-48 mx-auto mb-8">
               <Image
-                src=""
+                src="https://i.pinimg.com/736x/36/91/20/3691202c4afe515b834ce3f901fe01d4.jpg"
                 alt="Luis Marcelo"
                 fill
                 className="rounded-full object-cover border-4 border-primary"
@@ -133,7 +134,7 @@ export default function Home() {
                   }}
                   className="flex flex-col items-center gap-3 p-4 rounded-xl bg-card hover:bg-accent transition-colors"
                 >
-                  <div className="relative w-16 h-16">
+                  <div className="relative w-16 h-16 [&>img]:dark:invert [&>img]:dark:brightness-0 [&>img]:brightness-0">
                     <Image
                       src={tech.icon}
                       alt={tech.name}
