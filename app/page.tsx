@@ -24,7 +24,7 @@ export default function Home() {
           >
             <div className="relative w-48 h-48 mx-auto mb-8">
               <Image
-                src="public/images/pfp_luis-marcelo.png"
+                src="\images\pfp_luismarcelo.jpeg"
                 alt="Luis Marcelo"
                 fill
                 className="rounded-full object-cover border-4 border-primary"
