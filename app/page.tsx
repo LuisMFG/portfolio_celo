@@ -1,14 +1,31 @@
 "use client"
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion"
 import { Sidebar } from "@/components/sidebar"
 import { ParticlesBackground } from "@/components/particles-background"
 import Image from "next/image"
 import { technologies } from "@/components/technologies"
+import { LoadingScreen } from "@/components/loadingscreen";
 
 import { Code2, Database, Globe2 } from "lucide-react"
 
 export default function Home() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000); 
+
+    return () => clearTimeout(timer); 
+  }, []);
+
+  if (loading) {
+    return <LoadingScreen />; 
+  }
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <ParticlesBackground />
