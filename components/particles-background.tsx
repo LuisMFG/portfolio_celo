@@ -2,11 +2,16 @@ import { useCallback } from "react";
 import type { Container, Engine } from "tsparticles-engine";
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
+import { useTheme } from "next-themes";
 
 export function ParticlesBackground() {
+  const { theme } = useTheme(); // 'light' ou 'dark'
+
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadSlim(engine);
   }, []);
+
+  const particleColor = theme === "light" ? "#000000" : "#ffffff";
 
   return (
     <Particles
@@ -21,10 +26,10 @@ export function ParticlesBackground() {
         fpsLimit: 120,
         particles: {
           color: {
-            value: "#ffffff",
+            value: particleColor,
           },
           links: {
-            color: "#ffffff",
+            color: particleColor,
             distance: 150,
             enable: true,
             opacity: 0.2,
@@ -35,9 +40,7 @@ export function ParticlesBackground() {
             outModes: {
               default: "bounce",
             },
-            random: false,
             speed: 1,
-            straight: false,
           },
           number: {
             density: {

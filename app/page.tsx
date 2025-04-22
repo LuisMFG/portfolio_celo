@@ -6,6 +6,7 @@ import { Sidebar } from "@/components/sidebar"
 import { ParticlesBackground } from "@/components/particles-background"
 import Image from "next/image"
 import { technologies } from "@/components/technologies"
+import { Icons } from "@/components/icons";
 import { LoadingScreen } from "@/components/loadingscreen";
 
 import { Code2, Database, Globe2 } from "lucide-react"
@@ -121,7 +122,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="max-w-3xl mx-auto"
           >
-            <h2 className="text-3xl font-bold mb-12">Experiência Profissional</h2>
+            <h2 className="text-3xl font-bold mb-12">Experiência Profissional <Icons/></h2>
             <div className="space-y-12">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
