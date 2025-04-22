@@ -93,17 +93,15 @@ export default function Home() {
             <div className="flex flex-wrap justify-center gap-8">
               {technologies.map((tech, index) => (
                 <motion.div
-                  key={tech.name}
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  whileHover={{ scale: 1.1 }}
-                  transition={{
-                    duration: 0.3,
-                    delay: index * 0.1,
-                    type: "spring",
-                    stiffness: 260,
-                    damping: 20
-                  }}
+                key={tech.name}
+                initial={{ opacity: 0, scale: 0.5 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{
+                  opacity: { duration: 0.6, delay: index * 0.1, ease: "easeInOut" },
+                  scale: { type: "spring", stiffness: 100, damping: 12 }
+                }}
                   className="flex flex-col items-center gap-3 p-4 rounded-xl bg-card hover:bg-accent transition-colors"
                 >
                   <div className="text-foreground">{tech.icon}</div>
