@@ -5,7 +5,7 @@ import { loadSlim } from "tsparticles-slim";
 import { useTheme } from "next-themes";
 
 export function ParticlesBackground() {
-  const { theme } = useTheme(); // 'light' ou 'dark'
+  const { theme } = useTheme(); 
 
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadSlim(engine);
