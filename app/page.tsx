@@ -208,6 +208,58 @@ export default function Home() {
                 <div>
                   <div className="overflow-hidden rounded-lg mb-4">
                     <img
+                      src="\images\projeto_estudanteauditor.png"
+                      alt="Catedog"
+                      className="w-full aspect-video object-contain rounded-lg transition-transform duration-500 hover:scale-105"
+                    />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">
+                    Estudante Auditor (Em Construção)
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    Desenvolvendo a landing page oficial do Projeto Estudante
+                    Auditor, uma iniciativa da Controladoria-Geral do Estado de
+                    Rondônia (CGE/RO) em parceria com a SEDUC/RO.
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      C#
+                    </span>
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      ASP.NET Core MVC
+                    </span>
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      Razor (HTML)
+                    </span>
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      CSS
+                    </span>
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      JavaScript
+                    </span>
+                  </div>
+                </div>
+                <Button asChild variant="outline" className="mt-auto">
+                  <a
+                    href="https://estudanteauditor.cge.ro.gov.br/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Visualizar página
+                  </a>
+                </Button>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="bg-card p-4 rounded-xl shadow-md hover:shadow-xl transition-shadow border border-white/10 hover:border-primary"
+              >
+                <div>
+                  <div className="overflow-hidden rounded-lg mb-4">
+                    <img
                       src="/images/projeto_catedog.png"
                       alt="Catedog"
                       className="w-full aspect-video object-contain rounded-lg transition-transform duration-500 hover:scale-105"
@@ -253,6 +305,99 @@ export default function Home() {
               </motion.div>
 
               {/* Projeto 2 */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="bg-card p-4 rounded-xl shadow-md hover:shadow-xl transition-shadow border border-white/10 hover:border-primary"
+              >
+                <div>
+                  <div className="overflow-hidden rounded-lg mb-4">
+                    <img
+                      src="\images\projeto_pokedex.png"
+                      alt="Task Management App"
+                      className="w-full aspect-video object-contain rounded-lg transition-transform duration-500 hover:scale-105"
+                    />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">Pokedex</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Desenvolvido com o objetivo de praticar o consumo de APIs. É
+                    uma Pokédex interativa que utiliza a PokéAPI para buscar
+                    informações em tempo real sobre diferentes Pokémons, como
+                    nome, imagem, tipo e número.
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      HTML
+                    </span>
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      CSS
+                    </span>
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      Javascript
+                    </span>
+                  </div>
+                </div>
+                <Button asChild variant="outline" className="mt-auto">
+                  <a
+                    href="https://github.com/LuisMFG/pokedex-project"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Github className="mr-2 h-4 w-4" />
+                    Ver no GitHub
+                  </a>
+                </Button>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="bg-card p-4 rounded-xl shadow-md hover:shadow-xl transition-shadow border border-white/10 hover:border-primary"
+              >
+                <div>
+                  <div className="overflow-hidden rounded-lg mb-4">
+                    <img
+                      src="\images\projeto_receitasdomestre.png"
+                      alt="Task Management App"
+                      className="w-full aspect-video object-contain rounded-lg transition-transform duration-500 hover:scale-105"
+                    />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">
+                    Receitas do Mestre
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    É um blog de receitas, que foi realizado como parte da
+                    disciplina Fundamentos de Programação Web, com o intuito de
+                    demonstrar conhecimentos em HTML.
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      HTML
+                    </span>
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      CSS
+                    </span>
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      Bootstrap
+                    </span>
+                  </div>
+                </div>
+                <Button asChild variant="outline" className="mt-auto">
+                  <a
+                    href="https://github.com/LuisMFG/pagina-receitas"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Github className="mr-2 h-4 w-4" />
+                    Ver no GitHub
+                  </a>
+                </Button>
+              </motion.div>
+
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
