@@ -11,7 +11,8 @@ export function LoadingScreen() {
         className="text-3xl text-primary font-bold"
       >
         Luis Marcelo - Portfolio
-        <center> © 2025 </center>
+        <br></br>
+        <center>© 2025</center>
       </motion.div>
     </div>
   );
