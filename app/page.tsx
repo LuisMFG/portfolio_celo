@@ -198,6 +198,50 @@ export default function Home() {
             <h2 className="text-3xl font-bold mb-12 text-center">Projetos</h2>
             <div className="grid md:grid-cols-2 gap-8">
               {/* Projeto 1 */}
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="bg-card p-4 rounded-xl shadow-md hover:shadow-xl transition-shadow border border-white/10 hover:border-primary"
+              >
+                <div>
+                  <div className="overflow-hidden rounded-lg mb-4">
+                    <img
+                      src="\images\projeto_coneci_ro.png"
+                      alt="Catedog"
+                      className="w-full aspect-video object-contain rounded-lg transition-transform duration-500 hover:scale-105"
+                    />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">
+                    CONECI - RO (Em Construção)
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    Desenvolvendo a landing page oficial do CONECI-RO, o
+                    Congresso Estadual de Controle Interno, uma iniciativa que
+                    reúne profissionais da área de controle e governança pública
+                    no Estado de Rondônia, com sistema de votação para eleger a
+                    nova presidência do evento.
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      React
+                    </span>
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      TypeScript
+                    </span>
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      Tailwind
+                    </span>
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      Vite
+                    </span>
+                  </div>
+                </div>
+                
+              </motion.div>
+
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -246,6 +290,93 @@ export default function Home() {
                     rel="noopener noreferrer"
                   >
                     Visualizar página
+                  </a>
+                </Button>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="bg-card p-4 rounded-xl shadow-md hover:shadow-xl transition-shadow border border-white/10 hover:border-primary"
+              >
+                <div>
+                  <div className="overflow-hidden rounded-lg mb-4">
+                    <img
+                      src="\images\projeto_wikicge.png"
+                      alt="wikicge"
+                      className="w-full aspect-video object-contain rounded-lg transition-transform duration-500 hover:scale-105"
+                    />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">
+                    Wiki.CGE (Em construção)
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    Participo no desenvolvimento da Wiki.CGE, uma plataforma
+                    informativa voltada à transparência, documentação interna e
+                    disseminação de conhecimento institucional da Controladoria
+                    Geral do Estado de Rondônia.
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      HTML
+                    </span>
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      CSS
+                    </span>
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      JS
+                    </span>
+                  </div>
+                </div>
+                <Button asChild variant="outline" className="mt-auto">
+                  <a
+                    href="https://wiki.cge.ro.gov.br"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Visualizar página
+                  </a>
+                </Button>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="bg-card p-4 rounded-xl shadow-md hover:shadow-xl transition-shadow border border-white/10 hover:border-primary"
+              >
+                <div>
+                  <div className="overflow-hidden rounded-lg mb-4">
+                    <img
+                      src="/images/projeto_chaewon_yugioh.png"
+                      alt="Catedog"
+                      className="w-full aspect-video object-contain rounded-lg transition-transform duration-500 hover:scale-105"
+                    />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">3D Card Chaewon Yugioh</h3>
+                  <p className="text-muted-foreground mb-4">
+                  Desenvolvi uma carta 3D animada da Chaewon em estilo Yu-Gi-Oh!
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      Next.js
+                    </span>
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                      Three.js
+                    </span>
+                  </div>
+                </div>
+                <Button asChild variant="outline" className="mt-auto">
+                  <a
+                    href="https://github.com/LuisMFG/petshop-cat-dog"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Github className="mr-2 h-4 w-4" />
+                    Ver no GitHub
                   </a>
                 </Button>
               </motion.div>
