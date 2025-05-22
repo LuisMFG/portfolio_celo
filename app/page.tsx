@@ -75,7 +75,7 @@ export default function Home() {
           >
             <h2 className="text-3xl font-bold mb-8">Sobre Mim</h2>
             <p className="text-lg text-muted-foreground mb-6">
-              Entusiasta da tecnologia apaixonado por programação e
+              Entusiasta da tecnologia, apaixonado por programação e
               infraestrutura de TI. Atualmente, sou estagiário em
               Desenvolvimento Full Stack na CGE/RO, atuando no Núcleo de
               Inovação e Prevenção à Corrupção.
@@ -138,47 +138,94 @@ export default function Home() {
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="max-w-3xl mx-auto"
+            className="max-w-6xl mx-auto w-full"
           >
-            <h2 className="text-3xl font-bold mb-12">
-              Experiência Profissional <Icons />
+            <h2 className="text-3xl font-bold mb-12 text-center">
+              Experiências <Icons />
             </h2>
-            <div className="space-y-12">
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              {/* Experiência Profissional */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
-                className="border-l-2 border-primary pl-6"
+                className="space-y-8"
               >
-                <h3 className="text-xl font-semibold">
-                  Estagiário de Desenvolvimento Full Stack
+                <h3 className="text-2xl font-semibold text-primary mb-6">
+                  Profissional
                 </h3>
-                <p className="text-muted-foreground mb-2">
-                  CGE/RO - Controladoria Geral do Estado de Rondônia • abr de
-                  2025 - Presente
-                </p>
-                <p className="text-muted-foreground">
-                  Desenvolvimento de aplicações web escaláveis, liderança
-                  técnica de equipe e implementação de arquiteturas modernas.
-                </p>
+
+                <div className="space-y-8">
+                  <div className="border-l-2 border-primary pl-6">
+                    <h4 className="text-xl font-semibold">
+                      Estagiário de Desenvolvimento Full Stack
+                    </h4>
+                    <p className="text-muted-foreground mb-2">
+                      CGE/RO - Controladoria Geral do Estado de Rondônia • abr
+                      de 2025 - Presente
+                    </p>
+                    <p className="text-muted-foreground">
+                      Desenvolvimento de aplicações web escaláveis, liderança
+                      técnica de equipe e implementação de arquiteturas
+                      modernas.
+                    </p>
+                  </div>
+
+                  <div className="border-l-2 border-primary pl-6">
+                    <h4 className="text-xl font-semibold">Estagiário de TI</h4>
+                    <p className="text-muted-foreground mb-2">
+                      CGE/RO (Controladoria Geral do Estado de Rondônia) • out
+                      de 2024 - abr de 2025
+                    </p>
+                    <p className="text-muted-foreground">
+                      Suporte e infraestrutura de TI
+                    </p>
+                  </div>
+                </div>
               </motion.div>
 
+              {/* Experiência Acadêmica */}
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
-                className="border-l-2 border-primary pl-6"
+                className="space-y-8"
               >
-                <h3 className="text-xl font-semibold">Estagiário de TI</h3>
-                <p className="text-muted-foreground mb-2">
-                  CGE/RO - Controladoria Geral do Estado de Rondônia • out de
-                  2024 - abr de 2025
-                </p>
-                <p className="text-muted-foreground">
-                  Suporte e infraestrutura de TI
-                </p>
+                <h3 className="text-2xl font-semibold text-primary mb-6">
+                  Acadêmica
+                </h3>
+
+                <div className="space-y-8">
+                  <div className="border-l-2 border-primary pl-6">
+                    <h4 className="text-xl font-semibold">
+                      CST em Análise e Desenvolvimento de Sistemas
+                    </h4>
+                    <p className="text-muted-foreground mb-2">
+                      IFRO (Instituto Federal de Educação, Ciência e Tecnologia
+                      de Rondônia) • fev de 2023 - Presente
+                    </p>
+                    <p className="text-muted-foreground">
+                      Cursando o 5° período de 6 períodos.
+                    </p>
+                  </div>
+
+                  <div className="border-l-2 border-primary pl-6">
+                    <h4 className="text-xl font-semibold">
+                      Tecnico em Informática
+                    </h4>
+                    <p className="text-muted-foreground mb-2">
+                      IFAM (Instituto Federal de Educação, Ciência e Tecnologia
+                      do Amazonas) • jan de 2018 - dez de 2020
+                    </p>
+                    <p className="text-muted-foreground">
+                      Participação em projetos de pesquisa e desenvolvimento de
+                      sistemas web e mobile utilizando tecnologias modernas.
+                    </p>
+                  </div>
+                </div>
               </motion.div>
             </div>
           </motion.div>
@@ -209,7 +256,7 @@ export default function Home() {
                 <div>
                   <div className="overflow-hidden rounded-lg mb-4">
                     <img
-                      src="\images\projeto_coneci_ro.png"
+                      src="\images\projeto_coneci_ro.jpeg"
                       alt="Catedog"
                       className="w-full aspect-video object-contain rounded-lg transition-transform duration-500 hover:scale-105"
                     />
@@ -219,10 +266,8 @@ export default function Home() {
                   </h3>
                   <p className="text-muted-foreground mb-4">
                     Desenvolvendo a landing page oficial do CONECI-RO, o
-                    Congresso Estadual de Controle Interno, uma iniciativa que
-                    reúne profissionais da área de controle e governança pública
-                    no Estado de Rondônia, com sistema de votação para eleger a
-                    nova presidência do evento.
+                    Conselho Estadual de Controle Interno, com sistema de
+                    votação para eleger a nova presidência do evento.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-4">
                     <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
@@ -239,7 +284,6 @@ export default function Home() {
                     </span>
                   </div>
                 </div>
-                
               </motion.div>
 
               <motion.div
@@ -340,7 +384,7 @@ export default function Home() {
                   </a>
                 </Button>
               </motion.div>
-              
+
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -356,9 +400,12 @@ export default function Home() {
                       className="w-full aspect-video object-contain rounded-lg transition-transform duration-500 hover:scale-105"
                     />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">3D Card Chaewon Yugioh</h3>
+                  <h3 className="text-xl font-semibold mb-2">
+                    3D Card Chaewon Yugioh
+                  </h3>
                   <p className="text-muted-foreground mb-4">
-                  Desenvolvi uma carta 3D animada da Chaewon em estilo Yu-Gi-Oh!
+                    Desenvolvi uma carta 3D animada da Chaewon em estilo
+                    Yu-Gi-Oh!
                   </p>
                   <div className="flex flex-wrap gap-2 mb-4">
                     <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
