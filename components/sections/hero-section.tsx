@@ -1,7 +1,36 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useState, useEffect } from "react";
 
 export function HeroSection() {
+  const [displayedText, setDisplayedText] = useState("");
+  const [showCursor, setShowCursor] = useState(true);
+  const fullText = "Oi, eu sou Luis Marcelo!";
+
+  useEffect(() => {
+    let currentIndex = 0;
+    const typingInterval = setInterval(() => {
+      if (currentIndex <= fullText.length) {
+        setDisplayedText(fullText.slice(0, currentIndex));
+        currentIndex++;
+      } else {
+        clearInterval(typingInterval);
+        // Remove o cursor após terminar de digitar
+        setTimeout(() => setShowCursor(false), 1000);
+      }
+    }, 100); // Velocidade da digitação (100ms por caractere)
+
+    // Animação do cursor piscando
+    const cursorInterval = setInterval(() => {
+      setShowCursor((prev) => !prev);
+    }, 500);
+
+    return () => {
+      clearInterval(typingInterval);
+      clearInterval(cursorInterval);
+    };
+  }, []);
+
   return (
     <section
       id="home"
@@ -21,15 +50,33 @@ export function HeroSection() {
             className="rounded-full object-cover border-4 border-primary"
           />
         </div>
-        <h1 className="text-4xl md:text-6xl font-bold mb-4">
-          Oi, eu sou Luis Marcelo!
+
+        <h1 className="text-4xl md:text-6xl font-bold mb-4 min-h-[1.2em]">
+          {displayedText}
+          <span
+            className={`inline-block w-1 h-[1em] bg-primary ml-1 ${
+              showCursor ? "opacity-100" : "opacity-0"
+            } transition-opacity duration-100`}
+          />
         </h1>
-        <h2 className="text-2xl md:text-3xl text-muted-foreground mb-8">
+
+        <motion.h2
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2.5, duration: 0.8 }}
+          className="text-2xl md:text-3xl text-muted-foreground mb-8"
+        >
           Desenvolvedor Full Stack
-        </h2>
-        <p className="text-lg text-muted-foreground">
+        </motion.h2>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 3, duration: 0.8 }}
+          className="text-lg text-muted-foreground"
+        >
           Transformando ideias em soluções digitais inovadoras
-        </p>
+        </motion.p>
       </motion.div>
     </section>
   );
