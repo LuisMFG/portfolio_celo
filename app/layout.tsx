@@ -1,17 +1,18 @@
-import './globals.css';
-import type { Metadata } from 'next';
-import { Sora } from 'next/font/google';
-import { ThemeProvider } from '@/components/theme-provider';
-import { Toaster } from '@/components/ui/toaster';
+// app/layout.tsx — layout “global”, **sem** next-intl
+import "./globals.css";
+import type { Metadata } from "next";
+import { Sora } from "next/font/google";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 const sora = Sora({
-  subsets: ['latin'],
-  weight: ['400', '600', '700'], 
-})
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+});
 
 export const metadata: Metadata = {
-  title: 'Luis Marcelo - Desenvolvedor Full Stack',
-  description: 'Portfolio pessoal de Luis Marcelo, Desenvolvedor Full Stack',
+  title: "Luis Marcelo – Desenvolvedor Full Stack",
+  description: "Portfolio pessoal de Luis Marcelo, Desenvolvedor Full Stack",
 };
 
 export default function RootLayout({
