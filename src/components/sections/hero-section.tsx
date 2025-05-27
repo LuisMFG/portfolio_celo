@@ -1,11 +1,16 @@
+"use client";
+
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 export function HeroSection() {
+  const t = useTranslations("HeroSection");
+
   const [displayedText, setDisplayedText] = useState("");
   const [showCursor, setShowCursor] = useState(true);
-  const fullText = "Oi, eu sou Luis Marcelo!";
+  const fullText = t("greeting");
 
   useEffect(() => {
     let currentIndex = 0;
@@ -15,12 +20,10 @@ export function HeroSection() {
         currentIndex++;
       } else {
         clearInterval(typingInterval);
-        // Remove o cursor após terminar de digitar
         setTimeout(() => setShowCursor(false), 1000);
       }
-    }, 100); // Velocidade da digitação (100ms por caractere)
+    }, 100);
 
-    // Animação do cursor piscando
     const cursorInterval = setInterval(() => {
       setShowCursor((prev) => !prev);
     }, 500);
@@ -29,7 +32,7 @@ export function HeroSection() {
       clearInterval(typingInterval);
       clearInterval(cursorInterval);
     };
-  }, []);
+  }, [fullText]);
 
   return (
     <section
@@ -45,7 +48,7 @@ export function HeroSection() {
         <div className="relative w-48 h-48 mx-auto mb-8">
           <Image
             src="/images/pfp_luismarcelo.jpeg"
-            alt="Luis Marcelo"
+            alt={t("alt")}
             fill
             className="rounded-full object-cover border-4 border-primary"
           />
@@ -66,7 +69,7 @@ export function HeroSection() {
           transition={{ delay: 2.5, duration: 0.8 }}
           className="text-2xl md:text-3xl text-muted-foreground mb-8"
         >
-          Desenvolvedor Full Stack
+          {t("subtitle")}
         </motion.h2>
 
         <motion.p
@@ -75,7 +78,7 @@ export function HeroSection() {
           transition={{ delay: 3, duration: 0.8 }}
           className="text-lg text-muted-foreground"
         >
-          Transformando ideias em soluções digitais inovadoras
+          {t("description")}
         </motion.p>
       </motion.div>
     </section>
