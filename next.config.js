@@ -1,10 +1,8 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: 'export',
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  images: { unoptimized: true },
-};
+// next.config.js (no root do projeto)
+const createNextIntlPlugin = require('next-intl/plugin');
 
-module.exports = nextConfig;
+const withNextIntl = createNextIntlPlugin();
+
+module.exports = withNextIntl({
+  // aqui entram suas outras configs: reactStrictMode, etc.
+});

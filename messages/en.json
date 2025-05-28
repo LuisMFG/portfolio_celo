@@ -1,0 +1,83 @@
+{
+  "HeroSection": {
+    "greeting": "Hi, I'm Luis Marcelo!",
+    "alt": "Profile picture of Luis Marcelo",
+    "subtitle": "Full Stack Developer",
+    "description": "Turning ideas into innovative digital solutions"
+  },
+  "AboutSection": {
+    "title": "About Me",
+    "paragraph1": "Technology enthusiast, passionate about programming and IT infrastructure. Currently, I'm a Full Stack Development intern at CGE/RO, working in the Innovation and Corruption Prevention Center.",
+    "paragraph2": "I'm always seeking to improve my skills and contribute innovative solutions, combining academic knowledge with practical experience to tackle challenges and create a positive impact."
+  },
+  "SkillsSection": {
+    "title": "Skills"
+  },
+  "ExperienceSection": {
+    "title": "Experiences",
+    "professional": "Professional",
+    "academic": "Academic",
+    "items": {
+      "prof-1": {
+        "title": "Full Stack Development Intern",
+        "company": "CGE/RO - General Comptroller’s Office of Rondônia",
+        "period": "Apr 2025 – Present",
+        "description": "Development of scalable web applications, technical team leadership, and implementation of modern architectures."
+      },
+      "prof-2": {
+        "title": "IT Intern",
+        "company": "CGE/RO (General Comptroller’s Office of Rondônia)",
+        "period": "Oct 2024 – Apr 2025",
+        "description": "IT support and infrastructure."
+      },
+      "acad-1": {
+        "title": "Technologist in Systems Analysis and Development",
+        "company": "IFRO (Federal Institute of Education, Science and Technology of Rondônia)",
+        "period": "Feb 2023 – Present",
+        "description": "Currently in my 5th of 6 total semesters."
+      },
+      "acad-2": {
+        "title": "Technical Degree in Computer Science",
+        "company": "IFAM (Federal Institute of Education, Science and Technology of Amazonas)",
+        "period": "Jan 2018 – Dec 2020",
+        "description": "Participation in research projects and development of web and mobile systems using modern technologies."
+      }
+    }
+  }, "ProjectsSection": {
+    "title": "Projects",
+    "items": {
+      "coneci-ro": {
+        "title": "CONECI - RO (Under Construction)",
+        "description": "Building the official landing page for CONECI-RO, the State Internal Control Council, with a voting system to elect the new event presidency."
+      },
+      "estudante-auditor": {
+        "title": "Student Auditor (Under Construction)",
+        "description": "Developing the official landing page for the Student Auditor Project, an initiative by the Rondônia State General Comptroller’s Office (CGE/RO) in partnership with SEDUC/RO."
+      },
+      "wiki-cge": {
+        "title": "Wiki.CGE (Under Construction)",
+        "description": "Participating in the development of Wiki.CGE, an informational platform aimed at transparency, internal documentation, and dissemination of institutional knowledge at the Rondônia State General Comptroller’s Office."
+      },
+      "chaewon-yugioh": {
+        "title": "3D Card Chaewon Yugioh",
+        "description": "I developed an animated 3D card of Chaewon in Yu-Gi-Oh! style."
+      },
+      "catedog": {
+        "title": "Cat&Dog",
+        "description": "Web system for a pet shop with user and pet registration, service requests (grooming, bath), free delivery e-commerce, and full admin panel."
+      },
+      "pokedex": {
+        "title": "Pokedex",
+        "description": "Built to practice API consumption. An interactive Pokédex using the PokéAPI for real-time information on different Pokémon (name, image, type, and number)."
+      },
+      "receitas-do-mestre": {
+        "title": "Receitas do Mestre",
+        "description": "A recipe blog project completed as part of the Web Programming Fundamentals course, showcasing HTML skills."
+      },
+      "spacetime-sga": {
+        "title": "Spacetime - Shai Gilgeous Alexander",
+        "description": "An interactive time capsule to display memories along a timeline, creating a responsive visual experience."
+      }
+    }
+  }
+}
