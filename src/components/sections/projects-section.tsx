@@ -1,8 +1,13 @@
-import { motion } from "framer-motion";
-import { ProjectCard } from "@/src/components/ui/project-card";
-import { projects } from "@/src/data/projects";
+'use client';
+
+import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
+import { ProjectCard } from '@/src/components/ui/project-card';
+import { projects } from '@/src/data/projects';
 
 export function ProjectsSection() {
+  const t = useTranslations('ProjectsSection');
+
   return (
     <section
       id="projects"
@@ -15,14 +20,16 @@ export function ProjectsSection() {
         viewport={{ once: true }}
         className="max-w-6xl mx-auto w-full"
       >
-        <h2 className="text-3xl font-bold mb-12 text-center">Projetos</h2>
+        <h2 className="text-3xl font-bold mb-12 text-center">
+          {t('title')}
+        </h2>
 
         <div className="grid md:grid-cols-2 gap-8">
           {projects.map((project, index) => (
             <ProjectCard
               key={project.id}
-              title={project.title}
-              description={project.description}
+              title={t(`items.${project.id}.title`)}
+              description={t(`items.${project.id}.description`)}
               image={project.image}
               technologies={project.technologies}
               githubUrl={project.githubUrl}

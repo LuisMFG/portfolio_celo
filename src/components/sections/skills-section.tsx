@@ -1,7 +1,12 @@
-import { motion } from "framer-motion";
-import { technologies } from "@/src/components/technologies";
+'use client';
+
+import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
+import { technologies } from '@/src/components/technologies';
 
 export function SkillsSection() {
+  const t = useTranslations('SkillsSection');
+
   return (
     <section
       id="skills"
@@ -14,7 +19,9 @@ export function SkillsSection() {
         viewport={{ once: true }}
         className="max-w-5xl mx-auto w-full"
       >
-        <h2 className="text-3xl font-bold mb-12 text-center">Tecnologias</h2>
+        <h2 className="text-3xl font-bold mb-12 text-center">
+          {t('title')}
+        </h2>
         <div className="flex flex-wrap justify-center gap-8">
           {technologies.map((tech, index) => (
             <motion.div
@@ -27,9 +34,9 @@ export function SkillsSection() {
                 opacity: {
                   duration: 0.6,
                   delay: index * 0.1,
-                  ease: "easeInOut",
+                  ease: 'easeInOut',
                 },
-                scale: { type: "spring", stiffness: 100, damping: 12 },
+                scale: { type: 'spring', stiffness: 100, damping: 12 },
               }}
               className="flex flex-col items-center gap-3 p-4 rounded-xl bg-card hover:bg-accent transition-colors"
             >

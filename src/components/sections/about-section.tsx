@@ -1,6 +1,11 @@
-import { motion } from "framer-motion";
+'use client';
+
+import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 export function AboutSection() {
+  const t = useTranslations('AboutSection');
+
   return (
     <section
       id="about"
@@ -13,16 +18,14 @@ export function AboutSection() {
         viewport={{ once: true }}
         className="max-w-3xl mx-auto"
       >
-        <h2 className="text-3xl font-bold mb-8">Sobre Mim</h2>
+        <h2 className="text-3xl font-bold mb-8">
+          {t('title')}
+        </h2>
         <p className="text-lg text-muted-foreground mb-6">
-          Entusiasta da tecnologia, apaixonado por programação e infraestrutura
-          de TI. Atualmente, sou estagiário em Desenvolvimento Full Stack na
-          CGE/RO, atuando no Núcleo de Inovação e Prevenção à Corrupção.
+          {t('paragraph1')}
         </p>
         <p className="text-lg text-muted-foreground">
-          Estou sempre em busca de aprimorar minhas habilidades e contribuir com
-          soluções inovadoras, unindo conhecimento acadêmico à experiência
-          prática para enfrentar desafios e criar impacto positivo.
+          {t('paragraph2')}
         </p>
       </motion.div>
     </section>
