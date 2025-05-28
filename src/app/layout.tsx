@@ -4,6 +4,8 @@ import { Sora } from "next/font/google";
 import { ThemeProvider } from "@/src/components/theme-provider";
 import { Toaster } from "@/src/components/ui/toaster";
 
+
+
 const sora = Sora({
   subsets: ["latin"],
   weight: ["400", "600", "700"],
