@@ -14,7 +14,7 @@ export default async function LocaleLayout(props: {
 }) {
   // 1. 'params' é tratado como um objeto dinâmico, então precisamos aguardar
   const { params, children } = props;
-  const { locale } = await params;
+  const { locale } = params;
 
   // 2. Valida se o locale faz parte dos suportados
   if (!hasLocale(routing.locales, locale)) {
