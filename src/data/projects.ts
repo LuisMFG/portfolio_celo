@@ -31,6 +31,12 @@ export const projects: Project[] = [
     image: "/images/projeto_wikicge.png",
     technologies: ["HTML", "CSS", "JS"],
     liveUrl: "https://wiki.cge.ro.gov.br"
+  }, {
+    id: "gerenciador-de-horarios",
+    title: "Gerenciador de Horarios",
+    description: "Sistema para gerencimaento dos horários de aulas do IFRO. Fui responsável pelo desenvolvimento do backend, com foco especial na importação de planilhas utilizando a biblioteca PhpSpreadsheet",
+    image: "/images/projeto-gerenciadordehorarios.png",
+    technologies: ["PHP", "CodeIgniter", "HTML", "CSS", "Bootstrap"]
   },
   {
     id: "chaewon-yugioh",
