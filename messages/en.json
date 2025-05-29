@@ -7,8 +7,8 @@
   },
   "AboutSection": {
     "title": "About Me",
-    "paragraph1": "Technology enthusiast, passionate about programming and IT infrastructure. Currently, I'm a Full Stack Development intern at CGE/RO, working in the Innovation and Corruption Prevention Unit.",
-    "paragraph2": "I'm always looking to improve my skills and contribute with innovative solutions, combining academic knowledge with practical experience to face challenges and create positive impact."
+    "paragraph1": "Student of Systems Analysis and Development, I am a technology enthusiast with a deep passion for programming and IT infrastructure. My journey in the tech field is driven by constant curiosity and the desire to transform ideas into digital solutions that make a difference.",
+    "paragraph2": "Currently, I work as a Full Stack Development intern at CGE/RO (Controladoria Geral do Estado de Rondônia), where I am part of the Núcleo de Inovação e Prevenção à Corrupção. In this strategic position, I have the opportunity to apply technical knowledge to projects that promote transparency and modernization of the public sector, contributing directly to more efficient and ethical management."
   },
   "SkillsSection": {
     "title": "Technologies"
@@ -88,9 +88,8 @@
   "ContactSection": {
     "title": "Contact",
     "getInTouch": "Get in Touch",
-    "description": "I am always open to new opportunities and interesting conversations. Feel free to reach out!",
+    "description": "I am always open to new opportunities and collaborations. Get in touch with me!",
     "email": "Email",
-    "phone": "Phone",
     "location": "Location",
     "followMe": "Follow Me",
     "sendMessage": "Send Message",
@@ -100,10 +99,16 @@
       "email": "Email",
       "emailPlaceholder": "your.email@example.com",
       "subject": "Subject",
-      "subjectPlaceholder": "Subject of the message",
+      "subjectPlaceholder": "What would you like to talk about?",
       "message": "Message",
       "messagePlaceholder": "Write your message here...",
-      "submit": "Send Message"
+      "submit": "Send Message",
+      "sending": "Sending...",
+      "success": "Sent successfully!",
+      "tryAgain": "Try again",
+      "successMessage": "Message sent successfully! I will reply soon.",
+      "errorDefault": "Error sending message",
+      "errorUnknown": "Unknown error"
     }
   }
 }

@@ -62,7 +62,7 @@ export function ContactSection() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Erro ao enviar mensagem");
+        throw new Error(data.error || t("form.errorDefault"));
       }
 
       setFormStatus("success");
@@ -81,7 +81,7 @@ export function ContactSection() {
     } catch (error) {
       setFormStatus("error");
       setErrorMessage(
-        error instanceof Error ? error.message : "Erro desconhecido"
+        error instanceof Error ? error.message : t("form.errorUnknown")
       );
     }
   };
@@ -96,7 +96,7 @@ export function ContactSection() {
     {
       icon: MapPin,
       label: t("location"),
-      value: "Rondonia, Brasil.",
+      value: "Rondônia, Brasil.",
       href: null,
     },
   ];
@@ -125,21 +125,21 @@ export function ContactSection() {
         return (
           <>
             <Loader2 className="w-5 h-5 animate-spin" />
-            <span>Enviando...</span>
+            <span>{t("form.sending")}</span>
           </>
         );
       case "success":
         return (
           <>
             <CheckCircle className="w-5 h-5" />
-            <span>Enviado com sucesso!</span>
+            <span>{t("form.success")}</span>
           </>
         );
       case "error":
         return (
           <>
             <AlertCircle className="w-5 h-5" />
-            <span>Tentar novamente</span>
+            <span>{t("form.tryAgain")}</span>
           </>
         );
       default:
@@ -351,7 +351,7 @@ export function ContactSection() {
               {formStatus === "success" && (
                 <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
                   <p className="text-green-700 text-sm">
-                    Mensagem enviada com sucesso! Responderei em breve.
+                    {t("form.successMessage")}
                   </p>
                 </div>
               )}
