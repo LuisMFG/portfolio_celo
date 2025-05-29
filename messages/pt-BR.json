@@ -22,7 +22,7 @@
         "title": "Estagiário de Desenvolvimento Full Stack",
         "company": "CGE/RO - Controladoria Geral do Estado de Rondônia",
         "period": "abr de 2025 - Presente",
-        "description": "Desenvolvimento de aplicações web escaláveis, liderança técnica de equipe e implementação de arquiteturas modernas."
+        "description": "Desenvolvimento de sistemas web escaláveis, com foco em arquiteturas modernas, segurança e performance."
       },
       "prof-2": {
         "title": "Estagiário de TI",
@@ -43,7 +43,8 @@
         "description": "Participação em projetos de pesquisa e desenvolvimento de sistemas web e mobile utilizando tecnologias modernas."
       }
     }
-  }, "ProjectsSection": {
+  },
+  "ProjectsSection": {
     "title": "Projetos",
     "items": {
       "coneci-ro": {
@@ -57,6 +58,10 @@
       "wiki-cge": {
         "title": "Wiki.CGE (Em construção)",
         "description": "Participo no desenvolvimento da Wiki.CGE, uma plataforma informativa voltada à transparência, documentação interna e disseminação de conhecimento institucional da Controladoria Geral do Estado de Rondônia."
+      },
+      "gerenciador-de-horarios": {
+        "title": "Gerenciador de Horarios",
+        "description": "Sistema para gerenciamento dos horários de aulas do IFRO. Fui responsável pelo desenvolvimento do backend, com foco especial na importação de planilhas utilizando a biblioteca PhpSpreadsheet"
       },
       "chaewon-yugioh": {
         "title": "3D Card Chaewon Yugioh",
@@ -78,6 +83,27 @@
         "title": "Spacetime - Shai Gilgeous Alexander",
         "description": "Uma cápsula do tempo interativa para exibir memórias ao longo de uma linha do tempo, criando uma experiência visual e responsiva."
       }
+    }
+  },
+  "ContactSection": {
+    "title": "Contato",
+    "getInTouch": "Entre em Contato",
+    "description": "Estou sempre aberto a novas oportunidades e conversas interessantes. Sinta-se à vontade para entrar em contato!",
+    "email": "E-mail",
+    "phone": "Telefone",
+    "location": "Localização",
+    "followMe": "Me siga",
+    "sendMessage": "Enviar Mensagem",
+    "form": {
+      "name": "Nome",
+      "namePlaceholder": "Seu nome completo",
+      "email": "E-mail",
+      "emailPlaceholder": "seu.email@exemplo.com",
+      "subject": "Assunto",
+      "subjectPlaceholder": "Assunto da mensagem",
+      "message": "Mensagem",
+      "messagePlaceholder": "Escreva sua mensagem aqui...",
+      "submit": "Enviar Mensagem"
     }
   }
 }
