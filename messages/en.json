@@ -7,8 +7,8 @@
   },
   "AboutSection": {
     "title": "About Me",
-    "paragraph1": "Technology enthusiast, passionate about programming and IT infrastructure. Currently, I'm a Full Stack Development intern at CGE/RO, working in the Innovation and Corruption Prevention Unit.",
-    "paragraph2": "I'm always looking to improve my skills and contribute with innovative solutions, combining academic knowledge with practical experience to face challenges and create positive impact."
+    "paragraph1": "Student of Systems Analysis and Development, I am a technology enthusiast with a deep passion for programming and IT infrastructure. My journey in the tech field is driven by constant curiosity and the desire to transform ideas into digital solutions that make a difference.",
+    "paragraph2": "Currently, I work as a Full Stack Development intern at CGE/RO (Controladoria Geral do Estado de Rondônia), where I am part of the Núcleo de Inovação e Prevenção à Corrupção. In this strategic position, I have the opportunity to apply technical knowledge to projects that promote transparency and modernization of the public sector, contributing directly to more efficient and ethical management."
   },
   "SkillsSection": {
     "title": "Technologies"
@@ -20,25 +20,25 @@
     "items": {
       "prof-1": {
         "title": "Full Stack Development Intern",
-        "company": "CGE/RO - State Comptroller General of Rondônia",
+        "company": "CGE/RO - Controladoria Geral do Estado de Rondônia",
         "period": "Apr 2025 - Present",
         "description": "Development of scalable web applications, technical team leadership, and implementation of modern architectures."
       },
       "prof-2": {
         "title": "IT Intern",
-        "company": "CGE/RO (State Comptroller General of Rondônia)",
+        "company": "CGE/RO - Controladoria Geral do Estado de Rondônia",
         "period": "Oct 2024 - Apr 2025",
         "description": "IT support and infrastructure"
       },
       "acad-1": {
-        "title": "Associate Degree in Systems Analysis and Development",
-        "company": "IFRO (Federal Institute of Education, Science and Technology of Rondônia)",
+        "title": "Systems Analysis and Development",
+        "company": "IFRO (Instituto Federal de Educação, Ciência e Tecnologia de Rondônia)",
         "period": "Feb 2023 - Present",
-        "description": "Currently in the 5th of 6 terms."
+        "description": "Currently in the 5th of 6 semesters."
       },
       "acad-2": {
         "title": "Technical Degree in Informatics",
-        "company": "IFAM (Federal Institute of Education, Science and Technology of Amazonas)",
+        "company": "IFAM (Instituto Federal de Educação, Ciência e Tecnologia de Rondônia)",
         "period": "Jan 2018 - Dec 2020",
         "description": "Participated in research projects and development of web and mobile systems using modern technologies."
       }
@@ -58,6 +58,10 @@
       "wiki-cge": {
         "title": "Wiki.CGE (In development)",
         "description": "Contributing to the development of Wiki.CGE, an informational platform aimed at transparency, internal documentation, and dissemination of institutional knowledge at the State Comptroller General of Rondônia."
+      },
+      "gerenciador-de-horarios": {
+        "title": "Schedule Manager",
+        "description": "System for managing IFRO class schedules. I was responsible for backend development, with a special focus on importing spreadsheets using the PhpSpreadsheet library."
       },
       "chaewon-yugioh": {
         "title": "3D Card Chaewon Yugioh",
@@ -79,6 +83,32 @@
         "title": "Spacetime - Shai Gilgeous Alexander",
         "description": "An interactive time capsule to showcase memories along a timeline, creating a visual and responsive experience."
       }
+    }
+  },
+  "ContactSection": {
+    "title": "Contact",
+    "getInTouch": "Get in Touch",
+    "description": "I am always open to new opportunities and collaborations. Get in touch with me!",
+    "email": "Email",
+    "location": "Location",
+    "followMe": "Follow Me",
+    "sendMessage": "Send Message",
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "Your full name",
+      "email": "Email",
+      "emailPlaceholder": "your.email@example.com",
+      "subject": "Subject",
+      "subjectPlaceholder": "What would you like to talk about?",
+      "message": "Message",
+      "messagePlaceholder": "Write your message here...",
+      "submit": "Send Message",
+      "sending": "Sending...",
+      "success": "Sent successfully!",
+      "tryAgain": "Try again",
+      "successMessage": "Message sent successfully! I will reply soon.",
+      "errorDefault": "Error sending message",
+      "errorUnknown": "Unknown error"
     }
   }
 }

@@ -7,8 +7,8 @@
   },
   "AboutSection": {
     "title": "Sobre Mim",
-    "paragraph1": "Entusiasta da tecnologia, apaixonado por programação e infraestrutura de TI. Atualmente, sou estagiário em Desenvolvimento Full Stack na CGE/RO, atuando no Núcleo de Inovação e Prevenção à Corrupção.",
-    "paragraph2": "Estou sempre em busca de aprimorar minhas habilidades e contribuir com soluções inovadoras, unindo conhecimento acadêmico à experiência prática para enfrentar desafios e criar impacto positivo."
+    "paragraph1": "Estudante de Análise e Desenvolvimento de Sistemas, sou um entusiasta da tecnologia com profunda paixão por programação e infraestrutura de TI. Minha jornada na área tech é impulsionada pela curiosidade constante e pelo desejo de transformar ideias em soluções digitais que façam a diferença.",
+    "paragraph2": "Atualmente, atuo como estagiário em Desenvolvimento Full Stack na CGE/RO (Controladoria Geral do Estado de Rondônia), onde integro o Núcleo de Inovação e Prevenção à Corrupção. Nessa posição estratégica, tenho a oportunidade de aplicar conhecimentos técnicos em projetos que promovem transparência e modernização do setor público, contribuindo diretamente para uma gestão mais eficiente e íntegra."
   },
   "SkillsSection": {
     "title": "Tecnologias"
@@ -22,7 +22,7 @@
         "title": "Estagiário de Desenvolvimento Full Stack",
         "company": "CGE/RO - Controladoria Geral do Estado de Rondônia",
         "period": "abr de 2025 - Presente",
-        "description": "Desenvolvimento de aplicações web escaláveis, liderança técnica de equipe e implementação de arquiteturas modernas."
+        "description": "Desenvolvimento de sistemas web escaláveis, com foco em arquiteturas modernas, segurança e performance."
       },
       "prof-2": {
         "title": "Estagiário de TI",
@@ -43,7 +43,8 @@
         "description": "Participação em projetos de pesquisa e desenvolvimento de sistemas web e mobile utilizando tecnologias modernas."
       }
     }
-  }, "ProjectsSection": {
+  },
+  "ProjectsSection": {
     "title": "Projetos",
     "items": {
       "coneci-ro": {
@@ -57,6 +58,10 @@
       "wiki-cge": {
         "title": "Wiki.CGE (Em construção)",
         "description": "Participo no desenvolvimento da Wiki.CGE, uma plataforma informativa voltada à transparência, documentação interna e disseminação de conhecimento institucional da Controladoria Geral do Estado de Rondônia."
+      },
+      "gerenciador-de-horarios": {
+        "title": "Gerenciador de Horarios",
+        "description": "Sistema para gerenciamento dos horários de aulas do IFRO. Fui responsável pelo desenvolvimento do backend, com foco especial na importação de planilhas utilizando a biblioteca PhpSpreadsheet"
       },
       "chaewon-yugioh": {
         "title": "3D Card Chaewon Yugioh",
@@ -78,6 +83,32 @@
         "title": "Spacetime - Shai Gilgeous Alexander",
         "description": "Uma cápsula do tempo interativa para exibir memórias ao longo de uma linha do tempo, criando uma experiência visual e responsiva."
       }
+    }
+  },
+  "ContactSection": {
+    "title": "Contato",
+    "getInTouch": "Entre em Contato",
+    "description": "Estou sempre aberto a novas oportunidades e colaborações. Entre em contato comigo!",
+    "email": "Email",
+    "location": "Localização",
+    "followMe": "Me Siga",
+    "sendMessage": "Enviar Mensagem",
+    "form": {
+      "name": "Nome",
+      "namePlaceholder": "Seu nome completo",
+      "email": "Email",
+      "emailPlaceholder": "seu.email@exemplo.com",
+      "subject": "Assunto",
+      "subjectPlaceholder": "Sobre o que você gostaria de falar?",
+      "message": "Mensagem",
+      "messagePlaceholder": "Escreva sua mensagem aqui...",
+      "submit": "Enviar Mensagem",
+      "sending": "Enviando...",
+      "success": "Enviado com sucesso!",
+      "tryAgain": "Tentar novamente",
+      "successMessage": "Mensagem enviada com sucesso! Responderei em breve.",
+      "errorDefault": "Erro ao enviar mensagem",
+      "errorUnknown": "Erro desconhecido"
     }
   }
 }
