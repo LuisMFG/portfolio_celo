@@ -8,22 +8,27 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-export default async function LocaleLayout(props: {
+export default async function LocaleLayout({
+  params,
+  children,
+}: {
+  params: { locale: string } | Promise<{ locale: string }>;
   children: React.ReactNode;
-  params: { locale: string };
 }) {
-  // 1. 'params' é tratado como um objeto dinâmico, então precisamos aguardar
-  const { params, children } = props;
-  const { locale } = params;
+  const resolvedParams = await params;
+  const { locale } = resolvedParams;
 
-  // 2. Valida se o locale faz parte dos suportados
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 
-  // 3. Configura o locale no contexto de internacionalização
   setRequestLocale(locale);
 
-  // 4. Renderiza o provedor de traduções envolvendo os children
-  return <NextIntlClientProvider>{children}</NextIntlClientProvider>;
+  const messages = (await import(`../../../messages/${locale}.json`)).default;
+
+  return (
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      {children}
+    </NextIntlClientProvider>
+  );
 }
