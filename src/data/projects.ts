@@ -36,7 +36,8 @@ export const projects: Project[] = [
     title: "Gerenciador de Horarios",
     description: "Sistema para gerencimaento dos horários de aulas do IFRO. Fui responsável pelo desenvolvimento do backend, com foco especial na importação de planilhas utilizando a biblioteca PhpSpreadsheet",
     image: "/images/projeto-gerenciadordehorarios.png",
-    technologies: ["PHP", "CodeIgniter", "HTML", "CSS", "Bootstrap"]
+    technologies: ["PHP", "CodeIgniter", "HTML", "CSS", "Bootstrap"],
+    liveUrl: "https://ifrocalama.com"
   },
   {
     id: "chaewon-yugioh",

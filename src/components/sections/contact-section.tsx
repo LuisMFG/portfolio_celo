@@ -38,7 +38,7 @@ export function ContactSection() {
       ...prev,
       [name]: value,
     }));
-    // Limpar mensagens de erro quando o usuário começar a digitar
+
     if (formStatus === "error") {
       setFormStatus("idle");
       setErrorMessage("");
