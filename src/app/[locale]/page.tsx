@@ -10,7 +10,8 @@ import { AboutSection } from "@/src/components/sections/about-section";
 import { SkillsSection } from "@/src/components/sections/skills-section";
 import { ExperienceSection } from "@/src/components/sections/experience-section";
 import { ProjectsSection } from "@/src/components/sections/projects-section";
-import { LanguageSwitcher } from '@/src/components/sections/locale-switcher';
+import { LanguageSwitcher } from "@/src/components/sections/locale-switcher";
+import { ContactSection } from "@/src/components/sections/contact-section";
 
 export default function Home() {
   const [loading, setLoading] = useState(() => {
@@ -44,6 +45,7 @@ export default function Home() {
         <SkillsSection />
         <ExperienceSection />
         <ProjectsSection />
+        <ContactSection />
       </div>
     </main>
   );
