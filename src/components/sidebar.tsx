@@ -1,9 +1,19 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { ThemeToggle } from "./theme-toggle"
-import { Home, User, Code2, Briefcase, FolderGit2, Github, Linkedin, Instagram } from "lucide-react"
-import Link from "next/link"
+import { motion } from "framer-motion";
+import { ThemeToggle } from "./theme-toggle";
+import {
+  Home,
+  User,
+  Code2,
+  Briefcase,
+  FolderGit2,
+  Mail,
+  Github,
+  Linkedin,
+  Instagram,
+} from "lucide-react";
+import Link from "next/link";
 
 const menuItems = [
   { href: "#home", icon: Home, label: "Início" },
@@ -11,22 +21,34 @@ const menuItems = [
   { href: "#skills", icon: Code2, label: "Tecnologias" },
   { href: "#experience", icon: Briefcase, label: "Experiência" },
   { href: "#projects", icon: FolderGit2, label: "Projetos" },
-]
+  { href: "#contact", icon: Mail, label: "Contato" },
+];
 
 const socialLinks = [
   { href: "https://github.com/LuisMFG", icon: Github, label: "GitHub" },
-  { href: "https://linkedin.com/in/celodev11", icon: Linkedin, label: "LinkedIn" },
-  { href: "https://instagram.com/celo11_", icon: Instagram, label: "Instagram" },
-]
+  {
+    href: "https://linkedin.com/in/celodev11",
+    icon: Linkedin,
+    label: "LinkedIn",
+  },
+  {
+    href: "https://instagram.com/celo11_",
+    icon: Instagram,
+    label: "Instagram",
+  },
+];
 
 export function Sidebar() {
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault()
-    const element = document.querySelector(href)
+  const handleClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
+    e.preventDefault();
+    const element = document.querySelector(href);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" })
+      element.scrollIntoView({ behavior: "smooth" });
     }
-  }
+  };
 
   return (
     <motion.nav
@@ -43,10 +65,7 @@ export function Sidebar() {
             onClick={(e) => handleClick(e, item.href)}
             className="p-3 hover:bg-accent rounded-lg transition-colors relative group"
           >
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <item.icon className="w-6 h-6" />
               <span className="sr-only">{item.label}</span>
               <div className="absolute left-full ml-2 px-2 py-1 bg-accent rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
@@ -56,7 +75,7 @@ export function Sidebar() {
           </Link>
         ))}
       </div>
-      
+
       <div className="flex flex-col gap-4 mb-4">
         {socialLinks.map((item, index) => (
           <motion.a
@@ -79,8 +98,8 @@ export function Sidebar() {
           </motion.a>
         ))}
       </div>
-      
+
       <ThemeToggle />
     </motion.nav>
-  )
+  );
 }
