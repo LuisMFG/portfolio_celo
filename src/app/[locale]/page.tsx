@@ -1,7 +1,6 @@
 // src/app/[locale]/page.tsx
 "use client";
 
-import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { LoadingScreen } from "@/src/components/loadingscreen";
 import { Sidebar } from "@/src/components/sidebar";
@@ -11,14 +10,25 @@ import { AboutSection } from "@/src/components/sections/about-section";
 import { SkillsSection } from "@/src/components/sections/skills-section";
 import { ExperienceSection } from "@/src/components/sections/experience-section";
 import { ProjectsSection } from "@/src/components/sections/projects-section";
+import { LanguageSwitcher } from '@/src/components/sections/locale-switcher';
 
 export default function Home() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => {
+    if (typeof window === "undefined") return false;
+    // se já teve loader nessa sessão, não mostra de novo
+    return !sessionStorage.getItem("hasShownLoading");
+  });
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2000);
+    if (!loading) return;
+
+    const timer = setTimeout(() => {
+      setLoading(false);
+      sessionStorage.setItem("hasShownLoading", "true");
+    }, 2000);
+
     return () => clearTimeout(timer);
-  }, []);
+  }, [loading]);
 
   if (loading) return <LoadingScreen />;
 
@@ -26,6 +36,7 @@ export default function Home() {
     <main className="min-h-screen bg-background text-foreground">
       <ParticlesBackground />
       <Sidebar />
+      <LanguageSwitcher />
 
       <div className="pl-16 md:pl-20 h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth">
         <HeroSection />

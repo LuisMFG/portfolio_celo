@@ -1,82 +1,83 @@
 {
   "HeroSection": {
     "greeting": "Hi, I'm Luis Marcelo!",
-    "alt": "Profile picture of Luis Marcelo",
+    "alt": "Profile photo of Luis Marcelo",
     "subtitle": "Full Stack Developer",
     "description": "Turning ideas into innovative digital solutions"
   },
   "AboutSection": {
     "title": "About Me",
-    "paragraph1": "Technology enthusiast, passionate about programming and IT infrastructure. Currently, I'm a Full Stack Development intern at CGE/RO, working in the Innovation and Corruption Prevention Center.",
-    "paragraph2": "I'm always seeking to improve my skills and contribute innovative solutions, combining academic knowledge with practical experience to tackle challenges and create a positive impact."
+    "paragraph1": "Technology enthusiast, passionate about programming and IT infrastructure. Currently, I'm a Full Stack Development intern at CGE/RO, working in the Innovation and Corruption Prevention Unit.",
+    "paragraph2": "I'm always looking to improve my skills and contribute with innovative solutions, combining academic knowledge with practical experience to face challenges and create positive impact."
   },
   "SkillsSection": {
-    "title": "Skills"
+    "title": "Technologies"
   },
   "ExperienceSection": {
-    "title": "Experiences",
+    "title": "Experience",
     "professional": "Professional",
     "academic": "Academic",
     "items": {
       "prof-1": {
         "title": "Full Stack Development Intern",
-        "company": "CGE/RO - General Comptroller’s Office of Rondônia",
-        "period": "Apr 2025 – Present",
+        "company": "CGE/RO - State Comptroller General of Rondônia",
+        "period": "Apr 2025 - Present",
         "description": "Development of scalable web applications, technical team leadership, and implementation of modern architectures."
       },
       "prof-2": {
         "title": "IT Intern",
-        "company": "CGE/RO (General Comptroller’s Office of Rondônia)",
-        "period": "Oct 2024 – Apr 2025",
-        "description": "IT support and infrastructure."
+        "company": "CGE/RO (State Comptroller General of Rondônia)",
+        "period": "Oct 2024 - Apr 2025",
+        "description": "IT support and infrastructure"
       },
       "acad-1": {
-        "title": "Technologist in Systems Analysis and Development",
+        "title": "Associate Degree in Systems Analysis and Development",
         "company": "IFRO (Federal Institute of Education, Science and Technology of Rondônia)",
-        "period": "Feb 2023 – Present",
-        "description": "Currently in my 5th of 6 total semesters."
+        "period": "Feb 2023 - Present",
+        "description": "Currently in the 5th of 6 terms."
       },
       "acad-2": {
-        "title": "Technical Degree in Computer Science",
+        "title": "Technical Degree in Informatics",
         "company": "IFAM (Federal Institute of Education, Science and Technology of Amazonas)",
-        "period": "Jan 2018 – Dec 2020",
-        "description": "Participation in research projects and development of web and mobile systems using modern technologies."
+        "period": "Jan 2018 - Dec 2020",
+        "description": "Participated in research projects and development of web and mobile systems using modern technologies."
       }
     }
-  }, "ProjectsSection": {
+  },
+  "ProjectsSection": {
     "title": "Projects",
     "items": {
       "coneci-ro": {
-        "title": "CONECI - RO (Under Construction)",
-        "description": "Building the official landing page for CONECI-RO, the State Internal Control Council, with a voting system to elect the new event presidency."
+        "title": "CONECI - RO (In development)",
+        "description": "Developing the official landing page for CONECI-RO, the State Internal Control Council, with a voting system to elect the new event leadership."
       },
       "estudante-auditor": {
-        "title": "Student Auditor (Under Construction)",
-        "description": "Developing the official landing page for the Student Auditor Project, an initiative by the Rondônia State General Comptroller’s Office (CGE/RO) in partnership with SEDUC/RO."
+        "title": "Estudante Auditor (In development)",
+        "description": "Developing the official landing page for the Student Auditor Project, an initiative by the State Comptroller General of Rondônia (CGE/RO) in partnership with SEDUC/RO."
       },
       "wiki-cge": {
-        "title": "Wiki.CGE (Under Construction)",
-        "description": "Participating in the development of Wiki.CGE, an informational platform aimed at transparency, internal documentation, and dissemination of institutional knowledge at the Rondônia State General Comptroller’s Office."
+        "title": "Wiki.CGE (In development)",
+        "description": "Contributing to the development of Wiki.CGE, an informational platform aimed at transparency, internal documentation, and dissemination of institutional knowledge at the State Comptroller General of Rondônia."
       },
       "chaewon-yugioh": {
         "title": "3D Card Chaewon Yugioh",
-        "description": "I developed an animated 3D card of Chaewon in Yu-Gi-Oh! style."
+        "description": "Created an animated 3D card of Chaewon in Yu-Gi-Oh! style"
       },
       "catedog": {
         "title": "Cat&Dog",
-        "description": "Web system for a pet shop with user and pet registration, service requests (grooming, bath), free delivery e-commerce, and full admin panel."
+        "description": "Web system for a pet shop with user and pet registration, service requests (bathing, grooming), e-commerce with free delivery, and a complete admin panel."
       },
       "pokedex": {
         "title": "Pokedex",
-        "description": "Built to practice API consumption. An interactive Pokédex using the PokéAPI for real-time information on different Pokémon (name, image, type, and number)."
+        "description": "Created to practice API consumption. It's an interactive Pokédex that uses the PokéAPI to fetch real-time information about different Pokémon, such as name, image, type, and number."
       },
       "receitas-do-mestre": {
-        "title": "Receitas do Mestre",
-        "description": "A recipe blog project completed as part of the Web Programming Fundamentals course, showcasing HTML skills."
+        "title": "Master's Recipes",
+        "description": "A recipe blog, developed as part of the Web Programming Fundamentals course, aimed at demonstrating knowledge in HTML."
       },
       "spacetime-sga": {
         "title": "Spacetime - Shai Gilgeous Alexander",
-        "description": "An interactive time capsule to display memories along a timeline, creating a responsive visual experience."
+        "description": "An interactive time capsule to showcase memories along a timeline, creating a visual and responsive experience."
       }
     }
   }
