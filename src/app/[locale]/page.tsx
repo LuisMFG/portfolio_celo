@@ -33,16 +33,15 @@ export default function Home() {
   if (loading) return <LoadingScreen />;
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <ParticlesBackground />
       <Sidebar />
 
-      {/* Switcher fixo no topo - só aparece no desktop */}
       <div className="hidden md:block">
         <LanguageSwitcher />
       </div>
 
-      <div className="pl-16 md:pl-20 h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth">
+      <div className="pl-16 md:pl-20 h-screen overflow-y-auto scroll-smooth md:snap-y md:snap-mandatory">
         <HeroSection />
         <AboutSection />
         <SkillsSection />

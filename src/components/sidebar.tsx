@@ -55,10 +55,10 @@ export function Sidebar() {
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="fixed left-0 top-0 h-screen w-16 flex flex-col items-center py-8 bg-background/80 backdrop-blur-sm border-r border-border md:w-20 z-50"
+      className="fixed left-0 top-0 h-screen max-h-screen w-16 flex flex-col items-center py-4 bg-background/80 backdrop-blur-sm border-r border-border md:w-20 z-50 overflow-y-auto"
     >
-      <div className="flex-1 flex flex-col gap-4">
-        {menuItems.map((item, index) => (
+      <div className="flex-1 flex flex-col gap-2">
+        {menuItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
@@ -76,7 +76,7 @@ export function Sidebar() {
         ))}
       </div>
 
-      <div className="flex flex-col gap-4 mb-4">
+      <div className="flex flex-col gap-2 mb-4">
         {socialLinks.map((item, index) => (
           <motion.a
             key={item.href}
