@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "@/src/components/sections/locale-switcher";
 
 export function HeroSection() {
   const t = useTranslations("HeroSection");
@@ -37,8 +38,13 @@ export function HeroSection() {
   return (
     <section
       id="home"
-      className="min-h-screen snap-start flex items-center justify-center p-8"
+      className="min-h-screen snap-start flex items-center justify-center p-8 relative"
     >
+      {/* Switcher fixo no canto superior direito no mobile */}
+      <div className="absolute top-4 right-4 block md:hidden z-50">
+        <LanguageSwitcher />
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

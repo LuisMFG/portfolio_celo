@@ -19,7 +19,7 @@ export function LanguageSwitcher() {
 
   return (
     <motion.div
-      className="fixed top-6 right-6 z-50"
+      className="md:fixed md:top-6 md:right-6 md:z-50"
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
@@ -99,11 +99,7 @@ export function LanguageSwitcher() {
             <motion.div
               key={i}
               className="absolute w-1 h-1 bg-white/60 rounded-full"
-              initial={{
-                x: 20,
-                y: 15,
-                opacity: 0,
-              }}
+              initial={{ x: 20, y: 15, opacity: 0 }}
               animate={{
                 x: 20 + Math.cos((i * 60 * Math.PI) / 180) * 30,
                 y: 15 + Math.sin((i * 60 * Math.PI) / 180) * 30,

@@ -10,13 +10,12 @@ import { AboutSection } from "@/src/components/sections/about-section";
 import { SkillsSection } from "@/src/components/sections/skills-section";
 import { ExperienceSection } from "@/src/components/sections/experience-section";
 import { ProjectsSection } from "@/src/components/sections/projects-section";
-import { LanguageSwitcher } from "@/src/components/sections/locale-switcher";
 import { ContactSection } from "@/src/components/sections/contact-section";
+import { LanguageSwitcher } from "@/src/components/sections/locale-switcher";
 
 export default function Home() {
   const [loading, setLoading] = useState(() => {
     if (typeof window === "undefined") return false;
-
     return !sessionStorage.getItem("hasShownLoading");
   });
 
@@ -37,7 +36,11 @@ export default function Home() {
     <main className="min-h-screen bg-background text-foreground">
       <ParticlesBackground />
       <Sidebar />
-      <LanguageSwitcher />
+
+      {/* Switcher fixo no topo - só aparece no desktop */}
+      <div className="hidden md:block">
+        <LanguageSwitcher />
+      </div>
 
       <div className="pl-16 md:pl-20 h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth">
         <HeroSection />
