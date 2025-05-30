@@ -66,7 +66,7 @@ export function ContactSection() {
       }
 
       setFormStatus("success");
-      // Reset form após sucesso
+
       setFormData({
         name: "",
         email: "",
@@ -74,7 +74,6 @@ export function ContactSection() {
         message: "",
       });
 
-      // Voltar ao estado inicial após 5 segundos
       setTimeout(() => {
         setFormStatus("idle");
       }, 5000);
@@ -180,7 +179,6 @@ export function ContactSection() {
         </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-          {/* Informações de Contato */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -225,7 +223,6 @@ export function ContactSection() {
               ))}
             </div>
 
-            {/* Redes Sociais */}
             <div className="pt-8 border-t border-border">
               <h4 className="text-lg font-semibold mb-4">{t("followMe")}</h4>
               <div className="flex space-x-4">
@@ -246,7 +243,6 @@ export function ContactSection() {
             </div>
           </motion.div>
 
-          {/* Formulário de Contato */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -340,14 +336,12 @@ export function ContactSection() {
                 />
               </div>
 
-              {/* Mensagem de erro */}
               {formStatus === "error" && errorMessage && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
                   <p className="text-red-700 text-sm">{errorMessage}</p>
                 </div>
               )}
 
-              {/* Mensagem de sucesso */}
               {formStatus === "success" && (
                 <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
                   <p className="text-green-700 text-sm">

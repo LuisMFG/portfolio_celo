@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { useTranslations } from 'next-intl';
+import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 export function AboutSection() {
-  const t = useTranslations('AboutSection');
+  const t = useTranslations("AboutSection");
 
   return (
     <section
@@ -18,15 +18,9 @@ export function AboutSection() {
         viewport={{ once: true }}
         className="max-w-3xl mx-auto"
       >
-        <h2 className="text-3xl font-bold mb-8">
-          {t('title')}
-        </h2>
-        <p className="text-lg text-muted-foreground mb-6">
-          {t('paragraph1')}
-        </p>
-        <p className="text-lg text-muted-foreground">
-          {t('paragraph2')}
-        </p>
+        <h2 className="text-3xl font-bold mb-8">{t("title")}</h2>
+        <p className="text-lg text-muted-foreground mb-6">{t("paragraph1")}</p>
+        <p className="text-lg text-muted-foreground">{t("paragraph2")}</p>
       </motion.div>
     </section>
   );

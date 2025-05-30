@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { usePathname, useRouter } from 'next/navigation';
-import { useLocale } from 'next-intl';
-import { useState } from 'react';
+import { motion } from "framer-motion";
+import { usePathname, useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
+import { useState } from "react";
 
 export function LanguageSwitcher() {
   const router = useRouter();
@@ -12,7 +12,7 @@ export function LanguageSwitcher() {
   const [isHovered, setIsHovered] = useState(false);
 
   const toggleLanguage = () => {
-    const newLocale = locale === 'pt-BR' ? 'en' : 'pt-BR';
+    const newLocale = locale === "pt-BR" ? "en" : "pt-BR";
     const newPath = pathname.replace(`/${locale}`, `/${newLocale}`);
     router.push(newPath);
   };
@@ -32,7 +32,6 @@ export function LanguageSwitcher() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
-        {/* Ícone do globo */}
         <motion.div
           animate={{ rotate: isHovered ? 360 : 0 }}
           transition={{ duration: 0.5 }}
@@ -53,12 +52,10 @@ export function LanguageSwitcher() {
           </svg>
         </motion.div>
 
-        {/* Texto do idioma atual */}
         <span className="text-sm font-medium uppercase tracking-wider">
-          {locale === 'pt-BR' ? 'PT-BR' : 'EN'}
+          {locale === "pt-BR" ? "PT-BR" : "EN"}
         </span>
 
-        {/* Seta indicativa */}
         <motion.div
           animate={{ rotate: isHovered ? 180 : 0 }}
           transition={{ duration: 0.3 }}
@@ -77,22 +74,20 @@ export function LanguageSwitcher() {
           </svg>
         </motion.div>
 
-        {/* Tooltip */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
-          animate={{ 
-            opacity: isHovered ? 1 : 0, 
-            y: isHovered ? -8 : -10 
+          animate={{
+            opacity: isHovered ? 1 : 0,
+            y: isHovered ? -8 : -10,
           }}
           transition={{ duration: 0.2 }}
           className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-black/90 text-white text-xs px-3 py-1 rounded-md whitespace-nowrap pointer-events-none"
         >
-          {locale === 'pt-BR' ? 'Switch to English' : 'Mudar para Português'}
+          {locale === "pt-BR" ? "Switch to English" : "Mudar para Português"}
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-black/90"></div>
         </motion.div>
       </motion.button>
 
-      {/* Efeito de partículas no hover */}
       {isHovered && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -104,20 +99,20 @@ export function LanguageSwitcher() {
             <motion.div
               key={i}
               className="absolute w-1 h-1 bg-white/60 rounded-full"
-              initial={{ 
-                x: 20, 
-                y: 15, 
-                opacity: 0 
+              initial={{
+                x: 20,
+                y: 15,
+                opacity: 0,
               }}
               animate={{
-                x: 20 + Math.cos(i * 60 * Math.PI / 180) * 30,
-                y: 15 + Math.sin(i * 60 * Math.PI / 180) * 30,
-                opacity: [0, 1, 0]
+                x: 20 + Math.cos((i * 60 * Math.PI) / 180) * 30,
+                y: 15 + Math.sin((i * 60 * Math.PI) / 180) * 30,
+                opacity: [0, 1, 0],
               }}
               transition={{
                 duration: 1,
                 repeat: Infinity,
-                delay: i * 0.1
+                delay: i * 0.1,
               }}
             />
           ))}

@@ -1,4 +1,3 @@
-// app/api/contact/route.ts
 import { Resend } from 'resend';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -15,7 +14,7 @@ export async function POST(request: NextRequest) {
     try {
         const body: ContactFormData = await request.json();
 
-        // Validação básica dos dados
+
         if (!body.name || !body.email || !body.subject || !body.message) {
             return NextResponse.json(
                 { error: 'Todos os campos são obrigatórios' },
@@ -23,7 +22,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Validação de email
+
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(body.email)) {
             return NextResponse.json(
@@ -32,7 +31,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Sanitização básica dos dados
+
         const sanitizedData = {
             name: body.name.trim().substring(0, 100),
             email: body.email.trim().toLowerCase(),
@@ -40,7 +39,7 @@ export async function POST(request: NextRequest) {
             message: body.message.trim().substring(0, 2000),
         };
 
-        // Envio do email usando Resend
+
         const { data, error } = await resend.emails.send({
             from: `${sanitizedData.name} <onboarding@resend.dev>`, // Use seu domínio verificado
             to: [process.env.CONTACT_EMAIL!],

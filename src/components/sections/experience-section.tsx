@@ -37,7 +37,6 @@ export function ExperienceSection() {
         </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-          {/* Experiência Profissional */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -67,7 +66,6 @@ export function ExperienceSection() {
             </div>
           </motion.div>
 
-          {/* Experiência Acadêmica */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}

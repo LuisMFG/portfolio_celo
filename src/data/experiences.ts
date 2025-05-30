@@ -1,4 +1,4 @@
-// @/data/experiences.ts
+
 
 export interface Experience {
   id: string;
@@ -10,7 +10,7 @@ export interface Experience {
 }
 
 export const experiences: Experience[] = [
-  // Experiências Profissionais
+
   {
     id: "prof-1",
     type: "professional",
@@ -20,7 +20,7 @@ export const experiences: Experience[] = [
     description: "Desenvolvimento de aplicações web escaláveis, liderança técnica de equipe e implementação de arquiteturas modernas."
   },
   {
-    id: "prof-2", 
+    id: "prof-2",
     type: "professional",
     title: "Estagiário de TI",
     company: "CGE/RO (Controladoria Geral do Estado de Rondônia)",
@@ -28,7 +28,7 @@ export const experiences: Experience[] = [
     description: "Suporte e infraestrutura de TI"
   },
 
-  // Experiências Acadêmicas
+
   {
     id: "acad-1",
     type: "academic",
@@ -42,7 +42,7 @@ export const experiences: Experience[] = [
     type: "academic",
     title: "Técnico em Informática",
     company: "IFAM (Instituto Federal de Educação, Ciência e Tecnologia do Amazonas)",
-    period: "jan de 2018 - dez de 2020", 
+    period: "jan de 2018 - dez de 2020",
     description: "Participação em projetos de pesquisa e desenvolvimento de sistemas web e mobile utilizando tecnologias modernas."
   }
 ];

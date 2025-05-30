@@ -16,7 +16,7 @@ import { ContactSection } from "@/src/components/sections/contact-section";
 export default function Home() {
   const [loading, setLoading] = useState(() => {
     if (typeof window === "undefined") return false;
-    // se já teve loader nessa sessão, não mostra de novo
+
     return !sessionStorage.getItem("hasShownLoading");
   });
 

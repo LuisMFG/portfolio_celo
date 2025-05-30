@@ -1,4 +1,3 @@
-// components/LoadingScreen.tsx
 import { motion } from "framer-motion";
 
 export function LoadingScreen() {
