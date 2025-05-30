@@ -1,4 +1,3 @@
-// src/app/[locale]/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -33,7 +32,7 @@ export default function Home() {
   if (loading) return <LoadingScreen />;
 
   return (
-    <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
+    <main className="min-h-screen bg-background text-foreground overflow-hidden">
       <ParticlesBackground />
       <Sidebar />
 
@@ -41,13 +40,15 @@ export default function Home() {
         <LanguageSwitcher />
       </div>
 
-      <div className="pl-16 md:pl-20 h-screen overflow-y-auto scroll-smooth md:snap-y md:snap-mandatory">
-        <HeroSection />
-        <AboutSection />
-        <SkillsSection />
-        <ExperienceSection />
-        <ProjectsSection />
-        <ContactSection />
+      <div className="pl-16 md:pl-20 h-screen overflow-y-auto overflow-x-hidden scroll-smooth md:snap-y md:snap-mandatory">
+        <div className="w-full max-w-none">
+          <HeroSection />
+          <AboutSection />
+          <SkillsSection />
+          <ExperienceSection />
+          <ProjectsSection />
+          <ContactSection />
+        </div>
       </div>
     </main>
   );
