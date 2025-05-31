@@ -14,31 +14,34 @@ import {
   Instagram,
 } from "lucide-react";
 import Link from "next/link";
-
-const menuItems = [
-  { href: "#home", icon: Home, label: "Início" },
-  { href: "#about", icon: User, label: "Sobre" },
-  { href: "#skills", icon: Code2, label: "Tecnologias" },
-  { href: "#experience", icon: Briefcase, label: "Experiência" },
-  { href: "#projects", icon: FolderGit2, label: "Projetos" },
-  { href: "#contact", icon: Mail, label: "Contato" },
-];
-
-const socialLinks = [
-  { href: "https://github.com/LuisMFG", icon: Github, label: "GitHub" },
-  {
-    href: "https://linkedin.com/in/celodev11",
-    icon: Linkedin,
-    label: "LinkedIn",
-  },
-  {
-    href: "https://instagram.com/celo11_",
-    icon: Instagram,
-    label: "Instagram",
-  },
-];
+import { useTranslations } from "next-intl";
 
 export function Sidebar() {
+  const t = useTranslations("Sidebar");
+
+  const menuItems = [
+    { href: "#home", icon: Home, label: t("home") },
+    { href: "#about", icon: User, label: t("about") },
+    { href: "#skills", icon: Code2, label: t("skills") },
+    { href: "#experience", icon: Briefcase, label: t("experience") },
+    { href: "#projects", icon: FolderGit2, label: t("projects") },
+    { href: "#contact", icon: Mail, label: t("contact") },
+  ];
+
+  const socialLinks = [
+    { href: "https://github.com/LuisMFG", icon: Github, label: "GitHub" },
+    {
+      href: "https://linkedin.com/in/celodev11",
+      icon: Linkedin,
+      label: "LinkedIn",
+    },
+    {
+      href: "https://instagram.com/celo11_",
+      icon: Instagram,
+      label: "Instagram",
+    },
+  ];
+
   const handleClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string

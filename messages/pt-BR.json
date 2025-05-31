@@ -110,5 +110,13 @@
       "errorDefault": "Erro ao enviar mensagem",
       "errorUnknown": "Erro desconhecido"
     }
+  },
+  "Sidebar": {
+    "home": "Início",
+    "about": "Sobre",
+    "skills": "Tecnologias",
+    "experience": "Experiência",
+    "projects": "Projetos",
+    "contact": "Contato"
   }
 }

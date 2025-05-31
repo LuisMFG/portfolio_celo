@@ -110,5 +110,13 @@
       "errorDefault": "Error sending message",
       "errorUnknown": "Unknown error"
     }
+  },
+  "Sidebar": {
+    "home": "Home",
+    "about": "About",
+    "skills": "Skills",
+    "experience": "Experience",
+    "projects": "Projects",
+    "contact": "Contact"
   }
 }
