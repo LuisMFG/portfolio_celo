@@ -18,7 +18,7 @@ export const projects: Project[] = [
   },
   {
     id: "estudante-auditor",
-    title: "Estudante Auditor (Em Construção)",
+    title: "Estudante Auditor",
     description: "Desenvolvendo a landing page oficial do Projeto Estudante Auditor, uma iniciativa da Controladoria-Geral do Estado de Rondônia (CGE/RO) em parceria com a SEDUC/RO.",
     image: "/images/projeto_estudanteauditor.png",
     technologies: ["C#", "ASP.NET Core MVC", "Razor (HTML)", "CSS", "JavaScript"],
@@ -26,14 +26,14 @@ export const projects: Project[] = [
   },
   {
     id: "wiki-cge",
-    title: "Wiki.CGE (Em construção)",
+    title: "Wiki.CGE",
     description: "Participo no desenvolvimento da Wiki.CGE, uma plataforma informativa voltada à transparência, documentação interna e disseminação de conhecimento institucional da Controladoria Geral do Estado de Rondônia.",
     image: "/images/projeto_wikicge.png",
     technologies: ["HTML", "CSS", "JS"],
     liveUrl: "https://wiki.cge.ro.gov.br"
   }, {
     id: "gerenciador-de-horarios",
-    title: "Gerenciador de Horarios",
+    title: "PlanIFica",
     description: "Sistema para gerencimaento dos horários de aulas do IFRO. Fui responsável pelo desenvolvimento do backend, com foco especial na importação de planilhas utilizando a biblioteca PhpSpreadsheet",
     image: "/images/projeto-gerenciadordehorarios.png",
     technologies: ["PHP", "CodeIgniter", "HTML", "CSS", "Bootstrap"],
