@@ -7,8 +7,8 @@
   },
   "AboutSection": {
     "title": "About Me",
-    "paragraph1": "I'm Student of Systems Analysis and Development and technology enthusiast with a deep passion for programming and IT infrastructure. My journey in the tech field is driven by constant curiosity and the desire to transform ideas into digital solutions that make a difference.",
-    "paragraph2": "Currently, I work as a Full Stack Development intern at CGE/RO (Controladoria Geral do Estado de Rondônia), where I am part of the Núcleo de Inovação e Prevenção à Corrupção. In this strategic position, I have the opportunity to apply technical knowledge to projects that promote transparency and modernization of the public sector, contributing directly to more efficient and ethical management."
+    "paragraph1": "I'm a Technologist in Systems Analysis and Development, graduated from IFRO, and a technology enthusiast with a deep passion for programming and IT infrastructure. My journey in the tech field is driven by constant curiosity and the desire to transform ideas into digital solutions that make a difference.",
+    "paragraph2": "I currently serve as Active Transparency Coordinator at CGE/RO (Controladoria Geral do Estado de Rondônia), leading initiatives focused on modernization and public information disclosure, and also as a Junior Software Engineer at Biggelo, developing applications with Node.js and NestJS in a remote environment. These roles allow me to combine technical expertise and strategic vision in projects that impact both the public and private sectors."
   },
   "SkillsSection": {
     "title": "Technologies"
@@ -19,12 +19,24 @@
     "academic": "Academic",
     "items": {
       "prof-1": {
-        "title": "Full Stack Development Intern",
+        "title": "Active Transparency Coordinator",
         "company": "CGE/RO - Controladoria Geral do Estado de Rondônia",
-        "period": "Apr 2025 - Present",
-        "description": "Development of scalable web applications, technical team leadership, and implementation of modern architectures."
+        "period": "Dec 2025 - Present",
+        "description": "Coordinating the State's Active Transparency initiatives, leading modernization efforts, data governance, and public information disclosure."
       },
       "prof-2": {
+        "title": "Junior Software Engineer",
+        "company": "Biggelo",
+        "period": "Nov 2025 - Present",
+        "description": "Responsible for the development, continuous improvement, and support of applications using technologies such as Node.js and NestJS, working remotely."
+      },
+      "prof-3": {
+        "title": "Full Stack Development Intern",
+        "company": "CGE/RO - Controladoria Geral do Estado de Rondônia",
+        "period": "Apr 2025 - Nov 2025",
+        "description": "Worked at the Innovation and Corruption Prevention Unit, developing web applications with C#, .NET Framework, and other technologies, contributing to projects focused on transparency and modernization of the public sector."
+      },
+      "prof-4": {
         "title": "IT Intern",
         "company": "CGE/RO - Controladoria Geral do Estado de Rondônia",
         "period": "Oct 2024 - Apr 2025",
@@ -33,12 +45,12 @@
       "acad-1": {
         "title": "Systems Analysis and Development",
         "company": "IFRO (Instituto Federal de Educação, Ciência e Tecnologia de Rondônia)",
-        "period": "Feb 2023 - Present",
-        "description": "Currently enrolled in the 5th of 6 semesters, I was part of the campus development team, Calama Devs."
+        "period": "Feb 2023 - 2025",
+        "description": "Graduated in Systems Analysis and Development. I was part of the campus development team, Calama Devs."
       },
       "acad-2": {
         "title": "Technical Degree in Informatics",
-        "company": "IFAM (Instituto Federal de Educação, Ciência e Tecnologia de Rondônia)",
+        "company": "IFAM (Instituto Federal de Educação, Ciência e Tecnologia do Amazonas)",
         "period": "Jan 2018 - Dec 2020",
         "description": "Participated in research projects and development of web and mobile systems using modern technologies."
       }

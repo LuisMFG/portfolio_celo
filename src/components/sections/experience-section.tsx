@@ -3,21 +3,20 @@
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Icons } from "@/src/components/icons";
-import { experiences } from "@/src/data/experiences";
+import type { ExperienceView } from "@/src/lib/content";
 
-interface Experience {
-  id: string;
-  type: "professional" | "academic";
-}
-
-export function ExperienceSection() {
+export function ExperienceSection({
+  experiences,
+}: {
+  experiences: ExperienceView[];
+}) {
   const t = useTranslations("ExperienceSection");
 
   const professionalExperiences = experiences.filter(
-    (exp: Experience) => exp.type === "professional"
+    (exp) => exp.type === "professional",
   );
   const academicExperiences = experiences.filter(
-    (exp: Experience) => exp.type === "academic"
+    (exp) => exp.type === "academic",
   );
 
   return (
@@ -51,16 +50,11 @@ export function ExperienceSection() {
             <div className="space-y-8">
               {professionalExperiences.map((exp) => (
                 <div key={exp.id} className="border-l-2 border-primary pl-6">
-                  <h4 className="text-xl font-semibold">
-                    {t(`items.${exp.id}.title`)}
-                  </h4>
+                  <h4 className="text-xl font-semibold">{exp.title}</h4>
                   <p className="text-muted-foreground mb-2">
-                    {t(`items.${exp.id}.company`)} •{" "}
-                    {t(`items.${exp.id}.period`)}
+                    {exp.company} • {exp.period}
                   </p>
-                  <p className="text-muted-foreground">
-                    {t(`items.${exp.id}.description`)}
-                  </p>
+                  <p className="text-muted-foreground">{exp.description}</p>
                 </div>
               ))}
             </div>
@@ -80,16 +74,11 @@ export function ExperienceSection() {
             <div className="space-y-8">
               {academicExperiences.map((exp) => (
                 <div key={exp.id} className="border-l-2 border-primary pl-6">
-                  <h4 className="text-xl font-semibold">
-                    {t(`items.${exp.id}.title`)}
-                  </h4>
+                  <h4 className="text-xl font-semibold">{exp.title}</h4>
                   <p className="text-muted-foreground mb-2">
-                    {t(`items.${exp.id}.company`)} •{" "}
-                    {t(`items.${exp.id}.period`)}
+                    {exp.company} • {exp.period}
                   </p>
-                  <p className="text-muted-foreground">
-                    {t(`items.${exp.id}.description`)}
-                  </p>
+                  <p className="text-muted-foreground">{exp.description}</p>
                 </div>
               ))}
             </div>

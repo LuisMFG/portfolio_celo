@@ -1,0 +1,60 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { LoadingScreen } from "@/src/components/loadingscreen";
+import { Sidebar } from "@/src/components/sidebar";
+import { ParticlesBackground } from "@/src/components/particles-background";
+import { HeroSection } from "@/src/components/sections/hero-section";
+import { AboutSection } from "@/src/components/sections/about-section";
+import { SkillsSection } from "@/src/components/sections/skills-section";
+import { ExperienceSection } from "@/src/components/sections/experience-section";
+import { ProjectsSection } from "@/src/components/sections/projects-section";
+import { ContactSection } from "@/src/components/sections/contact-section";
+import { LanguageSwitcher } from "@/src/components/sections/locale-switcher";
+import type { ExperienceView, ProjectView } from "@/src/lib/content";
+
+export function HomeShell({
+  experiences,
+  projects,
+}: {
+  experiences: ExperienceView[];
+  projects: ProjectView[];
+}) {
+  const [loading, setLoading] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return !sessionStorage.getItem("hasShownLoading");
+  });
+
+  useEffect(() => {
+    if (!loading) return;
+    const timer = setTimeout(() => {
+      setLoading(false);
+      sessionStorage.setItem("hasShownLoading", "true");
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [loading]);
+
+  if (loading) return <LoadingScreen />;
+
+  return (
+    <main className="min-h-screen bg-background text-foreground overflow-hidden">
+      <ParticlesBackground />
+      <Sidebar />
+
+      <div className="hidden md:block">
+        <LanguageSwitcher />
+      </div>
+
+      <div className="pl-16 md:pl-20 h-screen overflow-y-auto overflow-x-hidden scroll-smooth md:snap-y md:snap-mandatory">
+        <div className="w-full max-w-none">
+          <HeroSection />
+          <AboutSection />
+          <SkillsSection />
+          <ExperienceSection experiences={experiences} />
+          <ProjectsSection projects={projects} />
+          <ContactSection />
+        </div>
+      </div>
+    </main>
+  );
+}

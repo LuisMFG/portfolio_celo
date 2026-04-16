@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model SiteContent {
+  id        String   @id @default(cuid())
+  section   String
+  field     String
+  locale    String
+  value     String
+  updatedAt DateTime @updatedAt
+
+  @@unique([section, field, locale])
+}
+
+model Experience {
+  id            String   @id @default(cuid())
+  type          String
+  order         Int      @default(0)
+  titlePt       String
+  titleEn       String
+  companyPt     String
+  companyEn     String
+  periodPt      String
+  periodEn      String
+  descriptionPt String
+  descriptionEn String
+  isPublished   Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([type, order])
+}
+
+model Project {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  image         String
+  imageBlobKey  String?
+  technologies  String[]
+  githubUrl     String?
+  liveUrl       String?
+  order         Int      @default(0)
+  titlePt       String
+  titleEn       String
+  descriptionPt String
+  descriptionEn String
+  isPublished   Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([order])
+}

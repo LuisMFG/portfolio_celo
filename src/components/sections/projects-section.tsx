@@ -3,9 +3,9 @@
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { ProjectCard } from "@/src/components/ui/project-card";
-import { projects } from "@/src/data/projects";
+import type { ProjectView } from "@/src/lib/content";
 
-export function ProjectsSection() {
+export function ProjectsSection({ projects }: { projects: ProjectView[] }) {
   const t = useTranslations("ProjectsSection");
 
   return (
@@ -26,12 +26,12 @@ export function ProjectsSection() {
           {projects.map((project, index) => (
             <ProjectCard
               key={project.id}
-              title={t(`items.${project.id}.title`)}
-              description={t(`items.${project.id}.description`)}
+              title={project.title}
+              description={project.description}
               image={project.image}
               technologies={project.technologies}
-              githubUrl={project.githubUrl}
-              liveUrl={project.liveUrl}
+              githubUrl={project.githubUrl ?? undefined}
+              liveUrl={project.liveUrl ?? undefined}
               delay={index * 0.1}
             />
           ))}

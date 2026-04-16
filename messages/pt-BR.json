@@ -7,8 +7,8 @@
   },
   "AboutSection": {
     "title": "Sobre Mim",
-    "paragraph1": "Sou estudante de Análise e Desenvolvimento de Sistemas e entusiasta da tecnologia com profunda paixão por programação e infraestrutura de TI. Minha jornada na área tech é impulsionada pela curiosidade constante e pelo desejo de transformar ideias em soluções digitais que façam a diferença.",
-    "paragraph2": "Atualmente, atuo como estagiário em Desenvolvimento Full Stack na CGE/RO (Controladoria Geral do Estado de Rondônia), onde integro o Núcleo de Inovação e Prevenção à Corrupção. Nessa posição estratégica, tenho a oportunidade de aplicar conhecimentos técnicos em projetos que promovem transparência e modernização do setor público, contribuindo diretamente para uma gestão mais eficiente e íntegra."
+    "paragraph1": "Sou Tecnólogo em Análise e Desenvolvimento de Sistemas, formado pelo IFRO, e entusiasta da tecnologia com profunda paixão por programação e infraestrutura de TI. Minha jornada na área tech é impulsionada pela curiosidade constante e pelo desejo de transformar ideias em soluções digitais que façam a diferença.",
+    "paragraph2": "Atualmente, atuo como Coordenador de Transparência Ativa na CGE/RO (Controladoria Geral do Estado de Rondônia), liderando iniciativas de modernização e disponibilização de informações públicas, e também como JR Software Engineer na Biggelo, desenvolvendo aplicações com Node.js e NestJS em ambiente remoto. Essas posições me permitem unir expertise técnica e visão estratégica em projetos que impactam tanto o setor público quanto o privado."
   },
   "SkillsSection": {
     "title": "Tecnologias"
@@ -19,28 +19,40 @@
     "academic": "Acadêmica",
     "items": {
       "prof-1": {
-        "title": "Estagiário de Desenvolvimento Full Stack",
+        "title": "Coordenador de Transparência Ativa",
         "company": "CGE/RO - Controladoria Geral do Estado de Rondônia",
-        "period": "abr de 2025 - Presente",
-        "description": "Desenvolvimento de sistemas web escaláveis, com foco em arquiteturas modernas, segurança e performance."
+        "period": "dez de 2025 - Presente",
+        "description": "Coordenação das ações de Transparência Ativa do Estado, liderando iniciativas de modernização, governança de dados e disponibilização de informações públicas."
       },
       "prof-2": {
+        "title": "JR Software Engineer",
+        "company": "Biggelo",
+        "period": "nov de 2025 - Presente",
+        "description": "Responsável pelo desenvolvimento, melhoria contínua e suporte de aplicações empregando tecnologias como Node.js e NestJS, atuando de forma remota."
+      },
+      "prof-3": {
+        "title": "Estagiário de Desenvolvimento Full Stack",
+        "company": "CGE/RO - Controladoria Geral do Estado de Rondônia",
+        "period": "abr de 2025 - nov de 2025",
+        "description": "Atuei no Núcleo de Inovação e Prevenção à Corrupção, desenvolvendo aplicações web com C#, .NET Framework e outras tecnologias, contribuindo com projetos voltados à transparência e modernização do setor público."
+      },
+      "prof-4": {
         "title": "Estagiário de TI",
-        "company": "CGE/RO (Controladoria Geral do Estado de Rondônia)",
+        "company": "CGE/RO - Controladoria Geral do Estado de Rondônia",
         "period": "out de 2024 - abr de 2025",
         "description": "Atuei com suporte e infraestrutura de TI, realizando manutenção de computadores, administração de redes e suporte técnico a servidores do órgão."
       },
       "acad-1": {
         "title": "CST em Análise e Desenvolvimento de Sistemas",
         "company": "IFRO (Instituto Federal de Educação, Ciência e Tecnologia de Rondônia)",
-        "period": "fev de 2023 - Presente",
-        "description": "Cursando o 5º de 6 períodos, integrei a equipe de desenvolvimento do campus, Calama Devs."
+        "period": "fev de 2023 - 2025",
+        "description": "Formado em CST em Análise e Desenvolvimento de Sistemas. Integrei a equipe de desenvolvimento do campus, Calama Devs."
       },
       "acad-2": {
         "title": "Técnico em Informática",
         "company": "IFAM (Instituto Federal de Educação, Ciência e Tecnologia do Amazonas)",
         "period": "jan de 2018 - dez de 2020",
-        "description": "Ensino médio com foco em desenvolvimento de sistemas e suporte. Participei de projeto de projeto de extensão e desenvolvi habilidades técnicas e trabalho em equipe."
+        "description": "Ensino médio com foco em desenvolvimento de sistemas e suporte. Participei de projeto de extensão e desenvolvi habilidades técnicas e trabalho em equipe."
       }
     }
   },

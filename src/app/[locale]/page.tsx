@@ -1,55 +1,19 @@
-"use client";
+import { setRequestLocale } from "next-intl/server";
+import { fetchExperiences, fetchProjects, type Locale } from "@/src/lib/content";
+import { HomeShell } from "@/src/components/home-shell";
 
-import { useEffect, useState } from "react";
-import { LoadingScreen } from "@/src/components/loadingscreen";
-import { Sidebar } from "@/src/components/sidebar";
-import { ParticlesBackground } from "@/src/components/particles-background";
-import { HeroSection } from "@/src/components/sections/hero-section";
-import { AboutSection } from "@/src/components/sections/about-section";
-import { SkillsSection } from "@/src/components/sections/skills-section";
-import { ExperienceSection } from "@/src/components/sections/experience-section";
-import { ProjectsSection } from "@/src/components/sections/projects-section";
-import { ContactSection } from "@/src/components/sections/contact-section";
-import { LanguageSwitcher } from "@/src/components/sections/locale-switcher";
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
 
-export default function Home() {
-  const [loading, setLoading] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return !sessionStorage.getItem("hasShownLoading");
-  });
+  const [experiences, projects] = await Promise.all([
+    fetchExperiences(locale as Locale),
+    fetchProjects(locale as Locale),
+  ]);
 
-  useEffect(() => {
-    if (!loading) return;
-
-    const timer = setTimeout(() => {
-      setLoading(false);
-      sessionStorage.setItem("hasShownLoading", "true");
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, [loading]);
-
-  if (loading) return <LoadingScreen />;
-
-  return (
-    <main className="min-h-screen bg-background text-foreground overflow-hidden">
-      <ParticlesBackground />
-      <Sidebar />
-
-      <div className="hidden md:block">
-        <LanguageSwitcher />
-      </div>
-
-      <div className="pl-16 md:pl-20 h-screen overflow-y-auto overflow-x-hidden scroll-smooth md:snap-y md:snap-mandatory">
-        <div className="w-full max-w-none">
-          <HeroSection />
-          <AboutSection />
-          <SkillsSection />
-          <ExperienceSection />
-          <ProjectsSection />
-          <ContactSection />
-        </div>
-      </div>
-    </main>
-  );
+  return <HomeShell experiences={experiences} projects={projects} />;
 }
