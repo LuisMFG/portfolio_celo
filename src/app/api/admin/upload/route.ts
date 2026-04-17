@@ -20,14 +20,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(uploaded, { status: 201 });
   } catch (err) {
     console.error("Upload route error:", err);
-    if (err instanceof Error && err.message.toLowerCase().includes("inválido")) {
-      return jsonError(err.message, 400);
-    }
-    if (err instanceof Error && err.message.includes("5 MB")) {
-      return jsonError(err.message, 413);
-    }
-    if (err instanceof Error && err.message.includes("BLOB_READ_WRITE_TOKEN")) {
-      return jsonError(err.message, 500);
+    if (err instanceof Error) {
+      const msg = err.message;
+      if (msg.toLowerCase().includes("inválido")) return jsonError(msg, 400);
+      if (msg.includes("5 MB")) return jsonError(msg, 413);
+      if (msg.includes("BLOB_READ_WRITE_TOKEN")) return jsonError(msg, 500);
+      // Surface Vercel Blob errors to the client for debugging
+      return jsonError(msg, 500);
     }
     return handleApiError(err);
   }

@@ -119,7 +119,7 @@ export function ProjectForm({ initial }: { initial?: ProjectData }) {
             value={data.slug}
             onChange={(e) => set("slug", e.target.value)}
             placeholder="meu-projeto"
-            pattern="[a-z0-9-]+"
+            pattern="[a-z0-9\-]+"
             required
           />
           <p className="text-xs text-muted-foreground">
