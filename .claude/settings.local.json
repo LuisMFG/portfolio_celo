@@ -3,7 +3,10 @@
     "allow": [
       "Bash(grep -l \"projects\\\\|experiences\" src/components/sections/*.tsx)",
       "Bash(npm install *)",
-      "Bash(npx prisma *)"
+      "Bash(npx prisma *)",
+      "Bash(npx --package=prisma@6 prisma migrate deploy)",
+      "Bash(npx --package=prisma@6 prisma db push)",
+      "Bash(npx tsx:*)"
     ]
   }
 }
