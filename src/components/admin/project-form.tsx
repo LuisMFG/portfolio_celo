@@ -141,7 +141,6 @@ export function ProjectForm({ initial }: { initial?: ProjectData }) {
           <Label htmlFor="githubUrl">GitHub URL</Label>
           <Input
             id="githubUrl"
-            type="url"
             value={data.githubUrl}
             onChange={(e) => set("githubUrl", e.target.value)}
             placeholder="https://github.com/..."
@@ -151,7 +150,6 @@ export function ProjectForm({ initial }: { initial?: ProjectData }) {
           <Label htmlFor="liveUrl">Live URL</Label>
           <Input
             id="liveUrl"
-            type="url"
             value={data.liveUrl}
             onChange={(e) => set("liveUrl", e.target.value)}
             placeholder="https://..."
