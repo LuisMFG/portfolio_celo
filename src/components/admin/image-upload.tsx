@@ -40,14 +40,16 @@ export function ImageUpload({
       const form = new FormData();
       form.set("file", file);
       const res = await fetch("/api/admin/upload", { method: "POST", body: form });
+      const body = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? "Erro ao enviar imagem");
+        console.error("Upload failed:", res.status, body);
+        throw new Error(body.error ?? `Erro ${res.status} ao enviar imagem`);
       }
-      const data = (await res.json()) as { url: string; pathname: string };
+      const data = body as { url: string; pathname: string };
       onChange({ url: data.url, blobKey: data.pathname });
       toast.success("Imagem enviada!");
     } catch (err) {
+      console.error("Upload error:", err);
       toast.error(err instanceof Error ? err.message : "Erro desconhecido");
     } finally {
       setUploading(false);
