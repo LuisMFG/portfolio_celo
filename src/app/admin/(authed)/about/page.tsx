@@ -1,5 +1,7 @@
 import { prisma } from "@/src/lib/prisma";
 import { SectionContentForm } from "@/src/components/admin/section-content-form";
+import ptMessages from "@/messages/pt-BR.json";
+import enMessages from "@/messages/en.json";
 
 const FIELDS = [
   { name: "paragraph1", label: "Parágrafo 1", type: "textarea" as const },
@@ -7,14 +9,20 @@ const FIELDS = [
 ];
 
 export default async function AboutAdminPage() {
-  const rows = await prisma.siteContent.findMany({ where: { section: "about" } });
+  const rows = await prisma.siteContent.findMany({ where: { section: "about" } }).catch(() => []);
 
   const initial = {
-    "pt-BR": { paragraph1: "", paragraph2: "" },
-    en: { paragraph1: "", paragraph2: "" },
+    "pt-BR": {
+      paragraph1: ptMessages.AboutSection.paragraph1,
+      paragraph2: ptMessages.AboutSection.paragraph2,
+    },
+    en: {
+      paragraph1: enMessages.AboutSection.paragraph1,
+      paragraph2: enMessages.AboutSection.paragraph2,
+    },
   };
   for (const r of rows) {
-    if (r.locale === "pt-BR" || r.locale === "en") {
+    if ((r.locale === "pt-BR" || r.locale === "en") && r.value) {
       initial[r.locale][r.field as keyof (typeof initial)["pt-BR"]] = r.value;
     }
   }

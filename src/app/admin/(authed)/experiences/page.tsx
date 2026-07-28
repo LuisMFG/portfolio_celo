@@ -8,7 +8,7 @@ import { DeleteButton } from "@/src/components/admin/delete-button";
 export default async function ExperiencesAdminPage() {
   const items = await prisma.experience.findMany({
     orderBy: [{ type: "asc" }, { order: "asc" }, { createdAt: "asc" }],
-  });
+  }).catch(() => []);
 
   return (
     <div className="space-y-6">

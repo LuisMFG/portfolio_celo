@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { Button } from "@/src/components/ui/button";
 import { Github, ExternalLink } from "lucide-react";
 
@@ -30,11 +31,13 @@ export function ProjectCard({
       className="bg-card p-4 rounded-xl shadow-md hover:shadow-xl transition-shadow border border-white/10 hover:border-primary h-full flex flex-col"
     >
       {/* Imagem - altura fixa */}
-      <div className="overflow-hidden rounded-lg mb-4 h-48 flex-shrink-0 bg-muted/20">
-        <img
+      <div className="relative overflow-hidden rounded-lg mb-4 h-48 flex-shrink-0 bg-muted/20">
+        <Image
           src={image}
           alt={title}
-          className="w-full h-full object-contain rounded-lg transition-transform duration-500 hover:scale-105"
+          fill
+          unoptimized={image.startsWith("/") || !image.includes("public.blob.vercel-storage.com")}
+          className="object-contain rounded-lg transition-transform duration-500 hover:scale-105"
         />
       </div>
 

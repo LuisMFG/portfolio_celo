@@ -12,6 +12,9 @@ const SEVEN_DAYS = 60 * 60 * 24 * 7;
 function getSessionPassword(): string {
   const password = process.env.SESSION_SECRET;
   if (!password || password.length < 32) {
+    if (process.env.NODE_ENV !== "production") {
+      return "default_development_secret_must_be_32_chars_long_min!";
+    }
     throw new Error(
       "SESSION_SECRET must be set and at least 32 characters long",
     );

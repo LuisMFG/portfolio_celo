@@ -71,7 +71,7 @@ export function Sidebar() {
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <item.icon className="w-6 h-6" />
               <span className="sr-only">{item.label}</span>
-              <div className="absolute left-full ml-2 px-2 py-1 bg-accent rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+              <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-popover text-popover-foreground text-xs font-medium rounded-md shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 pointer-events-none">
                 {item.label}
               </div>
             </motion.div>
@@ -95,7 +95,7 @@ export function Sidebar() {
           >
             <item.icon className="w-6 h-6" />
             <span className="sr-only">{item.label}</span>
-            <div className="absolute left-full ml-2 px-2 py-1 bg-accent rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+            <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-popover text-popover-foreground text-xs font-medium rounded-md shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 pointer-events-none">
               {item.label}
             </div>
           </motion.a>

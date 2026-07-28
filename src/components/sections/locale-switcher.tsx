@@ -13,7 +13,10 @@ export function LanguageSwitcher() {
 
   const toggleLanguage = () => {
     const newLocale = locale === "pt-BR" ? "en" : "pt-BR";
-    const newPath = pathname.replace(`/${locale}`, `/${newLocale}`);
+    const regex = new RegExp(`^/${locale}(?=/|$)`);
+    const newPath = regex.test(pathname)
+      ? pathname.replace(regex, `/${newLocale}`)
+      : `/${newLocale}${pathname}`;
     router.push(newPath);
   };
 

@@ -20,19 +20,19 @@ export function HomeShell({
   experiences: ExperienceView[];
   projects: ProjectView[];
 }) {
-  const [loading, setLoading] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return !sessionStorage.getItem("hasShownLoading");
-  });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!loading) return;
-    const timer = setTimeout(() => {
-      setLoading(false);
-      sessionStorage.setItem("hasShownLoading", "true");
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [loading]);
+    const hasShown = sessionStorage.getItem("hasShownLoading");
+    if (!hasShown) {
+      setLoading(true);
+      const timer = setTimeout(() => {
+        setLoading(false);
+        sessionStorage.setItem("hasShownLoading", "true");
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   if (loading) return <LoadingScreen />;
 

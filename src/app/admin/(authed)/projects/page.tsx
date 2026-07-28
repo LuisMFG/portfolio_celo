@@ -9,7 +9,7 @@ import { DeleteButton } from "@/src/components/admin/delete-button";
 export default async function ProjectsAdminPage() {
   const items = await prisma.project.findMany({
     orderBy: [{ order: "asc" }, { createdAt: "asc" }],
-  });
+  }).catch(() => []);
 
   return (
     <div className="space-y-6">

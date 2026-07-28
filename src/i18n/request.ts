@@ -10,7 +10,8 @@ export default getRequestConfig(async ({ requestLocale }) => {
       ? requested
       : routing.defaultLocale;
 
-  const messages = (await import(`../../messages/${locale}.json`)).default;
+  const rawMessages = (await import(`../../messages/${locale}.json`)).default;
+  const messages = JSON.parse(JSON.stringify(rawMessages));
 
   const dbContent = await fetchSiteContent(locale as Locale);
   if (dbContent.hero && messages.HeroSection) {

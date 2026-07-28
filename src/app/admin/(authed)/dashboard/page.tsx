@@ -17,8 +17,8 @@ const CARDS = [
 
 export default async function DashboardPage() {
   const [exp, proj] = await Promise.all([
-    prisma.experience.count(),
-    prisma.project.count(),
+    prisma.experience.count().catch(() => 0),
+    prisma.project.count().catch(() => 0),
   ]);
 
   return (

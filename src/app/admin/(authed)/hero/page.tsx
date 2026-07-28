@@ -1,5 +1,7 @@
 import { prisma } from "@/src/lib/prisma";
 import { SectionContentForm } from "@/src/components/admin/section-content-form";
+import ptMessages from "@/messages/pt-BR.json";
+import enMessages from "@/messages/en.json";
 
 const FIELDS = [
   { name: "greeting", label: "Saudação", type: "input" as const },
@@ -8,14 +10,22 @@ const FIELDS = [
 ];
 
 export default async function HeroAdminPage() {
-  const rows = await prisma.siteContent.findMany({ where: { section: "hero" } });
+  const rows = await prisma.siteContent.findMany({ where: { section: "hero" } }).catch(() => []);
 
   const initial = {
-    "pt-BR": { greeting: "", subtitle: "", description: "" },
-    en: { greeting: "", subtitle: "", description: "" },
+    "pt-BR": {
+      greeting: ptMessages.HeroSection.greeting,
+      subtitle: ptMessages.HeroSection.subtitle,
+      description: ptMessages.HeroSection.description,
+    },
+    en: {
+      greeting: enMessages.HeroSection.greeting,
+      subtitle: enMessages.HeroSection.subtitle,
+      description: enMessages.HeroSection.description,
+    },
   };
   for (const r of rows) {
-    if (r.locale === "pt-BR" || r.locale === "en") {
+    if ((r.locale === "pt-BR" || r.locale === "en") && r.value) {
       initial[r.locale][r.field as keyof (typeof initial)["pt-BR"]] = r.value;
     }
   }
