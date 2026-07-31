@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0A0A;--surface:#111111;--line:#1F1F1F;--text:#EDEDED;--muted:#7A7A7A;--accent:#00E676;--ease:cubic-bezier(0.16,1,0.3,1);}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#0A0A0A;color:#EDEDED;font-family:'JetBrains Mono',ui-monospace,monospace;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{cursor:none}
+a{color:#EDEDED;text-decoration:none}
+a:hover{color:#00E676}
+::selection{background:#00E676;color:#0A0A0A}
+@keyframes blink{0%,48%{opacity:1}49%,100%{opacity:0}}
+@keyframes rise{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes marquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+@keyframes hint{0%{transform:translateY(0);opacity:.25}45%{opacity:1}100%{transform:translateY(12px);opacity:.25}}
+@media (prefers-reduced-motion: reduce){
+  body{cursor:auto}
+  *,*::before,*::after{animation:none !important;transition:none !important}
+  [data-rise]{animation:fadein .28s linear both !important}
+  [data-fade]{animation:fadein .28s linear both !important}
+}
+</style>
+</helmet>
+
+<div style="background:var(--bg);color:var(--text);position:relative;width:100%">
+
+  <section data-screen-label="Hero" style="position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:space-between;padding:28px clamp(20px,3vw,44px) 32px;overflow:hidden">
+    <div aria-hidden="true" style="position:absolute;inset:0;display:grid;grid-template-columns:repeat(12,1fr);pointer-events:none;opacity:.5;z-index:0">
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line);border-right:1px solid var(--line)"></div>
+    </div>
+
+    <header style="position:relative;z-index:1;display:flex;justify-content:space-between;align-items:baseline;gap:16px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)">
+      <div style="overflow:hidden"><div data-rise style="animation:rise .9s var(--ease) both;animation-delay:.05s">LM — full-stack</div></div>
+      <div style="overflow:hidden"><div data-rise style="animation:rise .9s var(--ease) both;animation-delay:.09s">são paulo · br</div></div>
+      <div style="overflow:hidden"><div data-rise style="animation:rise .9s var(--ease) both;animation-delay:.13s">v.2026</div></div>
+    </header>
+
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;gap:0;padding:6vh 0 2vh">
+      <div style="overflow:hidden;line-height:0.9">
+        <h1 data-rise style="margin:0;font-size:clamp(3.5rem,13vw,15rem);letter-spacing:-0.04em;line-height:0.9;font-weight:500;animation:rise 1.05s var(--ease) both;animation-delay:.16s">LUÍS</h1>
+      </div>
+      <div style="overflow:hidden;line-height:0.9">
+        <h1 data-rise style="margin:0;font-size:clamp(3.5rem,13vw,15rem);letter-spacing:-0.04em;line-height:0.9;font-weight:500;animation:rise 1.05s var(--ease) both;animation-delay:.2s">MARCELO</h1>
+      </div>
+      <div style="overflow:hidden;margin-top:clamp(18px,2.5vw,34px)">
+        <p data-rise style="margin:0;font-size:clamp(.8rem,1.1vw,1rem);letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:300;animation:rise .9s var(--ease) both;animation-delay:.28s">full-stack developer</p>
+      </div>
+    </div>
+
+    <div style="position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap">
+      <div data-fade style="display:flex;align-items:center;gap:10px;font-size:clamp(.8rem,1.15vw,1rem);animation:fadein .8s linear both;animation-delay:.5s">
+        <span style="color:var(--accent)">~/luis-marcelo</span>
+        <span style="color:var(--muted)">$</span>
+        <span style="color:var(--text)">whoami</span>
+        <span style="color:var(--accent);animation:blink 1.05s steps(1) infinite">_</span>
+      </div>
+      <div data-fade style="display:flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);animation:fadein .8s linear both;animation-delay:.62s">
+        <span>scroll</span>
+        <span style="display:inline-block;width:1px;height:34px;background:linear-gradient(var(--muted),transparent);animation:hint 1.9s var(--ease) infinite"></span>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Marquee" data-marquee style="border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface);overflow:hidden;padding:clamp(18px,2.4vw,34px) 0">
+    <div data-marquee-track style="display:inline-flex;white-space:nowrap;will-change:transform;animation:marquee 28s linear infinite">
+      <span style="display:inline-flex;font-size:clamp(1.4rem,4vw,3.4rem);letter-spacing:-0.03em;font-weight:300;white-space:nowrap">NODE.JS<span style="color:var(--accent);padding:0 .45em">·</span>NESTJS<span style="color:var(--accent);padding:0 .45em">·</span>TYPESCRIPT<span style="color:var(--accent);padding:0 .45em">·</span>NEXT.JS<span style="color:var(--accent);padding:0 .45em">·</span>REACT<span style="color:var(--accent);padding:0 .45em">·</span>ANGULAR<span style="color:var(--accent);padding:0 .45em">·</span>.NET<span style="color:var(--accent);padding:0 .45em">·</span>SPRING<span style="color:var(--accent);padding:0 .45em">·</span>DOCKER<span style="color:var(--accent);padding:0 .45em">·</span>POSTGRESQL<span style="color:var(--accent);padding:0 .45em">·</span></span>
+      <span aria-hidden="true" style="display:inline-flex;font-size:clamp(1.4rem,4vw,3.4rem);letter-spacing:-0.03em;font-weight:300;white-space:nowrap">NODE.JS<span style="color:var(--accent);padding:0 .45em">·</span>NESTJS<span style="color:var(--accent);padding:0 .45em">·</span>TYPESCRIPT<span style="color:var(--accent);padding:0 .45em">·</span>NEXT.JS<span style="color:var(--accent);padding:0 .45em">·</span>REACT<span style="color:var(--accent);padding:0 .45em">·</span>ANGULAR<span style="color:var(--accent);padding:0 .45em">·</span>.NET<span style="color:var(--accent);padding:0 .45em">·</span>SPRING<span style="color:var(--accent);padding:0 .45em">·</span>DOCKER<span style="color:var(--accent);padding:0 .45em">·</span>POSTGRESQL<span style="color:var(--accent);padding:0 .45em">·</span></span>
+    </div>
+  </section>
+
+  <section data-screen-label="Projects" style="padding:clamp(64px,9vw,140px) clamp(20px,3vw,44px)">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding-bottom:22px">
+      <span>selected work</span>
+      <span>005 / index</span>
+    </div>
+
+    <div style="border-top:1px solid var(--line)">
+      <a href="#" data-cursor="link" data-project data-color="#1E3A2A" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform" style-hover="color:var(--accent);transform:translate3d(14px,0,0)">
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted)">001</span>
+        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">ORBIT LEDGER</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">nestjs · postgresql · docker</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--accent);text-align:right">[ok]</span>
+      </a>
+      <a href="#" data-cursor="link" data-project data-color="#2A2A2A" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform" style-hover="color:var(--accent);transform:translate3d(14px,0,0)">
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted)">002</span>
+        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">HALT MONITOR</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">next.js · typescript · redis</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--accent);text-align:right">[ok]</span>
+      </a>
+      <a href="#" data-cursor="link" data-project data-color="#153025" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform" style-hover="color:var(--accent);transform:translate3d(14px,0,0)">
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted)">003</span>
+        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">CARGO ATLAS</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">spring · angular · kafka</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-align:right">[wip]</span>
+      </a>
+      <a href="#" data-cursor="link" data-project data-color="#1A1A22" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform" style-hover="color:var(--accent);transform:translate3d(14px,0,0)">
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted)">004</span>
+        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">SIGNAL DESK</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">.net · react · azure</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--accent);text-align:right">[ok]</span>
+      </a>
+      <a href="#" data-cursor="link" data-project data-color="#24301C" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform" style-hover="color:var(--accent);transform:translate3d(14px,0,0)">
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted)">005</span>
+        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">NODE FORGE</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">node.js · graphql · docker</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-align:right">[wip]</span>
+      </a>
+    </div>
+  </section>
+
+  <section data-screen-label="Command" data-type-section style="padding:clamp(70px,11vw,180px) clamp(20px,3vw,44px);border-top:1px solid var(--line);background:var(--surface)">
+    <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding-bottom:26px">session · stdin</div>
+    <div style="display:flex;align-items:center;flex-wrap:wrap;gap:0;font-size:clamp(1rem,3.2vw,2.6rem);letter-spacing:-0.03em;line-height:1.2;min-height:1.3em">
+      <span data-typed style="color:var(--text);white-space:pre-wrap;word-break:break-word"></span><span style="display:inline-block;width:.55em;height:1em;background:var(--accent);margin-left:.12em;transform:translateY(.12em);animation:blink 1.05s steps(1) infinite"></span>
+    </div>
+  </section>
+
+  <footer style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:28px clamp(20px,3vw,44px) 40px;border-top:1px solid var(--line);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)">
+    <a href="#" data-cursor="link" style="color:var(--muted)" style-hover="color:var(--accent)">github</a>
+    <a href="#" data-cursor="link" style="color:var(--muted)" style-hover="color:var(--accent)">linkedin</a>
+    <a href="#" data-cursor="link" style="color:var(--muted)" style-hover="color:var(--accent)">mail</a>
+    <span>exit 0</span>
+  </footer>
+
+  <div data-preview aria-hidden="true" style="position:fixed;top:0;left:0;width:240px;height:160px;background:#1E3A2A;border:1px solid var(--line);pointer-events:none;opacity:0;z-index:9998;transition:opacity .35s var(--ease);will-change:transform,opacity"></div>
+  <div data-cursor-ring aria-hidden="true" style="position:fixed;top:0;left:0;width:34px;height:34px;border:1px solid var(--muted);border-radius:50%;pointer-events:none;z-index:9999;will-change:transform;transition:opacity .3s linear"></div>
+  <div data-cursor-dot aria-hidden="true" style="position:fixed;top:0;left:0;width:6px;height:6px;border-radius:50%;background:var(--accent);pointer-events:none;z-index:9999;will-change:transform"></div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#00E676&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#00E676&quot;,&quot;#7AF0C0&quot;,&quot;#E6E6E6&quot;,&quot;#FF6A3D&quot;],&quot;section&quot;:&quot;Theme&quot;},&quot;marqueeSeconds&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:28,&quot;min&quot;:10,&quot;max&quot;:60,&quot;step&quot;:1,&quot;unit&quot;:&quot;s&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;typeSpeed&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:28,&quot;min&quot;:10,&quot;max&quot;:90,&quot;step&quot;:2,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() {
+    const root = document.documentElement;
+    if (this.props.accent) root.style.setProperty('--accent', this.props.accent);
+
+    this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const q = (s) => document.querySelector(s);
+    const dot = q('[data-cursor-dot]'), ring = q('[data-cursor-ring]'), prev = q('[data-preview]');
+    const track = q('[data-marquee-track]'), marquee = q('[data-marquee]');
+    const typed = q('[data-typed]'), typeSection = q('[data-type-section]');
+    const full = '~/luis-marcelo $ ls ./projects --all';
+
+    const base = Math.max(6, this.props.marqueeSeconds ?? 28);
+    if (track) track.style.animationDuration = base + 's';
+    if (marquee && !this.reduced) {
+      this._enterM = () => { track.style.transition = 'none'; track.style.animationDuration = (base / 0.6).toFixed(2) + 's'; };
+      this._leaveM = () => { track.style.animationDuration = base + 's'; };
+      marquee.addEventListener('mouseenter', this._enterM);
+      marquee.addEventListener('mouseleave', this._leaveM);
+    }
+
+    // typed command — once, on enter
+    if (typed) {
+      if (this.reduced) {
+        typed.textContent = full;
+      } else {
+        const speed = this.props.typeSpeed ?? 28;
+        const run = () => {
+          let i = 0;
+          const step = () => {
+            typed.textContent = full.slice(0, i);
+            if (i++ <= full.length) this._typeT = setTimeout(step, speed + (Math.random() * 46 - 12));
+          };
+          step();
+        };
+        this._io = new IntersectionObserver((es) => {
+          es.forEach((e) => { if (e.isIntersecting) { this._io.disconnect(); run(); } });
+        }, { threshold: 0.35 });
+        this._io.observe(typeSection);
+      }
+    }
+
+    if (this.reduced) {
+      [dot, ring, prev].forEach((el) => el && (el.style.display = 'none'));
+      document.body.style.cursor = 'auto';
+      return;
+    }
+
+    // custom cursor + velocity-tilted preview
+    let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+    let rx = mx, ry = my, px = mx, py = my, vel = 0, rot = 0, hover = 0, on = 0;
+
+    this._move = (e) => { vel = vel * 0.55 + (e.clientX - mx) * 0.45; mx = e.clientX; my = e.clientY; };
+    window.addEventListener('mousemove', this._move, { passive: true });
+
+    document.querySelectorAll('[data-cursor="link"]').forEach((el) => {
+      el.addEventListener('mouseenter', () => { hover = 1; });
+      el.addEventListener('mouseleave', () => { hover = 0; });
+    });
+    document.querySelectorAll('[data-project]').forEach((el) => {
+      el.addEventListener('mouseenter', () => {
+        on = 1; prev.style.background = el.getAttribute('data-color') || '#1E3A2A'; prev.style.opacity = '1';
+      });
+      el.addEventListener('mouseleave', () => { on = 0; prev.style.opacity = '0'; });
+    });
+
+    const tick = () => {
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      px += (mx + 34 - px) * 0.16; py += (my - 96 - py) * 0.16;
+      const target = Math.max(-14, Math.min(14, vel * 0.5));
+      rot += (target - rot) * 0.12; vel *= 0.86;
+      dot.style.transform = 'translate3d(' + mx + 'px,' + my + 'px,0) translate(-50%,-50%) scale(' + (hover ? 0.4 : 1) + ')';
+      ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0) translate(-50%,-50%) scale(' + (hover ? 1.9 : 1) + ')';
+      ring.style.opacity = hover ? '1' : '0.55';
+      prev.style.transform = 'translate3d(' + px + 'px,' + py + 'px,0) rotate(' + rot.toFixed(2) + 'deg) scale(' + (on ? 1 : 0.9) + ')';
+      this._raf = requestAnimationFrame(tick);
+    };
+    tick();
+  }
+
+  componentWillUnmount() {
+    cancelAnimationFrame(this._raf);
+    clearTimeout(this._typeT);
+    if (this._io) this._io.disconnect();
+    if (this._move) window.removeEventListener('mousemove', this._move);
+  }
+
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
