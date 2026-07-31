@@ -1,14 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="./support.js"></script>
-</head>
-<body>
-<x-dc>
-<helmet>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Luís Marcelo — protótipo de direção visual</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;300;400;500;700&display=swap" rel="stylesheet">
@@ -25,6 +20,16 @@ a:hover{color:#00E676}
 @keyframes fadein{from{opacity:0}to{opacity:1}}
 @keyframes marquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
 @keyframes hint{0%{transform:translateY(0);opacity:.25}45%{opacity:1}100%{transform:translateY(12px);opacity:.25}}
+
+/* hover states — precisam de !important para vencer os style inline,
+   exatamente como o runtime do Design Component fazia */
+.prow:hover{color:var(--accent)!important;transform:translate3d(14px,0,0)!important}
+.flink:hover{color:var(--accent)!important}
+
+@media (pointer:coarse){
+  body{cursor:auto}
+  [data-cursor-dot],[data-cursor-ring],[data-preview]{display:none!important}
+}
 @media (prefers-reduced-motion: reduce){
   body{cursor:auto}
   *,*::before,*::after{animation:none !important;transition:none !important}
@@ -32,7 +37,8 @@ a:hover{color:#00E676}
   [data-fade]{animation:fadein .28s linear both !important}
 }
 </style>
-</helmet>
+</head>
+<body>
 
 <div style="background:var(--bg);color:var(--text);position:relative;width:100%">
 
@@ -54,7 +60,7 @@ a:hover{color:#00E676}
 
     <header style="position:relative;z-index:1;display:flex;justify-content:space-between;align-items:baseline;gap:16px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)">
       <div style="overflow:hidden"><div data-rise style="animation:rise .9s var(--ease) both;animation-delay:.05s">LM — full-stack</div></div>
-      <div style="overflow:hidden"><div data-rise style="animation:rise .9s var(--ease) both;animation-delay:.09s">são paulo · br</div></div>
+      <div style="overflow:hidden"><div data-rise style="animation:rise .9s var(--ease) both;animation-delay:.09s">porto velho · ro</div></div>
       <div style="overflow:hidden"><div data-rise style="animation:rise .9s var(--ease) both;animation-delay:.13s">v.2026</div></div>
     </header>
 
@@ -98,35 +104,35 @@ a:hover{color:#00E676}
     </div>
 
     <div style="border-top:1px solid var(--line)">
-      <a href="#" data-cursor="link" data-project data-color="#1E3A2A" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform" style-hover="color:var(--accent);transform:translate3d(14px,0,0)">
+      <a href="#" class="prow" data-cursor="link" data-project data-color="#1E3A2A" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform">
         <span style="font-size:11px;letter-spacing:.14em;color:var(--muted)">001</span>
-        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">ORBIT LEDGER</span>
-        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">nestjs · postgresql · docker</span>
-        <span style="font-size:11px;letter-spacing:.14em;color:var(--accent);text-align:right">[ok]</span>
+        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">CONECI-RO</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">react · typescript · tailwind</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-align:right">[wip]</span>
       </a>
-      <a href="#" data-cursor="link" data-project data-color="#2A2A2A" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform" style-hover="color:var(--accent);transform:translate3d(14px,0,0)">
+      <a href="#" class="prow" data-cursor="link" data-project data-color="#2A2A2A" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform">
         <span style="font-size:11px;letter-spacing:.14em;color:var(--muted)">002</span>
-        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">HALT MONITOR</span>
-        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">next.js · typescript · redis</span>
-        <span style="font-size:11px;letter-spacing:.14em;color:var(--accent);text-align:right">[ok]</span>
+        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">ESTUDANTE AUDITOR</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">c# · asp.net core · sql server</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-align:right">[wip]</span>
       </a>
-      <a href="#" data-cursor="link" data-project data-color="#153025" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform" style-hover="color:var(--accent);transform:translate3d(14px,0,0)">
+      <a href="#" class="prow" data-cursor="link" data-project data-color="#153025" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform">
         <span style="font-size:11px;letter-spacing:.14em;color:var(--muted)">003</span>
-        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">CARGO ATLAS</span>
-        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">spring · angular · kafka</span>
+        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">WIKI.CGE</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">next.js · typescript · postgresql</span>
         <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-align:right">[wip]</span>
       </a>
-      <a href="#" data-cursor="link" data-project data-color="#1A1A22" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform" style-hover="color:var(--accent);transform:translate3d(14px,0,0)">
+      <a href="#" class="prow" data-cursor="link" data-project data-color="#1A1A22" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform">
         <span style="font-size:11px;letter-spacing:.14em;color:var(--muted)">004</span>
-        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">SIGNAL DESK</span>
-        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">.net · react · azure</span>
+        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">GERENCIADOR DE HORÁRIOS</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">php · codeigniter · mysql</span>
         <span style="font-size:11px;letter-spacing:.14em;color:var(--accent);text-align:right">[ok]</span>
       </a>
-      <a href="#" data-cursor="link" data-project data-color="#24301C" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform" style-hover="color:var(--accent);transform:translate3d(14px,0,0)">
+      <a href="#" class="prow" data-cursor="link" data-project data-color="#24301C" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform">
         <span style="font-size:11px;letter-spacing:.14em;color:var(--muted)">005</span>
-        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">NODE FORGE</span>
-        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">node.js · graphql · docker</span>
-        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-align:right">[wip]</span>
+        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">3D CARD CHAEWON</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">next.js · three.js · gsap</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--accent);text-align:right">[ok]</span>
       </a>
     </div>
   </section>
@@ -139,9 +145,9 @@ a:hover{color:#00E676}
   </section>
 
   <footer style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:28px clamp(20px,3vw,44px) 40px;border-top:1px solid var(--line);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)">
-    <a href="#" data-cursor="link" style="color:var(--muted)" style-hover="color:var(--accent)">github</a>
-    <a href="#" data-cursor="link" style="color:var(--muted)" style-hover="color:var(--accent)">linkedin</a>
-    <a href="#" data-cursor="link" style="color:var(--muted)" style-hover="color:var(--accent)">mail</a>
+    <a href="#" class="flink" data-cursor="link" style="color:var(--muted)">github</a>
+    <a href="#" class="flink" data-cursor="link" style="color:var(--muted)">linkedin</a>
+    <a href="#" class="flink" data-cursor="link" style="color:var(--muted)">mail</a>
     <span>exit 0</span>
   </footer>
 
@@ -150,97 +156,103 @@ a:hover{color:#00E676}
   <div data-cursor-dot aria-hidden="true" style="position:fixed;top:0;left:0;width:6px;height:6px;border-radius:50%;background:var(--accent);pointer-events:none;z-index:9999;will-change:transform"></div>
 
 </div>
-</x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#00E676&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#00E676&quot;,&quot;#7AF0C0&quot;,&quot;#E6E6E6&quot;,&quot;#FF6A3D&quot;],&quot;section&quot;:&quot;Theme&quot;},&quot;marqueeSeconds&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:28,&quot;min&quot;:10,&quot;max&quot;:60,&quot;step&quot;:1,&quot;unit&quot;:&quot;s&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;typeSpeed&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:28,&quot;min&quot;:10,&quot;max&quot;:90,&quot;step&quot;:2,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
-class Component extends DCLogic {
-  componentDidMount() {
-    const root = document.documentElement;
-    if (this.props.accent) root.style.setProperty('--accent', this.props.accent);
 
-    this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const q = (s) => document.querySelector(s);
-    const dot = q('[data-cursor-dot]'), ring = q('[data-cursor-ring]'), prev = q('[data-preview]');
-    const track = q('[data-marquee-track]'), marquee = q('[data-marquee]');
-    const typed = q('[data-typed]'), typeSection = q('[data-type-section]');
-    const full = '~/luis-marcelo $ ls ./projects --all';
+<script>
+/* Parâmetros que no Design Component eram props ajustáveis no editor.
+   Mantidos aqui como constantes, com os mesmos valores default. */
+var ACCENT = '#00E676';      // opções testadas: #00E676 · #7AF0C0 · #E6E6E6 · #FF6A3D
+var MARQUEE_SECONDS = 28;    // 10–60
+var TYPE_SPEED = 28;         // 10–90 ms por caractere
 
-    const base = Math.max(6, this.props.marqueeSeconds ?? 28);
+(function () {
+  function boot() {
+    var root = document.documentElement;
+    if (ACCENT) root.style.setProperty('--accent', ACCENT);
+
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var coarse = window.matchMedia('(pointer: coarse)').matches;
+    var q = function (s) { return document.querySelector(s); };
+    var dot = q('[data-cursor-dot]'), ring = q('[data-cursor-ring]'), prev = q('[data-preview]');
+    var track = q('[data-marquee-track]'), marquee = q('[data-marquee]');
+    var typed = q('[data-typed]'), typeSection = q('[data-type-section]');
+    var full = '~/luis-marcelo $ ls ./projects --all';
+
+    var base = Math.max(6, MARQUEE_SECONDS);
     if (track) track.style.animationDuration = base + 's';
-    if (marquee && !this.reduced) {
-      this._enterM = () => { track.style.transition = 'none'; track.style.animationDuration = (base / 0.6).toFixed(2) + 's'; };
-      this._leaveM = () => { track.style.animationDuration = base + 's'; };
-      marquee.addEventListener('mouseenter', this._enterM);
-      marquee.addEventListener('mouseleave', this._leaveM);
+    if (marquee && track && !reduced) {
+      marquee.addEventListener('mouseenter', function () {
+        track.style.transition = 'none';
+        track.style.animationDuration = (base / 0.6).toFixed(2) + 's';
+      });
+      marquee.addEventListener('mouseleave', function () {
+        track.style.animationDuration = base + 's';
+      });
     }
 
-    // typed command — once, on enter
+    // typed command — uma vez só, ao entrar no viewport
     if (typed) {
-      if (this.reduced) {
+      if (reduced) {
         typed.textContent = full;
       } else {
-        const speed = this.props.typeSpeed ?? 28;
-        const run = () => {
-          let i = 0;
-          const step = () => {
+        var run = function () {
+          var i = 0;
+          var step = function () {
             typed.textContent = full.slice(0, i);
-            if (i++ <= full.length) this._typeT = setTimeout(step, speed + (Math.random() * 46 - 12));
+            if (i++ <= full.length) setTimeout(step, TYPE_SPEED + (Math.random() * 46 - 12));
           };
           step();
         };
-        this._io = new IntersectionObserver((es) => {
-          es.forEach((e) => { if (e.isIntersecting) { this._io.disconnect(); run(); } });
+        var io = new IntersectionObserver(function (es) {
+          es.forEach(function (e) { if (e.isIntersecting) { io.disconnect(); run(); } });
         }, { threshold: 0.35 });
-        this._io.observe(typeSection);
+        io.observe(typeSection);
       }
     }
 
-    if (this.reduced) {
-      [dot, ring, prev].forEach((el) => el && (el.style.display = 'none'));
+    if (reduced || coarse) {
+      [dot, ring, prev].forEach(function (el) { if (el) el.style.display = 'none'; });
       document.body.style.cursor = 'auto';
       return;
     }
 
-    // custom cursor + velocity-tilted preview
-    let mx = window.innerWidth / 2, my = window.innerHeight / 2;
-    let rx = mx, ry = my, px = mx, py = my, vel = 0, rot = 0, hover = 0, on = 0;
+    // cursor customizado + preview inclinado pela velocidade
+    var mx = window.innerWidth / 2, my = window.innerHeight / 2;
+    var rx = mx, ry = my, px = mx, py = my, vel = 0, rot = 0, hover = 0, on = 0;
 
-    this._move = (e) => { vel = vel * 0.55 + (e.clientX - mx) * 0.45; mx = e.clientX; my = e.clientY; };
-    window.addEventListener('mousemove', this._move, { passive: true });
+    window.addEventListener('mousemove', function (e) {
+      vel = vel * 0.55 + (e.clientX - mx) * 0.45;
+      mx = e.clientX; my = e.clientY;
+    }, { passive: true });
 
-    document.querySelectorAll('[data-cursor="link"]').forEach((el) => {
-      el.addEventListener('mouseenter', () => { hover = 1; });
-      el.addEventListener('mouseleave', () => { hover = 0; });
+    document.querySelectorAll('[data-cursor="link"]').forEach(function (el) {
+      el.addEventListener('mouseenter', function () { hover = 1; });
+      el.addEventListener('mouseleave', function () { hover = 0; });
     });
-    document.querySelectorAll('[data-project]').forEach((el) => {
-      el.addEventListener('mouseenter', () => {
-        on = 1; prev.style.background = el.getAttribute('data-color') || '#1E3A2A'; prev.style.opacity = '1';
+    document.querySelectorAll('[data-project]').forEach(function (el) {
+      el.addEventListener('mouseenter', function () {
+        on = 1;
+        prev.style.background = el.getAttribute('data-color') || '#1E3A2A';
+        prev.style.opacity = '1';
       });
-      el.addEventListener('mouseleave', () => { on = 0; prev.style.opacity = '0'; });
+      el.addEventListener('mouseleave', function () { on = 0; prev.style.opacity = '0'; });
     });
 
-    const tick = () => {
+    (function tick() {
       rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
       px += (mx + 34 - px) * 0.16; py += (my - 96 - py) * 0.16;
-      const target = Math.max(-14, Math.min(14, vel * 0.5));
+      var target = Math.max(-14, Math.min(14, vel * 0.5));
       rot += (target - rot) * 0.12; vel *= 0.86;
       dot.style.transform = 'translate3d(' + mx + 'px,' + my + 'px,0) translate(-50%,-50%) scale(' + (hover ? 0.4 : 1) + ')';
       ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0) translate(-50%,-50%) scale(' + (hover ? 1.9 : 1) + ')';
       ring.style.opacity = hover ? '1' : '0.55';
       prev.style.transform = 'translate3d(' + px + 'px,' + py + 'px,0) rotate(' + rot.toFixed(2) + 'deg) scale(' + (on ? 1 : 0.9) + ')';
-      this._raf = requestAnimationFrame(tick);
-    };
-    tick();
+      requestAnimationFrame(tick);
+    })();
   }
 
-  componentWillUnmount() {
-    cancelAnimationFrame(this._raf);
-    clearTimeout(this._typeT);
-    if (this._io) this._io.disconnect();
-    if (this._move) window.removeEventListener('mousemove', this._move);
-  }
-
-  renderVals() { return {}; }
-}
+  if (document.readyState !== 'loading') boot();
+  else document.addEventListener('DOMContentLoaded', boot);
+})();
 </script>
 </body>
 </html>
