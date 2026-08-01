@@ -1,4 +1,25 @@
 {
+  "Header": {
+    "identity": "LM — full-stack",
+    "location": "porto velho · ro",
+    "version": "v.2026",
+    "switchTo": {
+      "pt-BR": "View the site in Portuguese",
+      "en": "View the site in English"
+    },
+    "theme": {
+      "dark": "Enable dark theme",
+      "light": "Enable light theme"
+    }
+  },
+  "Footer": {
+    "links": {
+      "github": "GitHub profile, opens in a new tab",
+      "linkedin": "LinkedIn profile, opens in a new tab",
+      "mail": "Send an email to lmfg10@gmail.com"
+    },
+    "exit": "exit 0"
+  },
   "HeroSection": {
     "greeting": "Hi, I'm Luis Marcelo!",
     "alt": "Profile photo of Luis Marcelo",

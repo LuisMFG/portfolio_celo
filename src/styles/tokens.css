@@ -1,0 +1,126 @@
+/**
+ * Tokens do conceito "Dev Terminal".
+ *
+ * Escopados em `.theme-terminal` de propósito: `globals.css` já define
+ * `--muted` e `--accent` como triplas HSL do shadcn, consumidas via
+ * `hsl(var(--muted))` pelo painel admin inteiro. Redefinir esses nomes em
+ * `:root` produziria `hsl(#828282)` — inválido — e quebraria o admin.
+ *
+ * Orientação: o escuro é o default sem classe e o claro é o override. O
+ * `next-themes` roda com `defaultTheme="dark"` e há uma janela transitória
+ * em que o `<html>` fica sem classe nenhuma (o `classList.remove` roda antes
+ * do `add`, e o script engole falha de localStorage). Nessa janela cai-se no
+ * escuro, que é o pretendido. Na orientação inversa o bug seria silencioso.
+ *
+ * Contrastes WCAG 2.1 de cada par estão em CLAUDE.md, com a conta.
+ */
+
+.theme-terminal {
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --line: #1f1f1f;
+  /* Cor efetiva do grid do protótipo (#1F1F1F a 50% sobre #0A0A0A).
+     Token próprio para que o `opacity: .5` — valor mágico — saia do
+     componente, e porque --line também desenha bordas em opacidade cheia. */
+  --grid: #151515;
+  --text: #ededed;
+  /* #7A7A7A do protótipo reprova AA sobre --surface (4.40:1). #828282
+     dá 5.15 sobre --bg e 4.91 sobre --surface. */
+  --muted: #828282;
+  --accent: #00e676;
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.light .theme-terminal {
+  --bg: #ededed;
+  --surface: #ffffff;
+  --line: #d4d4d4;
+  --grid: #dcdcdc;
+  --text: #0a0a0a;
+  --muted: #636363;
+  --accent: #007a3d;
+}
+
+/**
+ * Fundo do documento. Enquanto o /v2 é staging, o `<body>` ainda é pintado
+ * pelo `body { @apply bg-background }` do shadcn, que só coincide com --bg
+ * no escuro. Nome namespaced para não colidir com o shadcn — some quando a
+ * promoção levar o terminal para o site inteiro.
+ */
+:root {
+  --term-doc-bg: #0a0a0a;
+}
+
+.light {
+  --term-doc-bg: #ededed;
+}
+
+body:has(.theme-terminal) {
+  background-color: var(--term-doc-bg);
+}
+
+.theme-terminal {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+.theme-terminal ::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/**
+ * Entrada `rise` do protótipo: translateY(100%) → 0, com a cascata de delays
+ * de CLAUDE.md. Só `transform`, nunca layout. O pai precisa de overflow
+ * hidden para recortar.
+ */
+@keyframes term-rise {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes term-fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.theme-terminal [data-rise] {
+  animation: term-rise 0.9s var(--ease) both;
+}
+
+.theme-terminal [data-rise="a"] {
+  animation-delay: 0.05s;
+}
+.theme-terminal [data-rise="b"] {
+  animation-delay: 0.09s;
+}
+.theme-terminal [data-rise="c"] {
+  animation-delay: 0.13s;
+}
+.theme-terminal [data-rise="d"] {
+  animation-delay: 0.16s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-terminal [data-rise] {
+    animation: term-fadein 0.28s linear both !important;
+    animation-delay: 0s !important;
+  }
+
+  .theme-terminal *,
+  .theme-terminal *::before,
+  .theme-terminal *::after {
+    transition: none !important;
+  }
+}

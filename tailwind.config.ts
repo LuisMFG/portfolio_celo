@@ -20,7 +20,57 @@ const config: Config = {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
+      fontFamily: {
+        mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
+      },
+      // Escala do protótipo "Dev Terminal". Os clamp() são os valores exatos
+      // de CLAUDE.md — nenhum componente deve reescrevê-los.
+      fontSize: {
+        display: [
+          'clamp(3.5rem,13vw,15rem)',
+          { letterSpacing: '-0.04em', lineHeight: '0.9' },
+        ],
+        project: [
+          'clamp(1.3rem,3.4vw,2.9rem)',
+          { letterSpacing: '-0.035em', lineHeight: '1' },
+        ],
+        marquee: ['clamp(1.4rem,4vw,3.4rem)', { letterSpacing: '-0.03em' }],
+        lead: ['clamp(.8rem,1.1vw,1rem)', { letterSpacing: '.24em' }],
+        label: ['11px', { letterSpacing: '.18em' }],
+        'label-wide': ['11px', { letterSpacing: '.2em' }],
+      },
+      spacing: {
+        gutter: 'clamp(20px,3vw,44px)',
+        section: 'clamp(64px,9vw,140px)',
+        'section-lg': 'clamp(70px,11vw,180px)',
+      },
+      transitionTimingFunction: {
+        term: 'var(--ease)',
+      },
+      // Tailwind 3.3.3 não tem `min-h-svh` nem a escala de spacing em
+      // minHeight/minWidth (ambos chegaram na 3.4). Entram como token para
+      // que nenhum componente precise de valor arbitrário.
+      minHeight: {
+        // Alvo de toque de 44px sem inflar os 11px da fonte.
+        tap: '44px',
+        // svh, não vh: barra fantasma no Safari iOS.
+        svh: '100svh',
+      },
+      minWidth: {
+        tap: '44px',
+      },
       colors: {
+        // Namespace próprio: `muted` e `accent` já pertencem ao shadcn e são
+        // triplas HSL. Usar as mesmas chaves quebraria o admin.
+        term: {
+          bg: 'var(--bg)',
+          surface: 'var(--surface)',
+          line: 'var(--line)',
+          grid: 'var(--grid)',
+          text: 'var(--text)',
+          muted: 'var(--muted)',
+          accent: 'var(--accent)',
+        },
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {

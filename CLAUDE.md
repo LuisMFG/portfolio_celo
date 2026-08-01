@@ -7,14 +7,54 @@ Leia esse arquivo antes de qualquer decisão de espaçamento, escala ou timing.
 
 ### Tokens (em `src/styles/tokens.css`)
 
+Escopados em `.theme-terminal`, **não em `:root`**. `globals.css` já define
+`--muted` e `--accent` como triplas HSL do shadcn, consumidas via
+`hsl(var(--muted))` pelo admin inteiro; redefinir esses nomes globalmente
+produz `hsl(#828282)` — inválido — e quebra o painel.
+
+O escuro é o default sem classe; o claro é o override `.light .theme-terminal`.
+Nunca inverta essa orientação: existe uma janela em que o `<html>` fica sem
+classe nenhuma (o `classList.remove` do next-themes roda antes do `add`), e
+nela precisa cair no escuro, que é o `defaultTheme`.
+
 ```
---bg      #0A0A0A    --surface #111111    --line   #1F1F1F
---text    #EDEDED    --muted   #7A7A7A    --accent #00E676
---ease    cubic-bezier(0.16, 1, 0.3, 1)
+escuro   --bg #0A0A0A   --surface #111111   --line #1F1F1F   --grid #151515
+         --text #EDEDED --muted #828282     --accent #00E676
+
+claro    --bg #EDEDED   --surface #FFFFFF   --line #D4D4D4   --grid #DCDCDC
+         --text #0A0A0A --muted #636363     --accent #007A3D
+
+--ease   cubic-bezier(0.16, 1, 0.3, 1)
 ```
 
 Um único acento em todo o site. `[ok]` usa `--accent`, `[wip]` usa `--muted`.
 Não existe cor de status separada — não invente uma.
+
+#### Contrastes WCAG 2.1 — medidos, não estimados
+
+Todo par abaixo foi calculado com a fórmula `(L1+0.05)/(L2+0.05)` sobre
+luminância relativa sRGB. Ao mexer em qualquer cor, refaça a conta.
+
+| Escuro | Ratio | | Claro | Ratio |
+|---|---|---|---|---|
+| `--text` / `--bg` | 16.91 | | `--text` / `--bg` | 16.91 |
+| `--text` / `--surface` | 16.13 | | `--muted` / `--bg` | 5.13 |
+| `--muted` / `--bg` | 5.15 | | `--muted` / `--surface` | 6.01 |
+| `--muted` / `--surface` | 4.91 | | `--accent` / `--bg` | 4.66 |
+| `--accent` / `--bg` | 11.86 | | `--accent` / `--surface` | 5.45 |
+| `--accent` / `--surface` | 11.31 | | | |
+
+**`--muted` é `#828282`, não o `#7A7A7A` do protótipo.** O valor original dá
+4.61 sobre `--bg` mas **4.40 sobre `--surface`**, reprovando AA — e o label
+`SESSION · STDIN`, de 11px em `--muted`, fica exatamente sobre `--surface`.
+`#828282` sobe para 5.15 / 4.91 com desvio visual imperceptível.
+
+**O acento claro não pode ser o verde da marca.** `#00E676` sobre `#EDEDED`
+dá 1.6:1. Testados: `#00A15A` = 2.87 (reprova), `#008044` = 4.30 (reprova),
+`#007A3D` = 4.66 (passa). `#007A3D` é o menor desvio que sobrevive.
+
+`::selection` usa `background: var(--accent); color: var(--bg)` — o mesmo par
+serve aos dois temas (11.86 no escuro, 4.66 no claro).
 
 ### Tipografia
 
@@ -31,7 +71,11 @@ JetBrains Mono via `next/font/local`. Carregar só os pesos usados: 300, 400, 50
 - Gutter lateral: `clamp(20px, 3vw, 44px)`
 - Seção padrão: `clamp(64px, 9vw, 140px)` vertical
 - Seção de destaque: `clamp(70px, 11vw, 180px)` vertical
-- Grid de fundo: 12 colunas, `border-left: 1px solid var(--line)`, `opacity: .5`
+- Grid de fundo: 12 colunas, `border-left: 1px solid var(--grid)`, **sem opacity**.
+  O protótipo usa `--line` a `opacity: .5`, mas `--line` também desenha bordas
+  em opacidade cheia e as duas necessidades divergem. `--grid` já carrega a cor
+  efetiva (`#151515` no escuro é exatamente `#1F1F1F` a 50% sobre `#0A0A0A`),
+  o que tira o valor mágico do componente.
 
 ### Movimento — números exatos do protótipo
 
@@ -56,6 +100,59 @@ JetBrains Mono via `next/font/local`. Carregar só os pesos usados: 300, 400, 50
 - Todo componente animado respeita `prefers-reduced-motion: reduce`.
 - Zero valor mágico em componente: cor, spacing, duração e easing sempre via token.
 
+**Tailwind é 3.3.3, não 3.4.** `min-h-svh`, `min-h-<spacing>` e `min-w-<spacing>`
+não existem nessa versão. Em vez de valor arbitrário no componente, os que
+precisamos entraram em `theme.extend`: `min-h-svh`, `min-h-tap` / `min-w-tap`
+(44px de alvo de toque). Precisou de um valor novo? Vira token no config.
+
+As chaves de cor `muted` e `accent` do Tailwind **pertencem ao shadcn**. As do
+redesign vivem no namespace `term`: `bg-term-bg`, `text-term-muted`,
+`border-term-line`, `text-term-accent`. Nunca sobrescreva as do shadcn.
+
+### Estrutura de rotas
+
+Root layouts múltiplos via route groups — cada um com seu próprio `<html>`:
+
+- `src/app/(site)/[locale]/layout.tsx` — `lang={locale}`, expõe `--font-mono`
+- `src/app/(admin)/layout.tsx` — admin em Sora e shadcn, isolado dos tokens
+
+`middleware.ts` **precisa ficar em `src/middleware.ts`**. Com um diretório
+`src/` presente, o Next ignora silenciosamente o da raiz: o
+`middleware-manifest.json` sai com `"middleware": {}` e nada acusa o erro.
+Foi assim que ele passou o projeto inteiro sem nunca rodar.
+
+`localePrefix: 'as-needed'` + `localeDetection: false`: pt-BR mora em `/` por
+rewrite interno, en em `/en`, e `/pt-BR` redireciona uma vez para `/` — o
+próprio next-intl faz isso, não existe regra em `next.config.js` e não deve
+existir. Nenhuma URL, canonical, hreflang ou sitemap pode apontar para `/pt-BR`.
+
+### Scroll — decidido, não negociável
+
+O `<body>` é quem rola. Nenhum `h-screen` + `overflow-y-auto` em wrapper,
+nenhum `scroll-snap`. O `HomeShell` antigo rola num `<div>` interno e é
+justamente o padrão a não herdar: quebra o Lenis (que assume `window`) e o
+IntersectionObserver com `root: null`.
+
+Para conter overflow horizontal use `overflow-x: clip`, nunca `hidden` —
+`hidden` transforma o elemento em contêiner de scroll e mata `position: sticky`
+e o smooth scroll. O protótipo usa `hidden` em `html,body` por ser um arquivo
+solto; não copie isso.
+
+### Promoção do /v2 — um commit só
+
+Quando as seções estiverem portadas:
+
+1. `git mv src/app/(site)/[locale]/v2/page.tsx src/app/(site)/[locale]/page.tsx`
+2. absorver o `v2/layout.tsx` no layout de locale (incluindo o wrapper
+   `.theme-terminal`) e apagar o diretório `v2/`
+3. trocar Sora por JetBrains Mono no `<body>` do layout de locale
+4. deletar `home-shell.tsx`, `particles-background.tsx`, `loadingscreen.tsx`,
+   `sidebar.tsx`, `sections/*` e `locale-switcher.tsx`
+5. desinstalar `tsparticles`, `react-tsparticles`, `typewriter-effect`,
+   `react-typewriter-effect` (os dois últimos já estão instalados sem uso)
+6. remover `--term-doc-bg` de `tokens.css` — só existe porque o `<body>` ainda
+   é pintado pelo shadcn enquanto o /v2 é staging
+
 ### Não negociável
 
 - O protótipo **não tem tratamento mobile**. Cada seção portada precisa de uma
@@ -66,6 +163,15 @@ JetBrains Mono via `next/font/local`. Carregar só os pesos usados: 300, 400, 50
 - `cursor: none` só quando o provider do cursor montar — nunca global no `body`.
 - Navegação por teclado com foco visível em todos os interativos.
 - i18n PT-BR/EN e alternância de tema continuam funcionando após cada mudança.
+- Colapso responsivo é sempre media query CSS, nunca renderização condicional
+  em JS — evita hydration mismatch e layout shift.
+- Controles interativos: `min-h-tap`/`min-w-tap` para o alvo de toque, estado
+  fora da cor (`aria-current`, `aria-pressed`), e nunca comunicado só por glifo.
+
+**Decisão do header a 375px:** `porto velho · ro` e `v.2026` somem no mobile;
+ficam `LM — FULL-STACK` e os dois controles. Consequência registrada: a
+localização passa a existir **só** no header desktop, então **a seção "sobre"
+precisa carregá-la** — é requisito dela, não opcional.
 
 ### Metas de performance
 
@@ -92,8 +198,11 @@ O redesign precisa atingir, medido do mesmo jeito:
 Diagnóstico do baseline — o gargalo é JavaScript, não imagem nem layout:
 
 - Main thread ocupado 3.1s; execução de JS 2.4s. O TBT é o que derruba o score.
-- Redirect `/` → `/pt-BR` custa ~800ms antes de qualquer render. Resolver ao
-  mexer no i18n: renderizar na raiz ou negociar o locale sem hop extra.
+- ~~Redirect `/` → `/pt-BR` custa ~800ms.~~ **RESOLVIDO.** E o diagnóstico
+  original estava errado quanto à causa: não era hop de middleware — o
+  middleware nunca rodou, por estar na raiz em vez de `src/`. Os ~800ms vinham
+  do `redirect()` em `src/app/page.tsx`, um render de RSC mais round trip.
+  Hoje `/` responde 200 com rewrite interno, zero hop.
 - 37 KiB de JS não usado + 11 KiB de JS legado.
 - Latência do documento: ~330ms. Render-blocking: ~110ms.
 - Acessibilidade perde pontos em: links sem nome discernível e SVGs com
