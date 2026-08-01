@@ -237,6 +237,25 @@ Diagnóstico do baseline — o gargalo é JavaScript, não imagem nem layout:
 - Acessibilidade perde pontos em: links sem nome discernível e SVGs com
   `role="img"` sem texto alternativo (ícones de redes sociais).
 
+### Piso medido da fundação (01/08/2026)
+
+`/v2` com tokens, grid, header e footer — nenhuma seção de conteúdo ainda.
+Build de produção local, Lighthouse 13.4.1 mobile:
+
+```
+Performance 99 · Acessibilidade 100
+FCP 1.2s · LCP 2.2s · TBT 20ms · CLS 0.001 · SI 1.2s · 188 KiB
+```
+
+É contra este piso — não contra o baseline — que cada seção e cada camada de
+movimento deve ser julgada. Orçamento disponível até estourar a meta:
+**280ms de TBT** e **300ms de LCP**. Gastar tudo em uma única seção é sinal
+de que algo foi feito errado.
+
+Pendências conhecidas, nenhuma bloqueante:
+- Render-blocking de CSS: ~590ms estimados. Reavaliar quando houver conteúdo.
+- Legacy JavaScript: 12 KiB de polyfill. Ajustável via browserslist.
+
 **Risco novo introduzido pelo redesign:** cursor customizado, Lenis e o loop de
 animação rodam na thread principal. Trocar 560ms de React por 560ms de animação
 não é vitória. Todo trabalho de movimento deve ser verificado com CPU throttling
