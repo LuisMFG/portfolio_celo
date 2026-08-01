@@ -1,22 +1,19 @@
-import "./globals.css";
-import type { Metadata } from "next";
+import "../globals.css";
 import { Sora } from "next/font/google";
 import { ThemeProvider } from "@/src/components/theme-provider";
 import { Toaster } from "@/src/components/ui/toaster";
-
-
 
 const sora = Sora({
   subsets: ["latin"],
   weight: ["400", "600", "700"],
 });
 
-export const metadata: Metadata = {
-  title: "Luis Marcelo - Desenvolvedor Full Stack",
-  description: "Portfolio pessoal de Luis Marcelo, Desenvolvedor Full Stack",
-};
-
-export default function RootLayout({
+/**
+ * Root layout do painel admin. Separado do site público para que os tokens
+ * do "Dev Terminal" e a JetBrains Mono não vazem para cá — o admin continua
+ * no shadcn, em Sora.
+ */
+export default function AdminRootLayout({
   children,
 }: {
   children: React.ReactNode;

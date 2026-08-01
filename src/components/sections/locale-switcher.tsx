@@ -1,23 +1,23 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "@/src/i18n/navigation";
 import { useLocale } from "next-intl";
 import { useState } from "react";
 
 export function LanguageSwitcher() {
   const router = useRouter();
+  // `usePathname` do next-intl devolve o caminho sem o prefixo de locale, e o
+  // `router` reaplica o prefixo certo. Com `localePrefix: 'as-needed'` o pt-BR
+  // não tem prefixo nenhum, então a antiga cirurgia de regex não teria o que casar.
   const pathname = usePathname();
   const locale = useLocale();
   const [isHovered, setIsHovered] = useState(false);
 
   const toggleLanguage = () => {
     const newLocale = locale === "pt-BR" ? "en" : "pt-BR";
-    const regex = new RegExp(`^/${locale}(?=/|$)`);
-    const newPath = regex.test(pathname)
-      ? pathname.replace(regex, `/${newLocale}`)
-      : `/${newLocale}${pathname}`;
-    router.push(newPath);
+    const hash = typeof window === "undefined" ? "" : window.location.hash;
+    router.push(`${pathname}${hash}`, { locale: newLocale });
   };
 
   return (
