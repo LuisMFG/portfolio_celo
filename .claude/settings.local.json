@@ -6,7 +6,10 @@
       "Bash(npx prisma *)",
       "Bash(npx --package=prisma@6 prisma migrate deploy)",
       "Bash(npx --package=prisma@6 prisma db push)",
-      "Bash(npx tsx:*)"
+      "Bash(npx tsx:*)",
+      "Read(//private/tmp/**)",
+      "Bash(curl -sSL --max-time 45 -o jbm.zip \"https://github.com/JetBrains/JetBrainsMono/releases/download/v2.304/JetBrainsMono-2.304.zip\")",
+      "Bash(unzip -l jbm.zip)"
     ]
   }
 }

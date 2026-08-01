@@ -21,11 +21,14 @@ export default async function V2Page({
         <BackgroundGrid />
         <SiteHeader />
 
-        <div className="relative z-10 flex flex-1 items-center">
+        {/* <main> é obrigatório: sem ele o Lighthouse acusa
+            "Document does not have a main landmark". Fica fora do
+            header e do footer. */}
+        <main id="content" className="relative z-10 flex flex-1 items-center">
           <p className="text-label-wide uppercase text-term-muted">
             fundação · aguardando seções
           </p>
-        </div>
+        </main>
       </div>
 
       <SiteFooter />

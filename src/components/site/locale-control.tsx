@@ -19,7 +19,8 @@ const LABEL: Record<(typeof DISPLAY_ORDER)[number], string> = {
  * o pt-BR mora na raiz e não tem prefixo nenhum.
  *
  * `aria-current` carrega o estado fora da cor, então a cor é reforço e não
- * canal único (WCAG 1.4.1). Alvos de toque de 44px vêm de `min-h-tap
+ * canal único (WCAG 1.4.1). O `aria-label` começa pelo texto
+ * visível por causa do WCAG 2.5.3 (Label in Name). Alvos de toque de 44px vêm de `min-h-tap
  * min-w-tap`, sem inflar os 11px da fonte.
  */
 export function LocaleControl() {
@@ -53,7 +54,7 @@ export function LocaleControl() {
               locale={code}
               lang={code}
               hrefLang={code}
-              aria-label={t(`switchTo.${code}`)}
+              aria-label={`${LABEL[code]} — ${t(`switchTo.${code}`)}`}
               className="inline-flex min-h-tap min-w-tap items-center justify-center text-term-muted transition-colors duration-300 ease-term hover:text-term-accent focus-visible:text-term-accent"
             >
               {LABEL[code]}

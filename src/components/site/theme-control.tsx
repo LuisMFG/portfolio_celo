@@ -10,7 +10,10 @@ const THEMES = ["dark", "light"] as const;
  * Controle de tema na mesma linguagem do de idioma.
  *
  * Texto, não ícone — o estado nunca depende de um glifo. `aria-pressed`
- * carrega o estado fora da cor.
+ * carrega o estado fora da cor. O `aria-label` começa pelo texto visível
+ * (WCAG 2.5.3, Label in Name): quem usa comando de voz diz "clicar em
+ * dark", e o nome acessível precisa conter essa palavra — só "Ativar
+ * tema escuro" reprovava a auditoria.
  *
  * O next-themes só conhece o tema depois de montar (localStorage, sem
  * cookie), então há uma guarda `mounted`: o primeiro render do cliente é
@@ -44,7 +47,7 @@ export function ThemeControl() {
               type="button"
               onClick={() => setTheme(theme)}
               aria-pressed={mounted ? active : undefined}
-              aria-label={t(`theme.${theme}`)}
+              aria-label={`${theme} — ${t(`theme.${theme}`)}`}
               className={`inline-flex min-h-tap min-w-tap items-center justify-center transition-colors duration-300 ease-term hover:text-term-accent focus-visible:text-term-accent ${
                 active ? "text-term-accent" : "text-term-muted"
               }`}
