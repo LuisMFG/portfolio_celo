@@ -1,13 +1,29 @@
 import localFont from "next/font/local";
 
 /**
- * Subset latin + latin-ext, nos ranges canônicos do Google Fonts.
+ * Fonte variável, subset latin + latin-ext nos ranges canônicos do Google
+ * Fonts, com o eixo `wght` recortado em 300–500 — a faixa inteira que a
+ * escala tipográfica usa, e nada além dela.
  *
- * Os arquivos em `src/fonts` foram subsetados com `pyftsubset` a partir do
- * release oficial (JetBrainsMono 2.304), mantendo
- * `kern,liga,calt,ccmp,locl,mark,mkmk`. As ligaduras de código (`liga`,
- * `calt`) ficam de propósito: são a assinatura da JetBrains Mono e o
- * conceito inteiro depende delas. 91.7 KiB -> 22.6 KiB por peso.
+ * Vem do `JetBrainsMono[wght].ttf` do release oficial (2.304), instanciado
+ * e subsetado com fonttools, mantendo `kern,liga,calt,ccmp,locl,mark,mkmk`.
+ * As ligaduras de código (`liga`, `calt`) ficam de propósito: são a
+ * assinatura da JetBrains Mono e o conceito inteiro depende delas.
+ *
+ * ```
+ * fonttools varLib.instancer 'JetBrainsMono[wght].ttf' wght=300:500 -o partial.ttf
+ * pyftsubset partial.ttf --output-file=src/fonts/JetBrainsMono-Variable.woff2 \
+ *   --flavor=woff2 --unicodes="<latin>,<latin-ext>" \
+ *   --layout-features="kern,liga,calt,ccmp,locl,mark,mkmk" \
+ *   --no-hinting --desubroutinize
+ * ```
+ *
+ * Substituiu três estáticos de ~22 KiB cada. Não foi só o byte: 67.1 KiB em
+ * três requisições viraram 38.8 KiB em uma, e como os três pesos estavam
+ * todos em uso (500 no display, 400 nos labels, 300 no subtítulo), não
+ * havia peso ocioso a cortar. Medido, os estáticos custavam ~300ms de LCP
+ * na simulação móvel do Lighthouse — o orçamento inteiro do redesign,
+ * gasto só em fonte.
  *
  * Se um dia entrar caractere fora desses ranges, ele cai no fallback e some
  * do desenho sem erro nenhum — refaça o subset em vez de trocar a fonte.
@@ -21,17 +37,20 @@ import localFont from "next/font/local";
  * fim do FOUT, ao custo de 67 KiB disputando banda no momento mais caro —
  * que foi exatamente o que levou o LCP a 3.8s.
  *
- * O `preload` do next/font é por chamada, não por peso: não há como
- * precarregar só o 500 sem quebrar a família em duas, o que faria o
- * navegador sintetizar peso em vez de usar o arquivo certo. Quando o hero
- * existir, remedir; se o FOUT no display incomodar, o caminho é um loader
- * separado usado só por ele.
+ * Com um arquivo só, o argumento contra o preload perde metade da força —
+ * não há mais peso ocioso a baixar. Continua `false` porque o LCP é texto e
+ * o `swap` já o pinta no fallback métrico: precarregar adiantaria o fim do
+ * FOUT, não o LCP. Reavaliar quando o hero deixar de ser o elemento LCP.
  */
 export const jetbrainsMono = localFont({
   src: [
-    { path: "../fonts/JetBrainsMono-Light.woff2", weight: "300", style: "normal" },
-    { path: "../fonts/JetBrainsMono-Regular.woff2", weight: "400", style: "normal" },
-    { path: "../fonts/JetBrainsMono-Medium.woff2", weight: "500", style: "normal" },
+    {
+      path: "../fonts/JetBrainsMono-Variable.woff2",
+      // Faixa, não peso fixo: o navegador interpola 300/400/500 do mesmo
+      // arquivo em vez de sintetizar.
+      weight: "300 500",
+      style: "normal",
+    },
   ],
   display: "swap",
   preload: false,
