@@ -1,6 +1,5 @@
 import "../../globals.css";
 import type { Metadata } from "next";
-import { Sora } from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale, getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -9,11 +8,6 @@ import { ThemeProvider } from "@/src/components/theme-provider";
 import { Toaster } from "@/src/components/ui/toaster";
 import { jetbrainsMono } from "@/src/lib/fonts";
 import { SITE_URL, localePath, languageAlternates } from "@/src/lib/site";
-
-const sora = Sora({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-});
 
 const COPY = {
   "pt-BR": {
@@ -69,8 +63,12 @@ interface LayoutProps {
  * Root layout do site público. Tem o próprio `<html>` para que `lang`
  * acompanhe o locale — o admin tem o seu em `(admin)/layout.tsx`.
  *
- * `jetbrainsMono.variable` apenas expõe `--font-mono`; a fonte aplicada
- * segue sendo Sora até a fundação visual entrar.
+ * `jetbrainsMono.variable` apenas expõe `--font-mono` — declarar a variável
+ * não aplica a fonte. Quem aplica é o `font-family` de `.theme-terminal`.
+ *
+ * O `<body>` não tem família própria de propósito: a Sora vive só na home
+ * antiga, que é quem ainda a usa. Deixá-la aqui fazia o /v2 baixar e
+ * precarregar ~36 KiB de uma fonte que ele nem desenha.
  */
 export default async function LocaleLayout({ params, children }: LayoutProps) {
   const resolvedParams = await params;
@@ -90,7 +88,7 @@ export default async function LocaleLayout({ params, children }: LayoutProps) {
       suppressHydrationWarning
       className={jetbrainsMono.variable}
     >
-      <body className={sora.className}>
+      <body>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

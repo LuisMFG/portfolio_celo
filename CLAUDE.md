@@ -60,6 +60,35 @@ serve aos dois temas (11.86 no escuro, 4.66 no claro).
 
 JetBrains Mono via `next/font/local`. Carregar só os pesos usados: 300, 400, 500.
 
+Os `.woff2` em `src/fonts` são **subsetados**, não os do release. O release
+traz o charset inteiro a ~92 KiB por peso, e três pesos precarregados custaram
+1s de LCP. Subset latin + latin-ext com `pyftsubset`, mantendo
+`kern,liga,calt,ccmp,locl,mark,mkmk` — as ligaduras de código ficam, são a
+assinatura da fonte. Resultado: ~22 KiB por peso, 428 glifos.
+
+```
+uvx --from fonttools --with brotli pyftsubset ORIGINAL.woff2 \
+  --output-file=src/fonts/JetBrainsMono-<peso>.woff2 --flavor=woff2 \
+  --unicodes="<latin>,<latin-ext>" \
+  --layout-features="kern,liga,calt,ccmp,locl,mark,mkmk" \
+  --no-hinting --desubroutinize
+```
+
+O `unicode-range` em `src/lib/fonts.ts` precisa espelhar o subset. Caractere
+fora do range cai no fallback silenciosamente — refaça o subset, não troque a
+fonte. O `next/font` exige literal escrito na chamada: nada de variável,
+template ou concatenação no `declarations`.
+
+**`preload: false` é deliberado.** Com `display: 'swap'` o texto pinta na hora
+no fallback métrico, então o LCP não espera fonte. Com `preload: true` o
+navegador baixa **todos** os pesos declarados, usados ou não — foi o que
+gerou 274 KiB. Sem preload, ele busca só os pesos que algum texto casa.
+O `preload` do next/font é por chamada e não por peso: precarregar só o 500
+exigiria quebrar a família em duas e faria o navegador sintetizar peso.
+
+Fonte só no lugar que a usa: a Sora vive em `(site)/[locale]/page.tsx`, não no
+layout de locale, senão o /v2 baixaria 36 KiB de uma fonte que não desenha.
+
 - Display do hero: `clamp(3.5rem, 13vw, 15rem)` · `-0.04em` · lh `0.9` · **peso 500**
 - Nome de projeto: `clamp(1.3rem, 3.4vw, 2.9rem)` · `-0.035em` · lh `1` · peso 400
 - Marquee: `clamp(1.4rem, 4vw, 3.4rem)` · `-0.03em` · peso 300
