@@ -1,6 +1,7 @@
 {
   "Header": {
-    "identity": "LM — full-stack",
+    "identity": "LM",
+    "identitySuffix": "— full-stack",
     "location": "porto velho · ro",
     "version": "v.2026",
     "switchTo": {
@@ -24,7 +25,16 @@
     "greeting": "Oi, eu sou Luis Marcelo!",
     "alt": "Foto de perfil de Luis Marcelo",
     "subtitle": "Desenvolvedor Full Stack",
-    "description": "Transformando ideias em soluções digitais inovadoras"
+    "description": "Transformando ideias em soluções digitais inovadoras",
+    "name": {
+      "first": "LUÍS",
+      "last": "MARCELO"
+    },
+    "prompt": {
+      "path": "~/luis-marcelo",
+      "command": "whoami"
+    },
+    "scroll": "scroll"
   },
   "AboutSection": {
     "title": "Sobre Mim",

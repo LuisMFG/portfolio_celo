@@ -1,6 +1,7 @@
 {
   "Header": {
-    "identity": "LM — full-stack",
+    "identity": "LM",
+    "identitySuffix": "— full-stack",
     "location": "porto velho · ro",
     "version": "v.2026",
     "switchTo": {
@@ -24,7 +25,16 @@
     "greeting": "Hi, I'm Luis Marcelo!",
     "alt": "Profile photo of Luis Marcelo",
     "subtitle": "Full Stack Developer",
-    "description": "Turning ideas into innovative digital solutions"
+    "description": "Turning ideas into innovative digital solutions",
+    "name": {
+      "first": "LUÍS",
+      "last": "MARCELO"
+    },
+    "prompt": {
+      "path": "~/luis-marcelo",
+      "command": "whoami"
+    },
+    "scroll": "scroll"
   },
   "AboutSection": {
     "title": "About Me",

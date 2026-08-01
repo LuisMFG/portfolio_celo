@@ -2,10 +2,19 @@ import { setRequestLocale } from "next-intl/server";
 import { BackgroundGrid } from "@/src/components/site/background-grid";
 import { SiteHeader } from "@/src/components/site/site-header";
 import { SiteFooter } from "@/src/components/site/site-footer";
+import { HeroSection } from "@/src/components/site/hero-section";
 
 /**
- * Página de staging da fundação. Só o chão: grid, header e footer.
- * As seções de conteúdo entram aqui uma a uma.
+ * Página de staging do redesign. As seções de conteúdo entram no `<main>`,
+ * uma a uma, abaixo do hero.
+ *
+ * O shell da primeira tela é só `min-h-svh` + coluna flex: gutter e padding
+ * pertencem a cada seção, não ao shell, senão o marquee — que sangra de
+ * ponta a ponta — teria que desfazer o padding do pai com margem negativa.
+ *
+ * O `<header>` fica fora do `<main>` para continuar sendo landmark `banner`,
+ * mas dentro do shell, para dividir a coluna flex com o hero como na section
+ * de 100vh do protótipo.
  */
 export default async function V2Page({
   params,
@@ -17,17 +26,14 @@ export default async function V2Page({
 
   return (
     <>
-      <div className="relative flex min-h-svh flex-col px-gutter pb-8 pt-7">
+      <div className="relative flex min-h-svh flex-col">
         <BackgroundGrid />
         <SiteHeader />
 
-        {/* <main> é obrigatório: sem ele o Lighthouse acusa
-            "Document does not have a main landmark". Fica fora do
-            header e do footer. */}
-        <main id="content" className="relative z-10 flex flex-1 items-center">
-          <p className="text-label-wide uppercase text-term-muted">
-            fundação · aguardando seções
-          </p>
+        {/* `<main>` é obrigatório: sem ele o Lighthouse acusa
+            "Document does not have a main landmark". */}
+        <main id="content" className="relative z-10 flex flex-1 flex-col">
+          <HeroSection />
         </main>
       </div>
 

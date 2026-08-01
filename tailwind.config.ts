@@ -36,6 +36,9 @@ const config: Config = {
         ],
         marquee: ['clamp(1.4rem,4vw,3.4rem)', { letterSpacing: '-0.03em' }],
         lead: ['clamp(.8rem,1.1vw,1rem)', { letterSpacing: '.24em' }],
+        // A linha de prompt é meio degrau maior que a lead e não tem
+        // tracking — é código, não label (prototype.html:80).
+        prompt: ['clamp(.8rem,1.15vw,1rem)', { letterSpacing: '0' }],
         label: ['11px', { letterSpacing: '.18em' }],
         'label-wide': ['11px', { letterSpacing: '.2em' }],
       },
@@ -43,6 +46,19 @@ const config: Config = {
         gutter: 'clamp(20px,3vw,44px)',
         section: 'clamp(64px,9vw,140px)',
         'section-lg': 'clamp(70px,11vw,180px)',
+        // Respiro do bloco de nome dentro da primeira tela
+        // (prototype.html:67) — assimétrico de propósito: o miolo desce 2vh.
+        'hero-top': '6vh',
+        'hero-bottom': '2vh',
+        // Entre o display e a linha de apoio (prototype.html:74).
+        'hero-lead': 'clamp(18px,2.5vw,34px)',
+        // Altura da barra do indicador de scroll (prototype.html:88).
+        hint: '34px',
+      },
+      height: {
+        // O grid pertence à primeira tela, não ao documento: o shell cresce
+        // quando novas seções entram, o grid não. Tailwind 3.3.3 não tem svh.
+        svh: '100svh',
       },
       transitionTimingFunction: {
         term: 'var(--ease)',

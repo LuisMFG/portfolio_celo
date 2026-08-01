@@ -95,32 +95,130 @@ body:has(.theme-terminal) {
   }
 }
 
+/** Cursor de bloco/underscore do protótipo (`prototype.html:18`). */
+@keyframes term-blink {
+  0%,
+  48% {
+    opacity: 1;
+  }
+  49%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/** Dica de scroll: a barra desce e volta a esmaecer (`prototype.html:22`). */
+@keyframes term-scroll-hint {
+  0% {
+    transform: translateY(0);
+    opacity: 0.25;
+  }
+  45% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(12px);
+    opacity: 0.25;
+  }
+}
+
+/**
+ * Recorte da entrada `rise`. O pai precisa esconder o texto deslocado, mas
+ * `overflow: hidden` puro corta pelo topo da caixa de conteúdo — e com
+ * `line-height: .9` no display essa caixa fica *abaixo* do ascender da
+ * fonte: medido, o acento de "LUÍS" projeta 0.125em de tinta acima dela e
+ * sumia do desenho. O protótipo tem o mesmo recorte e o mesmo defeito.
+ *
+ * A folga vem de `padding-top`, devolvida por margem negativa de igual
+ * valor: a altura de layout e a posição do texto ficam idênticas, e só a
+ * borda de cima do recorte sobe. A borda de baixo — a que de fato esconde o
+ * texto durante a entrada — não se move.
+ *
+ * 0.2em contra os 0.125em medidos: sobra para o fallback métrico, cujos
+ * acentos não têm por que ter a mesma altura. Nada pinta nessa faixa em
+ * repouso, então folga a mais é invisível.
+ *
+ * Quem usa isso precisa de contexto de formatação próprio (`flow-root`),
+ * senão a margem negativa do primeiro filho colapsa com a do pai e arrasta
+ * o bloco inteiro para cima.
+ */
+.theme-terminal .term-clip {
+  overflow: hidden;
+  padding-top: 0.2em;
+  margin-top: -0.2em;
+}
+
 .theme-terminal [data-rise] {
   animation: term-rise 0.9s var(--ease) both;
 }
 
-.theme-terminal [data-rise="a"] {
+/* O display do hero entra em 1.05s; todo o resto em 0.9s
+   (`prototype.html:69` contra `:62`). */
+.theme-terminal [data-rise-display] {
+  animation-duration: 1.05s;
+}
+
+.theme-terminal [data-fade] {
+  animation: term-fadein 0.8s linear both;
+}
+
+.theme-terminal [data-blink] {
+  animation: term-blink 1.05s steps(1) infinite;
+}
+
+.theme-terminal [data-scroll-hint] {
+  animation: term-scroll-hint 1.9s var(--ease) infinite;
+}
+
+/**
+ * Cascata única de delays (a régua de CLAUDE.md). O passo é um eixo separado
+ * da animação de propósito: `data-rise` e `data-fade` são intercalados no
+ * mesmo ritmo — o header ocupa a..d e o hero continua em d..h — e um atributo
+ * por eixo evita duplicar a régua em cada tipo de entrada.
+ */
+.theme-terminal [data-delay="a"] {
   animation-delay: 0.05s;
 }
-.theme-terminal [data-rise="b"] {
+.theme-terminal [data-delay="b"] {
   animation-delay: 0.09s;
 }
-.theme-terminal [data-rise="c"] {
+.theme-terminal [data-delay="c"] {
   animation-delay: 0.13s;
 }
-.theme-terminal [data-rise="d"] {
+.theme-terminal [data-delay="d"] {
   animation-delay: 0.16s;
+}
+.theme-terminal [data-delay="e"] {
+  animation-delay: 0.2s;
+}
+.theme-terminal [data-delay="f"] {
+  animation-delay: 0.28s;
+}
+.theme-terminal [data-delay="g"] {
+  animation-delay: 0.5s;
+}
+.theme-terminal [data-delay="h"] {
+  animation-delay: 0.62s;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .theme-terminal [data-rise] {
-    animation: term-fadein 0.28s linear both !important;
-    animation-delay: 0s !important;
-  }
-
+  /* Nada pulsa, nada repete. Sem `fill-mode`, cada elemento volta ao próprio
+     estado computado quando a animação encerra — o cursor fica aceso e a
+     barra do scroll, parada. Zerar a duração e não `animation: none` porque
+     `none` deixaria o `both` do rise sem estado final. */
   .theme-terminal *,
   .theme-terminal *::before,
   .theme-terminal *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition: none !important;
+  }
+
+  /* Vence a regra acima por especificidade (0,2,0 contra 0,1,0), e o
+     shorthand devolve duração e iteração aos valores desta declaração. */
+  .theme-terminal [data-rise],
+  .theme-terminal [data-fade] {
+    animation: term-fadein 0.28s linear both !important;
+    animation-delay: 0s !important;
   }
 }

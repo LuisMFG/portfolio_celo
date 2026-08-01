@@ -256,6 +256,39 @@ Pendências conhecidas, nenhuma bloqueante:
 - Render-blocking de CSS: ~590ms estimados. Reavaliar quando houver conteúdo.
 - Legacy JavaScript: 12 KiB de polyfill. Ajustável via browserslist.
 
+### Fonte: variável, medida (01/08/2026)
+
+`src/fonts/JetBrainsMono-Variable.woff2`, eixo `wght` instanciado em 300–500,
+subset latin + latin-ext, `liga`/`calt` preservados: **38,8 KiB** no lugar de
+68 KiB em três arquivos estáticos. Três requisições viraram uma.
+
+Em `next/font/local` é **uma** entrada em `src` com `weight: "300 500"` — nunca
+três entradas apontando para o mesmo arquivo. `preload: false` e
+`display: swap` continuam valendo pelos motivos já registrados.
+
+### Hero — medido (01/08/2026)
+
+```
+Performance 99 · Acessibilidade 100
+FCP 1.21s · LCP 2.153s · TBT 0ms · CLS 0.000
+```
+
+Contra o piso da fundação (LCP 2.2s), o hero custou praticamente zero. O
+orçamento de 280ms de TBT e 300ms de LCP segue intacto para as próximas seções.
+
+### Decisão revista: header em 375px
+
+A regra anterior — manter `LM — FULL-STACK` e os dois controles em 375px — era
+inviável: pedia 381px contra 335 de linha útil. Vale esta:
+
+- Em `<768px` a identidade encolhe para `LM`. O sufixo `— full-stack` é
+  redundante com o subtítulo do hero, que fica logo abaixo em escala muito
+  maior, e o header não é fixo (vive dentro do hero), então os dois são sempre
+  co-visíveis.
+- Os dois controles mantêm **ambos os estados visíveis**, com `aria-pressed` e
+  `aria-current`. Mostrar só a alternativa tornaria `[en]` ambíguo — estado
+  atual ou ação? — e desfaria a correção que levou a acessibilidade a 100.
+
 **Risco novo introduzido pelo redesign:** cursor customizado, Lenis e o loop de
 animação rodam na thread principal. Trocar 560ms de React por 560ms de animação
 não é vitória. Todo trabalho de movimento deve ser verificado com CPU throttling
