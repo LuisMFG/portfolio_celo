@@ -30,6 +30,32 @@
   --accent: #00e676;
 
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Gutter lateral. Vive aqui, e não só no `theme.extend` do Tailwind, porque
+     regras deste arquivo também precisam dele — o `spacing.gutter` do config
+     aponta para cá, então `px-gutter` e `var(--gutter)` são o mesmo valor. */
+  --gutter: clamp(20px, 3vw, 44px);
+
+  /**
+   * Marquee. O que o protótipo fixa é **velocidade**, não duração: os 28s
+   * dele valem para o trilho dele, de 2908,09px por cópia a 1440px — 103,86
+   * px/s. Este trilho tem 12 tecnologias em vez de 10 e mede 3409,09px, então
+   * 28s aqui correriam 17% mais rápido.
+   *
+   *   3409,09 / 103,86 = 32,82s
+   *
+   * A razão não depende do viewport: fonte, tracking e o padding do separador
+   * são todos em `em`, então as duas larguras escalam pelo mesmo clamp e
+   * 1,1723 vale em qualquer largura de tela — uma constante basta.
+   *
+   * **Mexeu na lista, refaça a conta.** Medir a largura de uma cópia e
+   * dividir por 103,86. Herdar os 28s como número absoluto é o erro.
+   *
+   * No hover a duração vira duração / 0.6 (prototype.html:185) — duração
+   * maior é faixa mais lenta, o hover freia.
+   */
+  --marquee-duration: 32.82s;
+  --marquee-duration-hover: 54.7s;
 }
 
 .light .theme-terminal {
@@ -104,6 +130,42 @@ body:has(.theme-terminal) {
   49%,
   100% {
     opacity: 0;
+  }
+}
+
+/**
+ * Marquee (`prototype.html:21`, `:93-98`).
+ *
+ * O trilho carrega duas cópias idênticas da faixa, então `-50%` desloca
+ * exatamente uma cópia: o último quadro é pixel a pixel igual ao primeiro e o
+ * loop não tem costura. Quem mexer no número tem que mexer no número de
+ * cópias junto.
+ */
+@keyframes term-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.theme-terminal [data-marquee-track] {
+  animation: term-marquee var(--marquee-duration) linear infinite;
+  /* O trilho anima do primeiro ao último quadro da página, sem intervalo em
+     que a promoção de camada seja desperdício. É o caso que `will-change`
+     existe para atender. */
+  will-change: transform;
+}
+
+/* `@media (hover: hover)`: em toque o `:hover` gruda depois do tap e a faixa
+   ficaria lenta para sempre, sem gesto que desfaça. Trocar a duração no meio
+   da animação salta a posição, porque o tempo decorrido é preservado e só a
+   fração do ciclo muda — o protótipo tem o mesmo salto, pelo mesmo motivo
+   (`prototype.html:185` mexe em `style.animationDuration`). */
+@media (hover: hover) {
+  .theme-terminal [data-marquee]:hover [data-marquee-track] {
+    animation-duration: var(--marquee-duration-hover);
   }
 }
 
@@ -220,5 +282,33 @@ body:has(.theme-terminal) {
   .theme-terminal [data-fade] {
     animation: term-fadein 0.28s linear both !important;
     animation-delay: 0s !important;
+  }
+
+  /**
+   * O marquee parado seria pior que inútil: a regra acima zera a duração, o
+   * trilho volta a `translate: none` e a faixa — que mede vários viewports —
+   * fica recortada, escondendo a maior parte das tecnologias atrás da borda.
+   * Informação que só existe enquanto algo se move não é informação.
+   *
+   * Sem movimento a faixa vira texto corrido: o trilho solta a largura
+   * `max-content`, a lista quebra linha dentro do gutter e a cópia-eco sai do
+   * desenho. O separador final — que só existe para costurar a emenda entre
+   * as duas cópias — some junto, senão sobraria um `·` órfão no fim.
+   */
+  .theme-terminal [data-marquee-track] {
+    width: auto;
+  }
+
+  .theme-terminal [data-marquee-list] {
+    flex-wrap: wrap;
+    padding-inline: var(--gutter);
+  }
+
+  .theme-terminal [data-marquee-echo] {
+    display: none;
+  }
+
+  .theme-terminal [data-marquee-list] > li:last-child [data-marquee-sep] {
+    display: none;
   }
 }

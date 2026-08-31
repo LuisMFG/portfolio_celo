@@ -34,7 +34,14 @@ const config: Config = {
           'clamp(1.3rem,3.4vw,2.9rem)',
           { letterSpacing: '-0.035em', lineHeight: '1' },
         ],
-        marquee: ['clamp(1.4rem,4vw,3.4rem)', { letterSpacing: '-0.03em' }],
+        // `lineHeight: normal` é o default do protótipo dito em voz alta: o
+        // preflight do Tailwind põe `line-height: 1.5` no `html`, herdado até
+        // a faixa, e 1.5 × 54.4px engordava a banda em 10.6px contra os 141px
+        // do protótipo. Entrelinha de display se mede pela métrica da fonte.
+        marquee: [
+          'clamp(1.4rem,4vw,3.4rem)',
+          { letterSpacing: '-0.03em', lineHeight: 'normal' },
+        ],
         lead: ['clamp(.8rem,1.1vw,1rem)', { letterSpacing: '.24em' }],
         // A linha de prompt é meio degrau maior que a lead e não tem
         // tracking — é código, não label (prototype.html:80).
@@ -43,7 +50,9 @@ const config: Config = {
         'label-wide': ['11px', { letterSpacing: '.2em' }],
       },
       spacing: {
-        gutter: 'clamp(20px,3vw,44px)',
+        // Definido em `tokens.css`: regras de lá também consomem o gutter, e
+        // duas cópias do mesmo clamp seriam duas verdades.
+        gutter: 'var(--gutter)',
         section: 'clamp(64px,9vw,140px)',
         'section-lg': 'clamp(70px,11vw,180px)',
         // Respiro do bloco de nome dentro da primeira tela
@@ -54,6 +63,13 @@ const config: Config = {
         'hero-lead': 'clamp(18px,2.5vw,34px)',
         // Altura da barra do indicador de scroll (prototype.html:88).
         hint: '34px',
+        // Faixa do marquee (prototype.html:93) — 2.4vw, não os 2.5vw de
+        // `hero-lead`. Valores próximos, escalas diferentes.
+        marquee: 'clamp(18px,2.4vw,34px)',
+        // Respiro de cada lado do `·` que separa as tecnologias
+        // (prototype.html:95). Em `em` de propósito: acompanha o clamp da
+        // fonte do marquee em vez de virar um vão fixo no mobile.
+        'marquee-sep': '0.45em',
       },
       height: {
         // O grid pertence à primeira tela, não ao documento: o shell cresce

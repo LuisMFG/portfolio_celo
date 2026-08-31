@@ -276,6 +276,66 @@ FCP 1.21s · LCP 2.153s · TBT 0ms · CLS 0.000
 Contra o piso da fundação (LCP 2.2s), o hero custou praticamente zero. O
 orçamento de 280ms de TBT e 300ms de LCP segue intacto para as próximas seções.
 
+### Marquee — medido (01/08/2026)
+
+```
+Performance 99 · Acessibilidade 100
+FCP 1.2s · LCP 2.2s · TBT 0ms · CLS 0.000 · SI 1.2s · 207 KiB
+```
+
+Zero JS: o loop é `@keyframes` e a freada do hover é um `:hover` atrás de
+`@media (hover: hover)` — em toque o `:hover` gruda depois do tap e a faixa
+ficaria lenta para sempre. O orçamento de 280ms de TBT e 300ms de LCP segue
+intacto.
+
+A faixa lista **12 tecnologias**, não as 10 do protótipo: `technologies.tsx`
+tem 11 e o protótipo tem 10, e a interseção não é total nos dois sentidos —
+o protótipo acrescenta NestJS (real, está na descrição do cargo na Biggelo) e
+larga Tailwind e Git. Redesign é visual, então nada de conteúdo se perde.
+
+#### Os 28s do marquee são velocidade, não duração
+
+**28s equivalem ao trilho do protótipo. Trilhos de outra largura precisam
+recalcular a duração para manter os mesmos px/s.** Ler 28s como valor absoluto
+é o erro — quem acrescentar ou tirar uma tecnologia muda a velocidade da faixa
+sem tocar em nenhum número de movimento.
+
+```
+protótipo   2908,09px por cópia a 1440px ÷ 28s   = 103,86 px/s
+aqui        3409,09px por cópia a 1440px ÷ 103,86 = 32,82s
+```
+
+A razão 1,1723 não depende do viewport: fonte, tracking e o padding do
+separador são todos em `em`, então as duas larguras escalam pelo mesmo
+`clamp()` e uma única constante serve para toda tela. O hover continua sendo
+duração ÷ 0.6 → 54,7s.
+
+A largura maior foi **medida antes de compensar**, e a diferença é só de
+conteúdo, não de espaçamento: os 10 itens compartilhados medem igual ao
+protótipo sub-pixel a sub-pixel (`TYPESCRIPT` 310,08 nos dois, separador 79,95
+nos dois, padding 24,48px = 0,45em nos dois), somando 2908,09 dos dois lados
+com delta 0,00. Os 501px de diferença são exatamente `TAILWIND` (328,02) mais
+`GIT` (172,98). De quebra isso prova que a variável subsetada tem os mesmos
+avanços das estáticas do release. Compensar duração sem essa medição teria
+escondido um erro de espaçamento atrás de um marquee com aparência correta.
+
+`lineHeight: normal` no token `marquee` **não é decoração**: o preflight do
+Tailwind põe `line-height: 1.5` no `html`, herdado até a faixa, e 1.5 × 54.4px
+engordava a banda em 10,6px. Com o token explícito a banda mede 141px a
+1440px — o número exato do protótipo.
+
+Um `<section>` com nome acessível é landmark `region`. É por isso que o
+`aria-label` do marquee é requisito estrutural: a faixa vive fora do `<main>`
+(que mora dentro do shell `min-h-svh` para dividir a coluna flex com o header,
+e o header precisa ficar fora do `<main>` para ser `banner`), e sem nome ela
+seria conteúdo fora de landmark. **Toda seção que entrar abaixo do hero
+precisa do mesmo tratamento.**
+
+Sem movimento (`prefers-reduced-motion`) a faixa vira texto corrido: trilho
+solta o `max-content`, a lista quebra linha dentro do gutter, a cópia-eco e o
+separador final somem. Marquee parado esconderia a maior parte da lista atrás
+da borda, e informação que só existe enquanto algo se move não é informação.
+
 ### Decisão revista: header em 375px
 
 A regra anterior — manter `LM — FULL-STACK` e os dois controles em 375px — era
