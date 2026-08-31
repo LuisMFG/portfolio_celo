@@ -607,3 +607,61 @@ Não foi validado em produção porque **o código do formulário não está lá
 a última implantação de produção é de 29 dias atrás e as mudanças do campo
 seguem sem commit. O dado está certo em produção; a interface para editá-lo,
 não. Conferir depois do próximo deploy.
+
+## Permissões do Claude Code
+
+Dois arquivos, e a distinção é a mesma dos endpoints do Neon: um é decisão do
+projeto, o outro é estado desta máquina.
+
+```
+.claude/settings.json         versionado    — rotina do projeto
+.claude/settings.local.json   no .gitignore — concessões deste clone
+```
+
+O sufixo `.local` é a convenção do Claude Code para configuração de máquina.
+Ele acumula toda permissão aceita durante as sessões, e **permissão aceita
+numa máquina não é decisão do projeto**: versionado, ele concederia em outro
+clone o que aquele clone nunca aprovou. Saiu do índice em 30/08/2026 com
+`git rm --cached` — só o `.gitignore` não bastava, porque arquivo já
+rastreado continua sendo rastreado.
+
+### O que o `settings.json` concede, e por quê
+
+JSON não aceita comentário, então a justificativa mora aqui. Sem ela, daqui a
+seis meses não dá para saber se a lista foi pensada ou herdada.
+
+| Permissão | Por quê |
+|---|---|
+| `Bash(npm run build)` | Todo trabalho de seção termina em build. Determinístico e sem argumento. |
+| `Bash(npm run lint)` | O script existe (`next lint`) — conferido no `package.json` antes de conceder. |
+| `Bash(npx tsc --noEmit)` | Type-check sem emitir arquivo. Só lê. |
+| `Bash(npx lighthouse:*)` | **O único coringa, e é inevitável:** recebe URL, porta e flags variáveis a cada medição. A porta muda entre execuções e a lista de categorias muda com o que se está medindo. |
+
+**Comando exato, nunca coringa** — `Bash(npm run build)` e não
+`Bash(npm run *)`; `Bash(npx tsc --noEmit)` e não `Bash(npx tsc:*)`. O ponto
+do arquivo é conceder o que é rotina e barrar o resto: coringa larga
+justamente a porta que a lista deveria fechar. `npm run *` cobriria
+`db:deploy` e `db:seed`, que escrevem em banco.
+
+### O que deliberadamente **não** está aqui
+
+Nada do `settings.local.json` foi promovido, e a decisão vale para as
+próximas vezes que alguém olhar aquela lista achando que ela devia migrar:
+
+- **Um-off já consumidos** — o `curl` do release da JetBrains Mono e o
+  `unzip -l jbm.zip` serviram para gerar os subsets, que hoje estão
+  commitados; o `grep` em `src/components/sections/*.tsx` aponta para um
+  diretório que a promoção do /v2 vai deletar.
+- **Coringas de mutação contra guardas deste arquivo** — `npm install *`
+  afrouxa o "PROIBIDO: GSAP, Three.js, AOS"; `npx prisma *` cobre
+  `migrate reset` e `db push`, e o projeto acabou de sair do `db push` para
+  migrations com baseline e dry run; `npx tsx:*` e `python3 *` são execução
+  de código arbitrário.
+- **`migrate deploy`** — é DDL em produção. Não deve ser silencioso em
+  máquina nenhuma, e menos ainda por padrão em todas.
+- **`Read(//private/tmp/**)`** — é o scratchpad do harness, igual em qualquer
+  projeto: o lugar dela é `~/.claude/settings.json`, do usuário. Versionada,
+  daria a todo clone leitura do `/private/tmp` inteiro da máquina.
+
+Regra para incluir algo: **rotina do projeto, roda igual em qualquer clone, e
+o argumento é fixo.** Falhou em uma das três, fica no `.local`.
