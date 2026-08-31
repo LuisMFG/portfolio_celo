@@ -58,6 +58,10 @@ model Project {
   descriptionPt String
   descriptionEn String
   isPublished   Boolean  @default(true)
+  /// Estado do projeto na lista pública. Valores em PROJECT_STATUSES
+  /// (src/lib/validators.ts) — "wip" ou "done". String solta, como
+  /// Experience.type: a validação mora no Zod, não num enum do Postgres.
+  status        String   @default("wip")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

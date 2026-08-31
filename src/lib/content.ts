@@ -3,6 +3,8 @@ import { prisma } from "./prisma";
 import { CACHE_TAGS } from "./cache-tags";
 import ptMessages from "../../messages/pt-BR.json";
 import enMessages from "../../messages/en.json";
+import { type ProjectStatus } from "./validators";
+import { deriveStatusFromTitle, toProjectStatus } from "./project-status";
 
 export type Locale = "pt-BR" | "en";
 
@@ -23,6 +25,7 @@ export type ProjectView = {
   githubUrl: string | null;
   liveUrl: string | null;
   title: string;
+  status: ProjectStatus;
   description: string;
 };
 
@@ -84,8 +87,14 @@ function getDefaultProjects(locale: Locale): ProjectView[] {
 
   if (!items) return [];
 
+  // O status deriva sempre do título PT, mesmo quando o locale é en — o
+  // marcador "(Em Construção)" só existe do lado português.
+  const ptItems = (ptMessages.ProjectsSection as Record<string, unknown>)
+    .items as Record<string, { title: string; description: string }>;
+
   return DEFAULT_PROJECT_SEED.map((p) => {
     const item = items[p.id];
+    const title = item?.title ?? p.id;
     return {
       id: p.id,
       slug: p.id,
@@ -93,7 +102,9 @@ function getDefaultProjects(locale: Locale): ProjectView[] {
       technologies: p.technologies,
       githubUrl: p.githubUrl ?? null,
       liveUrl: p.liveUrl ?? null,
-      title: item?.title ?? p.id,
+      title,
+      // Sem banco, o status vem do próprio título — mesma regra do seed.
+      status: deriveStatusFromTitle(ptItems[p.id]?.title ?? ""),
       description: item?.description ?? "",
     };
   });
@@ -146,6 +157,7 @@ export const fetchProjects = unstable_cache(
         githubUrl: r.githubUrl,
         liveUrl: r.liveUrl,
         title: pt ? r.titlePt : r.titleEn,
+        status: toProjectStatus(r.status),
         description: pt ? r.descriptionPt : r.descriptionEn,
       }));
     } catch (err) {

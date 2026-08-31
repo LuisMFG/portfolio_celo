@@ -360,3 +360,128 @@ Projetos: CONECI-RO · Estudante Auditor · Wiki.CGE · Gerenciador de Horários
 3D Card Chaewon · Cat&Dog · Pokédex · Receitas do Mestre · Spacetime.
 Localização: Porto Velho — RO. Atuação: Coordenador de Transparência Ativa na
 CGE/RO e Engenheiro de Software Jr. na Biggelo (remoto, Node/NestJS).
+
+## Banco de dados e migrations
+
+Produção é **Neon, PostgreSQL 17.10, sa-east-1** — confirmado por
+`SELECT version()` no SQL Editor do branch production. O `docker-compose.yml`
+fixa `postgres:17` para casar a major: testar migration num engine e aplicar
+em outro é como não ter testado. Ao subir a major lá, suba a daqui junto.
+
+A senha do compose é descartável (`postgres`/`postgres`) e por isso pode ir
+versionada — não abre nada e não é reusada. Os segredos de verdade vivem no
+`.env`, fora do git.
+
+Dois endpoints, e a distinção importa:
+
+```
+…-pooler.sa-east-1.aws.neon.tech   DML, app, migrate resolve
+…sa-east-1.aws.neon.tech            DDL — migrate deploy
+```
+
+**`migrate deploy` vai pelo endpoint direto**, sem `-pooler`: DDL através do
+PgBouncer em transaction mode é o que a própria Neon recomenda evitar. O
+`resolve` pode ir pelo pooler, porque é só um INSERT em `_prisma_migrations`.
+A URL de produção sai de `vercel env pull --environment=production` para um
+arquivo **fora do repo** — nunca para `.env.local`, que o `vercel link`
+sobrescreve.
+
+### Baseline (feita em 30/08/2026, não repetir)
+
+O projeto viveu do commit inicial até aqui sem `prisma/migrations`: o schema
+era aplicado por `db push`. Adotar `migrate` num banco que já tem tabelas
+exige baseline, senão `migrate deploy` tenta `CREATE TABLE` sobre tabela
+existente e falha.
+
+A ordem foi esta, e a sequência é o ponto:
+
+1. baseline gerada do schema **como estava**, sem o campo novo
+   (`migrate dev --name init` contra o banco local vazio)
+2. **prova de que produção bate com o schema**, antes de qualquer escrita:
+   `migrate diff --from-url <prod> --to-schema-datamodel prisma/schema.prisma --script`
+   Só seguir se vier `-- This is an empty migration.` e zero bytes de SQL.
+   Diff não-vazio é drift real, e marcar a baseline o esconderia em vez de
+   resolvê-lo.
+3. backup — branch copy-on-write no Neon a partir de production
+4. `migrate resolve --applied 20260801231359_init` contra produção
+5. `migrate status` → `Database schema is up to date!`
+6. só então o campo novo, na **segunda** migration
+
+Gerar a baseline já com o campo novo dentro e marcá-la como aplicada
+registraria produção como tendo uma coluna que ela não tem, e o erro só
+apareceria quando algum código lesse o campo.
+
+**O diff tem validade curta.** Refaça imediatamente antes do `resolve` — um
+diff de ontem não descreve um banco em que alguém mexeu pelo admin hoje.
+
+### O backup protege os dados, não o histórico
+
+O branch do Neon restaura **conteúdo**. Ele não desfaz um registro errado em
+`_prisma_migrations`: baseline marcada como aplicada por engano se conserta
+com `migrate resolve --rolled-back <nome>`, não com restore. São falhas de
+natureza diferente e o branch cobre só a primeira.
+
+### Campo `status` de Project (2ª migration, 30/08/2026)
+
+`status String @default("wip")` — aditivo, com default, então
+`ALTER TABLE ... ADD COLUMN` não quebra linha existente. String solta, como
+`Experience.type`; a validação mora no Zod, não num enum do Postgres.
+
+**`PROJECT_STATUSES` em `src/lib/validators.ts` é a fonte única dos valores**
+(`["done", "wip"] as const`), com `ProjectStatus` derivado dele. Zod,
+`ProjectView`, formulário do admin e o componente da lista bebem daí — nenhum
+literal solto. O `<Select>` do admin itera o array, então valor novo aparece
+sozinho e o `Record` de rótulos reprova no type-check até ganhar tradução.
+
+Valores são **semânticos, não rótulos**: o banco guarda `"done"`/`"wip"` e o
+site desenha `[ok]`/`[wip]`. Rótulo que muda mexe no componente, não no dado.
+
+`toProjectStatus()` em `src/lib/project-status.ts` é a porta de entrada: a
+coluna é `TEXT` livre e nada impede valor fora da lista, então sem o guard o
+`ProjectView.status` seria uma mentira de tipo. Desconhecido cai em `"wip"`.
+O componente também precisa tratar desconhecido — e as duas defesas concordam
+de graça, porque `"wip"` e valor sujo desenham igual, em `--muted`.
+
+O seed deriva de `deriveStatusFromTitle()`, que lê `"(Em Construção)"` no
+título **em português**: o EN marca os mesmos projetos com "(In development)",
+e duas regras para o mesmo fato divergiriam na primeira edição de um só lado.
+A comparação ignora caixa — `pt-BR.json` tem "(Em Construção)" em dois títulos
+e "(Em construção)" em Wiki.CGE, e um `includes` sensível a caixa marcaria a
+Wiki como concluída. Resultado bate com o protótipo: CONECI-RO, Estudante
+Auditor e Wiki.CGE em `wip`; os outros seis em `done`. Vale só para semear —
+depois o status é editável no admin e o título para de mandar nele.
+
+### Status em produção — corrigido (30/08/2026)
+
+`migrate deploy` aplicado pelo endpoint direto; schema em dia, drift zero. O
+`DEFAULT 'wip'` do `ADD COLUMN` carimbou as 9 linhas existentes e 6 ficaram
+erradas — corrigidas por UPDATE transacional único, com a própria
+`deriveStatusFromTitle()`, não uma regex reescrita em SQL: duas grafias da
+mesma regra divergem no primeiro ajuste. Produção hoje: **6 `done`, 3 `wip`**.
+
+Três coisas que o procedimento tinha e valem para qualquer correção de dado
+em produção:
+
+- **Dry run primeiro.** Transação idêntica à real terminando em `ROLLBACK`,
+  com o `SELECT` de conferência impresso. O resultado é visível antes de
+  qualquer escrita, e o custo é zero.
+- **Predicado defensivo.** `WHERE id = ? AND status = 'wip'` via `updateMany`,
+  que devolve contagem: linha editada pelo admin no intervalo não é
+  sobrescrita e aparece como `0` em vez de passar batido.
+- **Conferência dentro da transação.** Todo status resultante é comparado com
+  a derivação antes do `COMMIT`; divergência derruba tudo.
+
+Antes disso, os 9 títulos de produção foram comparados com
+`messages/pt-BR.json` — todos idênticos, nenhum editado pelo admin, então a
+derivação era válida para todas as linhas. Título editado invalidaria a regra
+para aquela linha.
+
+### Pendente: verificar o campo no admin de produção
+
+O `<Select>` de status foi validado **localmente**: renderiza o rótulo certo
+(`done` → "Concluído", `wip` → "Em andamento") e persiste na ida e volta.
+
+Não foi validado em produção porque **o código do formulário não está lá** —
+a última implantação de produção é de 29 dias atrás e as mudanças do campo
+seguem sem commit. O dado está certo em produção; a interface para editá-lo,
+não. Conferir depois do próximo deploy.

@@ -65,6 +65,19 @@ const URL_SCHEMA = z
   })
   .pipe(z.string().url("URL inválida").max(1000).nullable());
 
+/**
+ * Estados de um projeto. Esta é a **fonte única** dos valores: o Zod abaixo,
+ * o `ProjectView` de content.ts, o formulário do admin e o componente da
+ * lista derivam todos daqui. Nenhum literal solto em componente.
+ *
+ * Os valores são semânticos, não rótulos: o desenho mostra `[ok]`/`[wip]`,
+ * mas o banco guarda "done"/"wip". Se o rótulo mudar, muda o componente e o
+ * dado fica quieto.
+ */
+export const PROJECT_STATUSES = ["done", "wip"] as const;
+
+export type ProjectStatus = (typeof PROJECT_STATUSES)[number];
+
 export const projectSchema = z.object({
   slug: z
     .string()
@@ -82,6 +95,7 @@ export const projectSchema = z.object({
   titleEn: z.string().trim().min(1).max(500),
   descriptionPt: z.string().trim().min(1).max(10000),
   descriptionEn: z.string().trim().min(1).max(10000),
+  status: z.enum(PROJECT_STATUSES).default("wip"),
   isPublished: z.boolean().default(true),
 });
 

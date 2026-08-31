@@ -7,9 +7,22 @@ import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
 import { Textarea } from "@/src/components/ui/textarea";
 import { Switch } from "@/src/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/src/components/ui/select";
+import { PROJECT_STATUSES, type ProjectStatus } from "@/src/lib/validators";
 import { TechnologiesInput } from "./technologies-input";
 import { ImageUpload } from "./image-upload";
 import { toast } from "sonner";
+
+const STATUS_LABEL: Record<ProjectStatus, string> = {
+  done: "Concluído",
+  wip: "Em andamento",
+};
 
 export type ProjectData = {
   id?: string;
@@ -24,6 +37,7 @@ export type ProjectData = {
   titleEn: string;
   descriptionPt: string;
   descriptionEn: string;
+  status: ProjectStatus;
   isPublished: boolean;
 };
 
@@ -39,6 +53,7 @@ const EMPTY: ProjectData = {
   titleEn: "",
   descriptionPt: "",
   descriptionEn: "",
+  status: "wip",
   isPublished: true,
 };
 
@@ -92,6 +107,7 @@ export function ProjectForm({ initial }: { initial?: ProjectData }) {
           titleEn: data.titleEn,
           descriptionPt: data.descriptionPt,
           descriptionEn: data.descriptionEn,
+          status: data.status,
           isPublished: data.isPublished,
         }),
       });
@@ -155,6 +171,28 @@ export function ProjectForm({ initial }: { initial?: ProjectData }) {
             placeholder="https://..."
           />
         </div>
+        <div className="space-y-2">
+          <Label htmlFor="status">Status</Label>
+          <Select
+            value={data.status}
+            onValueChange={(v) => set("status", v as ProjectStatus)}
+          >
+            <SelectTrigger id="status">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {/* Itera a fonte única: um valor novo em PROJECT_STATUSES
+                  aparece aqui sozinho, e o Record de rótulos passa a
+                  reprovar no type-check até ganhar tradução. */}
+              {PROJECT_STATUSES.map((value) => (
+                <SelectItem key={value} value={value}>
+                  {STATUS_LABEL[value]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         <div className="flex items-center gap-3 pt-7">
           <Switch
             id="isPublished"

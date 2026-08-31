@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/src/lib/prisma";
 import { ProjectForm } from "@/src/components/admin/project-form";
+import { toProjectStatus } from "@/src/lib/project-status";
 
 export default async function EditProjectPage({
   params,
@@ -31,6 +32,8 @@ export default async function EditProjectPage({
           titleEn: item.titleEn,
           descriptionPt: item.descriptionPt,
           descriptionEn: item.descriptionEn,
+          // Coluna TEXT livre no banco; o guard mantém o tipo honesto.
+          status: toProjectStatus(item.status),
           isPublished: item.isPublished,
         }}
       />
