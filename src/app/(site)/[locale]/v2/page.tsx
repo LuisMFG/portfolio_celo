@@ -6,6 +6,7 @@ import { SiteFooter } from "@/src/components/site/site-footer";
 import { HeroSection } from "@/src/components/site/hero-section";
 import { MarqueeSection } from "@/src/components/site/marquee-section";
 import { ProjectsSection } from "@/src/components/site/projects-section";
+import { CommandSection } from "@/src/components/site/command-section";
 
 /**
  * Página de staging do redesign. As seções de conteúdo entram no `<main>`,
@@ -60,6 +61,12 @@ export default async function V2Page({
           requisito: `aria-labelledby` no `<section>` a torna landmark
           `region`, com o `<h2>` do cabeçalho como nome. */}
       <ProjectsSection projects={projects} />
+
+      {/* Mesma regra das duas de cima: fora do `<main>`, e landmark `region`
+          pelo `aria-labelledby` no `<h2>` do rótulo. É a primeira seção com
+          JavaScript de cliente — a digitação vive dentro do `TypedCommand`,
+          não aqui. */}
+      <CommandSection />
 
       <SiteFooter />
     </>

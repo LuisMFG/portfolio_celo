@@ -86,6 +86,29 @@
    * JetBrains Mono somam ~1.02em e encostariam.
    */
   --project-name-leading-stacked: 1.1;
+
+  /**
+   * Cursor da linha digitada (`prototype.html:143`). Os três números são os
+   * do protótipo: bloco de 0.55em de largura por 1em de altura, 0.12em de
+   * respiro depois do último caractere e 0.12em de queda para assentar sobre
+   * a linha de base em vez de flutuar no topo da caixa.
+   */
+  --caret-width: 0.55em;
+  --caret-gap: 0.12em;
+  --caret-drop: 0.12em;
+
+  /**
+   * Espaço que a linha guarda no fim para o cursor pousar.
+   *
+   * O cursor é absoluto — não ocupa largura — e por isso não conta na quebra
+   * de linha. Sem esta reserva, medido a 375px: o texto termina exatamente em
+   * cima do gutter (355px) e o cursor pinta até 359px, 4px dentro da margem.
+   * Não gera scroll horizontal, mas atravessa o gutter, que é regra dura.
+   *
+   * A reserva é constante e não depende de onde o cursor está, então ela não
+   * reintroduz o reflow que a posição absoluta existe para evitar.
+   */
+  --caret-reserve: calc(var(--caret-gap) + var(--caret-width));
 }
 
 .light .theme-terminal {
@@ -445,3 +468,44 @@ body:has(.theme-terminal) {
   }
 }
 
+/**
+ * Linha de terminal digitada (`prototype.html:142-143`).
+ *
+ * O cursor **não pode entrar no fluxo do texto.** Entre o trecho já digitado
+ * e o que falta, um `inline-block` seria um átomo inline: ele acrescenta
+ * largura e, pior, cria oportunidade de quebra de linha no meio de uma
+ * palavra. Como ele caminha um caractere por vez, a linha passaria a quebrar
+ * em pontos diferentes ao longo da digitação — reflow a cada tecla, e uma
+ * linha a mais no mobile.
+ *
+ * A âncora é um inline vazio: não ocupa largura, não cria ponto de quebra e
+ * só serve de bloco contentor para o cursor absoluto. O resultado é que o
+ * texto quebra, em todo quadro, exatamente onde a string completa quebraria.
+ */
+.theme-terminal [data-typed] {
+  padding-right: var(--caret-reserve);
+}
+
+.theme-terminal [data-caret-anchor] {
+  position: relative;
+}
+
+.theme-terminal [data-caret] {
+  position: absolute;
+  top: 0;
+  left: var(--caret-gap);
+  width: var(--caret-width);
+  height: 1em;
+  background: var(--accent);
+  transform: translateY(var(--caret-drop));
+}
+
+/**
+ * O que ainda não foi digitado: continua no fluxo, segurando a caixa, e
+ * continua na árvore de acessibilidade — `opacity`, não `visibility` nem
+ * `display`, porque as outras duas tirariam o texto do leitor de tela e
+ * devolveriam o CLS que este elemento existe para evitar.
+ */
+.theme-terminal [data-caret-ghost] {
+  opacity: 0;
+}

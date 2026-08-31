@@ -138,6 +138,21 @@ As chaves de cor `muted` e `accent` do Tailwind **pertencem ao shadcn**. As do
 redesign vivem no namespace `term`: `bg-term-bg`, `text-term-muted`,
 `border-term-line`, `text-term-accent`. Nunca sobrescreva as do shadcn.
 
+**O `twMerge` apaga a escala tipográfica em silêncio.** O `cn()` de
+`src/lib/utils.ts` passa por `tailwind-merge`, que decide se um `text-*` é
+tamanho ou cor pelo formato do sufixo: `text-2xl` casa com t-shirt size e cai
+no grupo `font-size`; `text-command`, `text-display`, `text-project` e os
+outros do protótipo não casam com nada e caem no grupo `text-color`. Aí
+`cn("text-command", "text-term-text")` vê duas cores no mesmo grupo, mantém a
+última e **descarta o tamanho**. A linha digitada renderizou a 16px em vez de
+41.6px por causa disso, e build, type-check e lint passaram os três.
+
+A correção está em `src/lib/utils.ts`: `extendTailwindMerge` com a lista de
+chaves de `theme.extend.fontSize`. **Chave nova em `fontSize` entra nas duas
+listas.** O sintoma de esquecer é texto no tamanho errado, e só onde `cn`
+recebe cor e tamanho na mesma chamada — `terminal-prompt.tsx` já tinha a
+armadilha armada sem disparar.
+
 ### Estrutura de rotas
 
 Root layouts múltiplos via route groups — cada um com seu próprio `<html>`:
@@ -335,6 +350,113 @@ Sem movimento (`prefers-reduced-motion`) a faixa vira texto corrido: trilho
 solta o `max-content`, a lista quebra linha dentro do gutter, a cópia-eco e o
 separador final somem. Marquee parado esconderia a maior parte da lista atrás
 da borda, e informação que só existe enquanto algo se move não é informação.
+
+### Comando — medido (30/08/2026)
+
+```
+Performance 99 · Acessibilidade 100
+FCP 1.2s · LCP 2.2s · TBT 0ms · CLS 0.000 · SI 1.2s · 210 KiB
+```
+
+Três execuções idênticas — a primeira medição deu 98/LCP 2.3s e era ruído.
+
+**É o primeiro JavaScript de cliente do redesign, e o TBT não se mexeu: 0ms
+antes da seção, 0ms depois.** A rota saiu de 3,57 KiB para 3,65 KiB. Digitar
+36 caracteres com `setTimeout` mais um IntersectionObserver custa zero de
+bloqueio: o trabalho por caractere é um `setState` de um inteiro e a árvore
+reconciliada tem três nós.
+
+**Ressalva, e ela é a parte importante do número:** o TBT de 0ms mede trabalho
+esparso (`setTimeout` a 28ms), não um loop por quadro. O orçamento de 280ms
+segue intacto mas **ainda não foi testado contra `rAF` contínuo** — o custo do
+cursor, do Lenis e do marquee em JS não pode ser inferido deste número. O
+risco registrado da fase de movimento continua de pé e continua exigindo
+verificação com CPU throttling 4x.
+
+#### A digitação não pode custar CLS
+
+O texto ainda não digitado **fica no DOM**, transparente, no lugar exato onde
+vai aparecer. Sem isso a linha cresceria de zero à largura final e, a 375px,
+ganharia uma segunda linha no meio da digitação — CLS puro num piso de 0.001.
+`opacity`, não `visibility` nem `display`: as outras duas tirariam o texto da
+árvore de acessibilidade e devolveriam o reflow que o fantasma existe para
+evitar. Medido: altura idêntica antes e depois da digitação em 320, 360, 375,
+390, 414, 768 e 1440px.
+
+Manter o resto no DOM também é o que faz o leitor de tela encontrar
+`~/luis-marcelo $ ls ./projects --all` inteiro e em ordem em qualquer instante
+da animação. Nada de `aria-live` — o texto não é anúncio, e mutação fora de
+live region não é narrada.
+
+O primeiro render do cliente é **idêntico** ao do servidor (string completa);
+a truncagem só acontece dentro do `useEffect`. É a mesma armadilha do guard
+`mounted` do controle de tema. De quebra, é o comportamento correto sem JS e
+sob `prefers-reduced-motion`, que saem pela mesma porta — verificado no
+emulador do DevTools, não por leitura do código.
+
+#### `--caret-reserve` — por que existe
+
+O cursor é absoluto e por isso não conta na quebra de linha. Medido a 375px:
+**o texto cabe por 6,7px** (328,3px contra 335px de linha útil), **mas o
+cursor pintava 4px dentro do gutter** de 20px — sem gerar scroll horizontal,
+e ainda assim atravessando uma regra dura do projeto.
+
+`--caret-reserve` (`--caret-gap` + `--caret-width`) devolve esse espaço como
+`padding-right` da linha. **É padding constante, não um clamp rebaixado** —
+baixar o piso para ~0.98rem seria valor mágico escondendo sintoma. Constante
+também significa que a reserva não depende de onde o cursor está, e por isso
+não reintroduz o reflow que a posição absoluta existe para evitar.
+
+Consequência: a 375px a linha passa a quebrar em duas. Abaixo de 368px de
+viewport o texto sozinho já não caberia e a quebra aconteceria de qualquer
+forma.
+
+#### Decisão: o corte de linha cai depois do hífen
+
+**A linha do comando quebra depois do hífen, em `--` / `all`, e não antes do
+token. Isso é intencional:** terminal quebra por coluna, não por palavra, e o
+corte cai a 33 de ~35 caracteres, praticamente na coluna.
+
+A alternativa (`nowrap` por token) foi testada e descartada: resolve o
+cosmético e cria um modo de falha pior, com token longo estourando a linha sem
+fallback. `word-break: keep-all` e `overflow-wrap` não suprimem a quebra após
+hífen em nenhuma combinação.
+
+Isto está escrito como decisão, e não como pendência, de propósito. **Decisão
+deliberada de não-consertar é a que mais some: bug documentado alguém acha,
+escolha não documentada alguém desfaz.**
+
+#### Quatro divergências do protótipo, e o motivo de cada uma
+
+- **Cursor absoluto**, não `inline-block` como em `:143`. Um átomo inline
+  entre o trecho digitado e o resto acrescenta largura e cria oportunidade de
+  quebra no meio de uma palavra; como ele caminha um caractere por vez, a
+  linha passaria a quebrar em pontos diferentes ao longo da digitação. A
+  âncora inline vazia não ocupa largura nem cria ponto de quebra, então o
+  texto quebra em todo quadro onde a string completa quebraria.
+- **Texto não digitado transparente no DOM.** Segura a caixa (zero CLS) e
+  entrega a linha inteira ao leitor de tela em qualquer instante da animação.
+- **Rótulo como `<h2>`**, não `<div>` como em `:141`. Nomeia a `region`, já
+  que a seção vive fora do `<main>` — mesmo requisito estrutural do marquee e
+  da lista de projetos.
+- **IntersectionObserver na linha, não na seção** (`:207` observa a seção). A
+  seção tem `py-section-lg` dos dois lados e 35% da área dela já estão
+  visíveis antes de o texto chegar perto do fundo da tela; observar a linha
+  faz a digitação começar quando ela é de fato vista.
+
+#### `TypedCommand` nasce genérico
+
+Recebe a linha pronta por prop e não sabe nada sobre a seção que o usa. As
+quatro seções derivadas (sobre, stack, experiência, contato) reaproveitam o
+mesmo componente mudando só o `text` — fazer específico agora custaria quatro
+refactors depois.
+
+O caminho da sessão vem de `HeroSection.prompt.path`, não de uma cópia em
+`CommandSection`: é o mesmo `~/luis-marcelo` do prompt do hero, a mesma
+sessão, e duas cópias divergiriam na primeira edição de um lado só. Rótulo e
+comando são jargão de terminal e têm o mesmo valor em PT e EN, como o
+`exit 0` do rodapé — a seção é a primeira que renderiza idêntica nos dois
+idiomas, e isso é intencional, não chave faltando.
 
 ### Decisão revista: header em 375px
 

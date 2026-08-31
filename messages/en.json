@@ -134,6 +134,10 @@
       }
     }
   },
+  "CommandSection": {
+    "label": "session · stdin",
+    "command": "ls ./projects --all"
+  },
   "ContactSection": {
     "title": "Contact",
     "getInTouch": "Get in Touch",

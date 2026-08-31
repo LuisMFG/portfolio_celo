@@ -53,6 +53,13 @@ const config: Config = {
         // menor: dentro da linha o texto compete com o nome ao lado, e .18em
         // alargaria a pilha de tecnologias sem ganho de leitura.
         'project-meta': ['11px', { letterSpacing: '.14em' }],
+        // Linha de terminal digitada (prototype.html:142). Escala própria:
+        // é maior que o prompt do hero — aqui a linha é o conteúdo da seção,
+        // não a assinatura de rodapé de tela.
+        command: [
+          'clamp(1rem,3.2vw,2.6rem)',
+          { letterSpacing: '-0.03em', lineHeight: '1.2' },
+        ],
       },
       spacing: {
         // Definido em `tokens.css`: regras de lá também consomem o gutter, e
@@ -78,6 +85,9 @@ const config: Config = {
         // Entre o cabeçalho da lista de projetos e a primeira linha
         // (prototype.html:101). Fixo no protótipo, não um clamp.
         'projects-head': '22px',
+        // Entre o rótulo `session · stdin` e a linha digitada
+        // (prototype.html:141). Fixo no protótipo, não um clamp.
+        'command-head': '26px',
       },
       height: {
         // O grid pertence à primeira tela, não ao documento: o shell cresce
@@ -91,6 +101,11 @@ const config: Config = {
       // minHeight/minWidth (ambos chegaram na 3.4). Entram como token para
       // que nenhum componente precise de valor arbitrário.
       minHeight: {
+        // Piso de uma linha para a linha digitada (prototype.html:142). Sem
+        // ele a caixa teria altura zero antes do primeiro caractere; com o
+        // fantasma do TypedCommand ele só governa quando o texto cabe numa
+        // linha, que é o caso de 768px para cima.
+        command: '1.3em',
         // Alvo de toque de 44px sem inflar os 11px da fonte.
         tap: '44px',
         // svh, não vh: barra fantasma no Safari iOS.
