@@ -1,9 +1,11 @@
 import { setRequestLocale } from "next-intl/server";
+import { fetchProjects, type Locale } from "@/src/lib/content";
 import { BackgroundGrid } from "@/src/components/site/background-grid";
 import { SiteHeader } from "@/src/components/site/site-header";
 import { SiteFooter } from "@/src/components/site/site-footer";
 import { HeroSection } from "@/src/components/site/hero-section";
 import { MarqueeSection } from "@/src/components/site/marquee-section";
+import { ProjectsSection } from "@/src/components/site/projects-section";
 
 /**
  * Página de staging do redesign. As seções de conteúdo entram no `<main>`,
@@ -24,6 +26,8 @@ export default async function V2Page({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const projects = await fetchProjects(locale as Locale);
 
   return (
     <>
@@ -51,6 +55,11 @@ export default async function V2Page({
           enfeite. Toda seção que entrar aqui embaixo precisa do mesmo — nome
           acessível ou nada de landmark. */}
       <MarqueeSection />
+
+      {/* Também fora do `<main>`, pelo mesmo motivo da faixa — e com o mesmo
+          requisito: `aria-labelledby` no `<section>` a torna landmark
+          `region`, com o `<h2>` do cabeçalho como nome. */}
+      <ProjectsSection projects={projects} />
 
       <SiteFooter />
     </>

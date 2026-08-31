@@ -89,6 +89,12 @@
   },
   "ProjectsSection": {
     "title": "Projects",
+    "index": "index",
+    "newTab": "opens in a new tab",
+    "status": {
+      "done": "Completed",
+      "wip": "In development"
+    },
     "items": {
       "coneci-ro": {
         "title": "CONECI - RO (In development)",

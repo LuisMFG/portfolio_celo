@@ -48,6 +48,11 @@ const config: Config = {
         prompt: ['clamp(.8rem,1.15vw,1rem)', { letterSpacing: '0' }],
         label: ['11px', { letterSpacing: '.18em' }],
         'label-wide': ['11px', { letterSpacing: '.2em' }],
+        // Meta da linha de projeto — índice, pilha e status
+        // (prototype.html:108-111). Mesmos 11px dos outros rótulos, tracking
+        // menor: dentro da linha o texto compete com o nome ao lado, e .18em
+        // alargaria a pilha de tecnologias sem ganho de leitura.
+        'project-meta': ['11px', { letterSpacing: '.14em' }],
       },
       spacing: {
         // Definido em `tokens.css`: regras de lá também consomem o gutter, e
@@ -70,6 +75,9 @@ const config: Config = {
         // (prototype.html:95). Em `em` de propósito: acompanha o clamp da
         // fonte do marquee em vez de virar um vão fixo no mobile.
         'marquee-sep': '0.45em',
+        // Entre o cabeçalho da lista de projetos e a primeira linha
+        // (prototype.html:101). Fixo no protótipo, não um clamp.
+        'projects-head': '22px',
       },
       height: {
         // O grid pertence à primeira tela, não ao documento: o shell cresce

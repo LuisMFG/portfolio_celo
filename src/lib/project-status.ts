@@ -37,5 +37,48 @@ export function toProjectStatus(value: unknown): ProjectStatus {
  * deixa de mandar nele.
  */
 export function deriveStatusFromTitle(titlePt: string): ProjectStatus {
-  return /\(em constru[çc][ãa]o\)/i.test(titlePt) ? "wip" : "done";
+  return PT_WIP_MARKER.test(titlePt) ? "wip" : "done";
 }
+
+/** O marcador que `deriveStatusFromTitle` lê. Só o lado português, de propósito. */
+const PT_WIP_MARKER = /\(em constru[çc][ãa]o\)/i;
+
+/**
+ * Marcador de andamento que alguns títulos ainda carregam dentro do próprio
+ * texto — legado de antes da coluna `status` existir.
+ *
+ * Ancorado no fim e com a lista de variantes **fechada**, nunca um
+ * `\([^)]*\)$` genérico: "3D Card Chaewon Yugioh" e qualquer título futuro com
+ * parêntese informativo perderiam conteúdo. Só casam as três grafias que
+ * existem no dado real — "(Em Construção)", "(Em construção)" e
+ * "(In development)" — e a caixa é ignorada porque `messages/pt-BR.json` usa
+ * duas delas.
+ *
+ * Cobre os dois idiomas, ao contrário de `PT_WIP_MARKER`: aqui o alvo é o
+ * texto que vai à tela, e o EN marca os mesmos projetos com "(In development)".
+ */
+const TRAILING_STATUS_MARKER =
+  /\s*\((?:em constru[çc][ãa]o|in development)\)\s*$/i;
+
+/**
+ * Tira do título o marcador que a coluna de status já comunica.
+ *
+ * **Só desenho.** O dado no banco e em `messages/*.json` fica intocado; quem
+ * limpar na origem tem que mexer em `deriveStatusFromTitle` junto, senão o
+ * próximo seed marca tudo como `done` (a pendência está em CLAUDE.md).
+ */
+export function stripStatusMarker(title: string): string {
+  return title.replace(TRAILING_STATUS_MARKER, "");
+}
+
+/**
+ * Glifo de cada status no desenho (`prototype.html:111`, `:129`).
+ *
+ * Mora aqui, junto da limpeza do título, porque os dois lados são a mesma
+ * decisão: o marcador sai do nome exatamente porque este colchete entra. Não
+ * é rótulo acessível — esse é traduzido, em `ProjectsSection.status`.
+ */
+export const PROJECT_STATUS_GLYPH: Record<ProjectStatus, string> = {
+  done: "[ok]",
+  wip: "[wip]",
+};

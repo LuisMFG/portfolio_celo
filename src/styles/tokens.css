@@ -56,6 +56,36 @@
    */
   --marquee-duration: 32.82s;
   --marquee-duration-hover: 54.7s;
+
+  /**
+   * Lista de projetos (`prototype.html:100-137`).
+   *
+   * As duas colunas fixas, o gap, o padding e o deslocamento do hover são os
+   * números do protótipo (`:107` e `:26`), aqui e não no componente.
+   */
+  --project-col-index: 64px;
+  --project-col-status: 84px;
+  --project-gap: 16px;
+  --project-pad-y: clamp(20px, 2.6vw, 34px);
+  --project-pad-x: 4px;
+  --project-shift: 14px;
+
+  /**
+   * Só existe abaixo de `md`, onde a linha vira três faixas empilhadas — o
+   * protótipo é de uma linha só e não tem esse vão. Menor que o piso de
+   * `--project-pad-y` (20px), que é o respiro entre projetos vizinhos: as
+   * faixas de uma mesma linha têm que se ler mais juntas que duas linhas.
+   */
+  --project-row-gap: 12px;
+
+  /**
+   * Entrelinha do nome quando ele quebra, e quebra só na pilha do mobile:
+   * "Spacetime - Shai Gilgeous Alexander" mede ~35 caracteres contra ~27 de
+   * linha útil a 375px. O `lineHeight: 1` do token `project` é do protótipo,
+   * onde todo nome cabe em uma linha; em duas, ascender e descender da
+   * JetBrains Mono somam ~1.02em e encostariam.
+   */
+  --project-name-leading-stacked: 1.1;
 }
 
 .light .theme-terminal {
@@ -263,6 +293,96 @@ body:has(.theme-terminal) {
   animation-delay: 0.62s;
 }
 
+/**
+ * Linha da lista de projetos (`prototype.html:107`).
+ *
+ * **Decisão de 375px: o grid de quatro colunas não é espremido, é
+ * substituído.** `64px 1.6fr 1.4fr 84px` a 335px de linha útil deixaria ~150px
+ * para um nome de até 35 caracteres. Abaixo de `md` a linha vira três faixas:
+ * os dois rótulos de 11px dividem a primeira (índice à esquerda, status à
+ * direita), o nome ocupa a largura inteira na segunda e a pilha de tecnologias
+ * fecha na terceira. O nome ganha a linha toda em vez de uma fração dela, e a
+ * ordem de leitura é a mesma do desktop.
+ *
+ * O breakpoint é o `md` do Tailwind (768px), o mesmo que header e hero usam
+ * para colapsar. Colapso por media query, nunca por render condicional.
+ *
+ * Sem `will-change`, ao contrário do protótipo: são nove linhas, e promover
+ * nove camadas de forma permanente para um deslocamento que só acontece sob o
+ * ponteiro é pagar memória de GPU o tempo todo por um efeito ocasional. O
+ * marquee tem `will-change` porque anima do primeiro ao último quadro.
+ */
+.theme-terminal [data-project-row] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "index status"
+    "name  name"
+    "tech  tech";
+  column-gap: var(--project-gap);
+  row-gap: var(--project-row-gap);
+  padding: var(--project-pad-y) var(--project-pad-x);
+  border-bottom: 1px solid var(--line);
+  transition:
+    transform 0.6s var(--ease),
+    color 0.35s var(--ease);
+}
+
+.theme-terminal [data-project-cell="index"] {
+  grid-area: index;
+}
+.theme-terminal [data-project-cell="name"] {
+  grid-area: name;
+  line-height: var(--project-name-leading-stacked);
+}
+.theme-terminal [data-project-cell="tech"] {
+  grid-area: tech;
+}
+.theme-terminal [data-project-cell="status"] {
+  grid-area: status;
+}
+
+@media (min-width: 768px) {
+  .theme-terminal [data-project-row] {
+    grid-template-columns:
+      var(--project-col-index) minmax(0, 1.6fr) minmax(0, 1.4fr)
+      var(--project-col-status);
+    grid-template-areas: "index name tech status";
+    row-gap: 0;
+    /* `baseline`, como o protótipo: a pilha de tecnologias pode ocupar duas
+       linhas nas larguras intermediárias e é a primeira delas que tem que
+       casar com o nome. */
+    align-items: baseline;
+  }
+
+  .theme-terminal [data-project-cell="name"] {
+    line-height: 1;
+  }
+}
+
+/**
+ * Hover atrás de `@media (hover: hover)` pelo mesmo motivo do marquee: em
+ * toque o `:hover` gruda depois do tap e a linha ficaria deslocada e acesa
+ * para sempre, sem gesto que desfaça.
+ *
+ * A cor troca só o que herda — o nome. Índice, tecnologias e `[wip]` declaram
+ * `--muted` e `[ok]` declara `--accent`, então ficam parados. É o desenho do
+ * protótipo (`:26`), não um efeito colateral.
+ *
+ * Linha sem destino não é `<a>` e por isso não casa nenhuma das duas regras:
+ * o seletor pede o elemento interativo, não o atributo.
+ */
+@media (hover: hover) {
+  .theme-terminal a[data-project-row]:hover {
+    color: var(--accent);
+    transform: translate3d(var(--project-shift), 0, 0);
+  }
+}
+
+.theme-terminal a[data-project-row]:focus-visible {
+  color: var(--accent);
+}
+
 @media (prefers-reduced-motion: reduce) {
   /* Nada pulsa, nada repete. Sem `fill-mode`, cada elemento volta ao próprio
      estado computado quando a animação encerra — o cursor fica aceso e a
@@ -311,4 +431,17 @@ body:has(.theme-terminal) {
   .theme-terminal [data-marquee-list] > li:last-child [data-marquee-sep] {
     display: none;
   }
+
+  /**
+   * O deslocamento de 14px da linha de projeto é movimento, não estado: com o
+   * `transition: none` acima ele viraria um salto seco a cada passagem do
+   * ponteiro. A cor fica — ela é o que comunica o alvo.
+   *
+   * Vence a regra de `@media (hover: hover)` por vir depois com a mesma
+   * especificidade (0,2,1). Quem mover este bloco para cima quebra isso.
+   */
+  .theme-terminal a[data-project-row]:hover {
+    transform: none;
+  }
 }
+

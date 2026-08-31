@@ -89,6 +89,12 @@
   },
   "ProjectsSection": {
     "title": "Projetos",
+    "index": "index",
+    "newTab": "abre em nova aba",
+    "status": {
+      "done": "Concluído",
+      "wip": "Em andamento"
+    },
     "items": {
       "coneci-ro": {
         "title": "CONECI - RO (Em Construção)",
