@@ -1115,6 +1115,16 @@ Não entrou no commit de promoção de propósito: são problemas independentes,
 **se a promoção precisar ser revertida o rate limit não deve voltar junto** —
 a exposição existe com qualquer uma das duas homes.
 
+**Verificado em produção (09/09/2026), sem disparar e-mail:** sete `POST` com
+corpo `{}` — o limite roda antes da validação, então corpo inválido não envia
+nada. Resultado exato: cinco `400` ("Todos os campos são obrigatórios") e a
+sexta e sétima `429`. O limite funciona no ar.
+
+Isso também mostra o caso favorável da ressalva acima: as sete requisições
+caíram na mesma instância (reuso do Fluid Compute). Instâncias diferentes
+teriam contadores próprios, e é exatamente por isso que continua sendo
+quebra-molas.
+
 O cliente não distingue `429` de outros erros: cai em `form.errorDefault`
 ("Erro ao enviar mensagem"). Aceito por ora — distinguir exigiria chave nova
 em `messages/*.json`, e o caso é raro o bastante para não pagar isso agora.

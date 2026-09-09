@@ -46,3 +46,11 @@ v2-*.html
 # permissão dadas nesta máquina, e permissão concedida aqui não é decisão do
 # projeto. Regra que vale para o projeto vai em .claude/settings.json.
 .claude/settings.local.json
+
+# Relatórios do Lighthouse — artefato de medição, nunca versionado.
+# `v2-local.html` e `design/prototype.dc.html.bak` entraram por engano e
+# saíram em 09/09/2026.
+*.report.html
+*.report.json
+lighthouse-*.html
+*.bak
