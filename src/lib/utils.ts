@@ -28,6 +28,7 @@ const TERM_FONT_SIZES = [
   'project-meta',
   'command',
   'body',
+  'field',
 ] as const;
 
 const twMerge = extendTailwindMerge({

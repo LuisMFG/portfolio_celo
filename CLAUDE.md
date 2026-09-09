@@ -255,6 +255,29 @@ O redesign precisa atingir, medido do mesmo jeito:
 | LCP | 2.8 s | **< 2.5 s** |
 | CLS | 0.005 | **manter < 0.01** |
 
+#### Estes números são de produção. As medições de seção não são.
+
+**A tabela acima foi medida no site publicado na Vercel, atrás de CDN. O piso
+de 2,2s e todas as medições de seção são `next start` em localhost com o
+simulador Lantern do Lighthouse. Os dois não são comparáveis em valor
+absoluto.**
+
+A distinção não é acadêmica, e é a que faltava aqui:
+
+- **Delta entre medições localhost é comparável** — mesma máquina, mesmo
+  simulador, mesmo build. "Esta seção custou +100ms de LCP" é uma afirmação
+  válida, e é assim que cada seção foi julgada.
+- **Limiar absoluto entre ambientes diferentes, não.** Dizer "LCP 2,5s
+  estourou a meta de < 2,5s" compara maçã localhost com laranja produção. A
+  latência de documento, o TLS, o cache de borda e a distribuição geográfica
+  do CDN não existem no localhost, e o Lantern os substitui por um modelo
+  fixo de 150ms de RTT.
+
+**Nenhuma cirurgia de CSS crítico deve começar antes de o LCP ser medido no
+deploy real.** Sem isso não se sabe contra o que se está otimizando: o
+localhost pode estar mentindo para os dois lados, e o custo de otimizar a
+métrica errada é alto.
+
 Diagnóstico do baseline — o gargalo é JavaScript, não imagem nem layout:
 
 - Main thread ocupado 3.1s; execução de JS 2.4s. O TBT é o que derruba o score.
@@ -808,6 +831,328 @@ O sintoma que fecha o diagnóstico em um passo: comparar o hash do CSS que a
 página carrega com o que existe em `.next/static/css`. Se o arquivo carregado
 não está no disco, o servidor é de outro build. Matar por
 `lsof -ti :PORTA`, nunca por nome.
+
+### Contato — medido (09/09/2026)
+
+```
+Performance 98 · Acessibilidade 100
+FCP 1.36s · LCP 2.31s · TBT 0ms · CLS 0.000 · 217 KiB   (doc 14.301 B)
+Performance 97 · FCP 1.51s · LCP 2.46s                  (doc 14.736 B)
+```
+
+Medido quente (descartando a primeira execução, pelo motivo registrado
+abaixo). A série de `97 · FCP 1,5 · LCP 2,5` que apareceu primeiro é a **mesma
+página** medida do outro lado de um limiar de rede — não outro resultado.
+
+Rota de 3,65 KiB para 4,43 KiB. **É a primeira seção do redesign que custa
+alguma coisa, e o número foi obtido em A/B controlado**, não contra os pisos
+de dias anteriores: HEAD sem a seção, build frio, mesma máquina, mesma sessão,
+deu `99 · FCP 1,2 · LCP 2,2` três vezes; com a seção, `97 · FCP 1,5 · LCP 2,5`
+cinco vezes em dois builds frios distintos.
+
+**Custo real, medido em estado quente: ~+100ms de LCP.** O número de 300ms
+que apareceu primeiro era artefato de medição, e a causa está diagnosticada e
+testada abaixo.
+
+O TBT **não se mexeu**: 0ms antes, 0ms depois, com o primeiro componente de
+cliente com estado do redesign (quatro campos controlados, máquina de envio e
+`fetch`). O orçamento de 280ms de TBT segue integralmente disponível.
+
+#### O documento está a ~300 B de um precipício de 150ms
+
+**Esta é a descoberta mais importante da seção, e ela não é sobre a seção.**
+
+O Lantern (o simulador do Lighthouse) modela TCP slow start com janela de
+congestionamento inicial de 10 segmentos × 1460 B = **14.600 B**. Documento
+que cabe nessa janela chega em um round trip; documento que a estoura precisa
+de dois, e o segundo custa os 150ms de RTT do perfil móvel.
+
+**Testado, não deduzido** — com padding de alta entropia no documento, três
+builds, três execuções quentes cada:
+
+| doc (comprimido) | FCP | LCP |
+|---|---|---|
+| 14.301 (`< 14600`) | 1355 ms | 2308 ms |
+| 15.161 (`> 14600`) | 1505 ms | 2455 ms |
+| 16.172 (`> 14600`) | 1506 ms | 2455 ms |
+
++860 B cruzando o limiar custam **+150ms exatos**. Mais 1011 B **depois** do
+limiar custam **zero**. É degrau, não rampa — o que também é a prova de que
+não é trabalho acrescentado, porque trabalho escalaria com os bytes.
+
+Consequência prática, e ela é pior do que "está perto do limiar": **`/v2`
+oscila em cima dele.** Medido no mesmo código-fonte, em builds diferentes:
+14.301 B (abaixo → LCP 2308ms) e 14.736 B (acima → LCP 2455ms). Dentro de um
+build o valor é estável; entre builds varia ~±400 B.
+
+Causa provável — **não isolada**: o `buildId` e os hashes de chunk mudam a
+cada build e aparecem no documento, mexendo na compressibilidade. Registrado
+como hipótese, não como fato.
+
+Isso significa que o LCP de `/v2` é **bimodal por build**: ~2,31s ou ~2,46s,
+e qual dos dois se mede é sorteio. Duas consequências:
+
+- **Reportar sempre em qual lado do limiar a medição caiu.** Um LCP sem o
+  `transferSize` do documento ao lado não é comparável com outro.
+- **Folga de 300 B não é folga.** Para sair da zona instável o documento
+  precisa de ~1 KB abaixo de 14.600, não de 100 B. Qualquer seção nova cruza
+  isso, e os 150ms vão parecer culpa dela quando são do documento inteiro.
+
+#### Duas armadilhas de medição, e as duas eram minhas
+
+- **A primeira execução do Lighthouse depois de subir o servidor mede
+  diferente.** Medido: run 1 → doc 15.012 / LCP 2460ms; runs 2 a 8 → doc
+  14.301 / LCP ~2308ms, idênticas. As duas caem em lados opostos dos 14.600.
+  `curl` não reproduz (13.572 B, `x-nextjs-cache: HIT` desde a primeira
+  requisição), então **não é cache ISR** — o mecanismo é do Chrome/servidor e
+  ficou sem identificação, mas o efeito é reprodutível. **Descarte sempre a
+  primeira execução** e meça as seguintes.
+- **Comparar builds diferentes escondeu isso por horas.** As séries de 97/2,5
+  e 98/2,3 eram a mesma página nos dois lados do limiar, não dois artefatos
+  diferentes. A hipótese de que 740 B de CSS explicavam o salto estava
+  errada; comentário de CSS também foi descartado (o build os remove, sobram
+  2 `/*` no arquivo). Build é determinístico: dois builds frios da mesma
+  árvore servem documento de 94.216 B idêntico.
+
+#### Ela não existe no protótipo, e a estrutura veio do componente antigo
+
+O protótipo vai da seção de comando direto ao rodapé. Derivada — e o desenho
+da derivação foi **decidido pelo conteúdo que precisava sobreviver**:
+`ContactSection` tem 19 chaves traduzidas, incluindo a subárvore `form.*` com
+14, e `/api/contact` existe e funciona (Resend).
+
+Manter as duas colunas do `sections/contact-section.tsx` antigo — à esquerda
+`getInTouch` + descrição + canais + `followMe`, à direita `sendMessage` + o
+formulário — é o que faz **as 19 chaves continuarem renderizadas**. Zero copy
+nova, zero chave nova, zero chave abandonada. Uma derivação "mais limpa" que
+descartasse metade delas seria reescrita de conteúdo disfarçada de redesign.
+
+Empréstimos: cabeçalho de dois rótulos com `pb-projects-head` e a gramática
+`$ comando` (de "sobre"); prosa `text-body` / `max-w-about` 72ch; `<dl>` em
+`max-content minmax(0,1fr)` com `display: contents` (de "stack"); colchetes do
+botão (dos controles do header); `[ok]` da linha de resultado (da lista de
+projetos). Nenhum vão novo — todos apelidos, medidos: prosa **829,44px =
+72,0ch exatos**, coluna de rótulos alinhada entre os dois pares em `x=43,2` /
+`w=56,98`, gap de coluna 95,04px (3 linhas em branco).
+
+#### A régua de cima pertence à banda de comando, não a esta seção
+
+`border-t` aqui parece fronteira de seção e não é. A seção de comando é
+`--surface`, e quem fechava a banda dela por baixo era o `border-t` do rodapé.
+Inserir a contato no meio deixaria aquela borda órfã. **Régua marca troca de
+superfície vale nos dois sentidos** — na saída da banda também, não só na
+entrada.
+
+#### `fontSize.field`: o piso é 16px, e o motivo é o dispositivo
+
+`clamp(1rem, 1.35vw, 1.2rem)` — o `body` com o piso subido de 0,9rem.
+**Abaixo de 16px o Safari iOS dá zoom ao focar um campo**, reposicionando a
+página no meio do preenchimento. Medido a 375px: `font-size` computado de
+16px. Entrou também em `TERM_FONT_SIZES` de `src/lib/utils.ts` — chave nova em
+`fontSize` entra nas duas listas, e o sintoma de esquecer é texto no tamanho
+errado.
+
+#### O cliente não valida nada, de propósito
+
+`/api/contact` **não usa `src/lib/validators.ts`** — não há schema de contato
+lá. A rota valida à mão: campos obrigatórios, `emailRegex` local e truncagem
+silenciosa para 100/200/2000. Como não há schema a compartilhar, a defesa
+contra divergência é o cliente **não ter opinião**: só `required` e
+`type="email"` nativos. **Nada de `maxLength` nos campos** — seria uma segunda
+cópia de 100/200/2000 vivendo longe da rota, exatamente a divergência que se
+quer evitar. Quem trunca é o servidor, sozinho.
+
+#### O texto de erro do servidor não vai para a tela
+
+A rota responde `{ error }` **só em português** ("Erro interno do servidor").
+O componente antigo o exibia com `data.error || t(...)`, mostrando português a
+quem lê em inglês. Aqui o corpo da resposta é ignorado: falha de resposta usa
+`form.errorDefault`, falha de rede usa `form.errorUnknown`, as duas
+traduzidas. Verificado no DOM em `/en/v2`: `stderr: Error sending message`.
+
+#### Erro não é vermelho, e sucesso não é toast
+
+Um único acento em todo o site, e não existe cor de status separada. O que
+separa os dois estados é o **token textual**: `[ok]` em `--accent` para
+sucesso, `stderr:` em `--muted` com a mensagem em `--text` para erro — que é
+o que a WCAG 1.4.1 pede de qualquer forma. Medido: `[ok]` em `#00e676`,
+`stderr:` em `#828282`, mensagem em `#ededed`.
+
+Sucesso em `role="status"`, erro em `role="alert"`. **As duas regiões vivem no
+DOM vazias desde o primeiro render** — região viva criada só na hora do erro
+pode não ter sido registrada pelo leitor de tela a tempo. `:empty` zera a
+margem em vez de `display: none`, que a tiraria da árvore e devolveria o
+problema. Elemento vazio não forma linha: altura zero, CLS zero. Medido:
+`margin-top` 0px vazia, 18,15px preenchida.
+
+Envio duplo é barrado em duas camadas — `disabled` no botão e um guard no topo
+do `handleSubmit`, que é o que sobrevive a `requestSubmit()` por teclado.
+Verificado por submit real: erro devolve `[ Try again ]` com os campos
+preservados; sucesso devolve `[ Sent successfully! ]` desabilitado com os
+campos limpos.
+
+#### `--contact-result-gap` existe só para não mentir
+
+Mesma definição de `--contact-field-gap`, token separado. `em` resolve contra
+o font-size de cada elemento: entre campos o vão cai sobre `text-field` e
+rende 31,68px; sobre a linha de resultado cai sobre `text-project-meta` (11px)
+e rende 18,15px. **Os dois estão certos** — cada um é uma linha em branco do
+texto a que pertence —, mas um nome só para dois valores renderizados faz
+parecer que um deles quebrou.
+
+#### `[ ENVIAR MENSAGEM ]` e o espaço que o flex come
+
+O botão é `inline-flex`, e **flex descarta o espaço em branco das pontas de
+cada nó de texto**: `{"[ "}` e `{" ]"}` renderizaram `[ENVIAR MENSAGEM]`, com
+os colchetes colados. A correção é `\u00a0`, que não é colapsável, dentro dos
+mesmos `<span aria-hidden>` — então não entra no nome acessível. Só apareceu
+no screenshot; build, type-check e lint passaram os três.
+
+#### 375px: as duas colunas viram uma
+
+Colapso em `md`, o mesmo de "stack" e "experiência", por media query. Medido a
+375px: `colsDisplay: flex`, rótulo e valor ambos em `x=20` (empilhados),
+prosa em 38,8 colunas, campo com `font-size` 16px e 44px de altura, botão
+44px, link mais largo (`linkedin.com/in/celodev11`) em 216px de 335,
+`scrollWidth == innerWidth`. Cabeçalho não quebra: **61,6 + 52,8 + 16 = 130,4
+de 335**, mesma linha confirmada pelo topo dos dois rótulos.
+
+#### Duas coisas registradas como decisão, não como pendência
+
+- **O vão sob a coluna de canais fica.** As duas colunas têm alturas muito
+  diferentes e `align-items: start` deixa ~430px de vazio sob os links a
+  1440px. Esticar as linhas do `<dl>` para preencher separaria dados
+  relacionados por um vão artificial. Vazio à esquerda é o que uma saída de
+  terminal faz.
+- **A localização não entra aqui.** "Sobre" já fecha com o `<dl>` LOCALIZAÇÃO
+  / `porto velho · ro`, justamente porque o header a esconde abaixo de 768px.
+  Repetir daria dois `<dl>` idênticos. Consequência: o `"Rondônia, Brasil."`
+  do componente antigo não volta — era literal cravado no JSX, nunca uma
+  chave traduzida.
+
+### Pendente: `/api/contact` não tem proteção anti-spam
+
+Verificado, e **nada foi inventado na seção**: a rota não tem honeypot, nem
+rate limit, nem captcha. `src/lib/rate-limit.ts` existe e é consumido só pelo
+login do admin (5 tentativas por 15 min) — o mesmo helper serve, é só aplicar.
+
+Não é escopo da seção de contato, e por isso não foi feito ali. Fica anotado
+para quando a rota for mexida: um formulário público sem limite é convite.
+
+### `<Toaster />` removido do site público (09/09/2026)
+
+`src/app/(site)/[locale]/layout.tsx` montava `<Toaster />` e **nada em `src/`
+consome `useToast`** — ele não desenhava nada em lugar nenhum. Saiu junto com
+o import.
+
+Não esperou a promoção do /v2 por um motivo específico: **código morto no
+bundle público atrapalha a medição de CSS crítico**, que é o próximo passo.
+Medir render-blocking com um componente que nunca pinta dentro da conta
+mediria a página errada.
+
+**O `(admin)/layout.tsx` continua montando o seu**, e isso é de propósito: o
+admin é outro root layout, com shadcn e Sora, e a remoção de lá é uma decisão
+separada que precisa checar os formulários do painel antes. `toaster.tsx`,
+`toast.tsx`, `sonner.tsx` e `use-toast.ts` seguem no repositório por isso.
+
+### Decidido: não existe seção `boot` (09/09/2026)
+
+**O overlay de carregamento foi projetado, orçado e recusado.** Está aqui como
+decisão para ninguém reabrir do zero — e, principalmente, para ninguém
+reabrir sem saber o que já foi descartado junto.
+
+#### Antes de tudo: `boot()` no protótipo não é overlay
+
+`prototype.html:168` tem uma função chamada `boot()`. Ela é o **init da fase de
+movimento** — liga cursor, marquee e digitação no `DOMContentLoaded`. Não tem
+nada a ver com tela de carregamento. A confusão entre as duas coisas é o que
+faz a ideia voltar.
+
+O overlay que existe de verdade é o do site antigo: `LoadingScreen`
+(framer-motion, "Luis Marcelo · Portfolio" + ano), exibido por `setTimeout`
+fixo de 2000ms com trava em `sessionStorage`, dentro de `home-shell.tsx`. Os
+três seguem na lista de deleção da etapa 4 da promoção, e **nada entra no
+lugar**.
+
+#### Motivo 1 — custo, sobre um orçamento já esgotado
+
+A previsão da implementação escolhida (`document.fonts.ready` + fade de 300ms)
+era **~450ms de LCP**: o tempo real de fonte, mais o fade, mais os ~150ms do
+limiar de documento que a seção cruzaria de vez. O orçamento de LCP já tinha
+sido consumido inteiro pela seção "contato".
+
+**Ressalva registrada junto, porque o arquivo não pode se contradizer:** a
+formulação original desta decisão comparava os ~2,95s resultantes com os 2,8s
+do baseline. Essa conta **cruza ambientes** — 2,95s seria localhost/Lantern e
+2,8s é produção com CDN —, exatamente o que "Estes números são de produção"
+declara inválido. O argumento sobrevive sem ela: acrescentar ~450ms a uma
+métrica que não tem folga nenhuma é caro independentemente do ambiente em que
+se meça. **O que não se pode afirmar, até medir em produção, é que o redesign
+ficaria mais lento que o site que ele substitui.**
+
+#### Motivo 2 — desenho, e este é o que decide sozinho
+
+O overlay cobre o hero, que é a peça mais forte da página.
+
+E a procedência não se sustenta: **o protótipo aprovado não tem boot.** A ideia
+veio do briefing original, não do arquivo que virou fonte da verdade. As oito
+seções existentes derivaram todas de algo que foi olhado e aprovado — as cinco
+portadas do protótipo diretamente, e as derivadas ("sobre", "stack",
+"experiência", "contato") por empréstimo declarado de elementos que estão lá.
+O boot não tinha esse lastro.
+
+#### Descartado junto — não reabrir sem ler isto
+
+- **Log de boot com tempos fixos** (`[ 0.089 ] mounting /projects .... ok`).
+  Recusado pela mesma razão do hash de commit da seção "experiência": o glifo
+  finge medir trabalho que não aconteceu. Com SSR a página **já está pronta**
+  no primeiro paint — não há espera para cobrir.
+- **Espera mínima inventada** para evitar que o overlay pisque em cache
+  quente. Recusada por ser **a opção dos tempos falsos com outro nome**: um
+  overlay que fica no ar por um tempo que ninguém está esperando é tempo
+  inventado, mesmo sem número na tela.
+- **`fonts.ready` + fade acopla o LCP ao carregamento de fonte.** Esta é a
+  análise mais importante do lote, porque ela vale para qualquer coisa que
+  venha a cobrir o hero: com o overlay saindo em `fonts.ready`, o LCP passa a
+  depender do `display: swap` e do `preload: false` escolhidos deliberadamente
+  em "Tipografia". Hoje o LCP **não espera fonte** — é justamente o que
+  `display: swap` compra. Qualquer cortina presa a `fonts.ready` desfaz isso e
+  transforma uma decisão de tipografia numa decisão de performance, sem que
+  nada no código diga que as duas ficaram acopladas.
+
+#### O que sobreviveu da análise, e vale para outra coisa
+
+Dois achados do desenho recusado continuam válidos e devem ser reusados se
+algum dia entrar qualquer elemento que cubra a página:
+
+- **Overlay renderizado no cliente é flash de conteúdo, depois cortina.** O
+  `LoadingScreen` antigo usa `useState(false)` + `useEffect`: a página pinta
+  primeiro e o overlay aparece **depois** da hidratação. O correto é nascer
+  visível no servidor e o efeito removê-lo — o padrão já registrado do
+  `TypedCommand`.
+- **A saída tem que ser CSS, não JS.** Overlay renderizado no servidor com JS
+  desabilitado cobre o site para sempre. O `@keyframes` limitado no tempo é
+  quem garante a correção; o JS só antecipa.
+
+### Estado do redesign (09/09/2026)
+
+**Oito seções, completas:** hero, marquee, sobre, stack, experiência,
+projetos, comando, contato — mais header e footer. Nenhuma seção nova
+planejada.
+
+Próximos passos, nesta ordem, **antes da fase de movimento**:
+
+1. **Medição em produção.** Nada de cirurgia de performance antes disso: todas
+   as medições de seção são localhost/Lantern e não dizem contra o que se está
+   otimizando. Ver "Estes números são de produção".
+2. **CSS crítico**, pendência aberta desde a fundação (~590ms de
+   render-blocking estimados, "reavaliar quando houver conteúdo" — agora há
+   conteúdo). O limiar de 14.600 B do documento entra na mesma passada: a
+   página oscila em cima dele.
+3. **Promoção do /v2**, a etapa de um commit só já descrita acima.
+
+Só depois disso a fase de movimento — que é onde entram cursor, Lenis e o
+`rAF`, e cujo risco de TBT continua registrado e não testado.
 
 ### Decisão revista: header em 375px
 

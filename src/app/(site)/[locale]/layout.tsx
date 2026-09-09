@@ -5,7 +5,6 @@ import { setRequestLocale, getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/src/i18n/routing";
 import { ThemeProvider } from "@/src/components/theme-provider";
-import { Toaster } from "@/src/components/ui/toaster";
 import { jetbrainsMono } from "@/src/lib/fonts";
 import { SITE_URL, localePath, languageAlternates } from "@/src/lib/site";
 
@@ -98,7 +97,6 @@ export default async function LocaleLayout({ params, children }: LayoutProps) {
           <NextIntlClientProvider locale={locale} messages={messages}>
             {children}
           </NextIntlClientProvider>
-          <Toaster />
         </ThemeProvider>
       </body>
     </html>

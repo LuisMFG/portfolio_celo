@@ -71,6 +71,15 @@ const config: Config = {
           'clamp(0.9rem,1.35vw,1.2rem)',
           { letterSpacing: '0', lineHeight: 'var(--body-leading)' },
         ],
+        // Campo de formulário. É o `body` com o piso subido de 0.9rem para
+        // 1rem, e o motivo é do dispositivo, não do desenho: **abaixo de
+        // 16px o Safari iOS dá zoom ao focar um campo**, o que reposiciona
+        // a página no meio do preenchimento. O teto e o passo continuam os
+        // do corpo — campo e prosa são o mesmo texto.
+        field: [
+          'clamp(1rem,1.35vw,1.2rem)',
+          { letterSpacing: '0', lineHeight: 'var(--body-leading)' },
+        ],
       },
       spacing: {
         // Definido em `tokens.css`: regras de lá também consomem o gutter, e

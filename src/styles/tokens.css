@@ -188,6 +188,52 @@
   --exp-entry-gap: calc(var(--about-para-gap) * 2);
   --exp-group-gap: calc(var(--about-para-gap) * 3);
   --exp-measure: var(--about-measure);
+
+  /**
+   * Seção "contato". Nenhum vão novo: a seção inteira é apelido dos ritmos
+   * que "sobre", "stack" e "experiência" já fixaram. Reescrever clamps aqui
+   * criaria uma segunda verdade para o mesmo espaçamento.
+   *
+   *   coluna -> coluna     3 linhas   (--exp-group-gap, horizontal no md+)
+   *   campo  -> campo      1 linha    (--exp-body-gap)
+   *   rótulo -> campo      12px       (--project-row-gap)
+   *   campos -> botão      2 linhas   (--exp-entry-gap)
+   *
+   * `--contact-col-gap` é o mesmo vão de grupo da seção "experiência" usado
+   * na horizontal — o mesmo movimento que a "stack" fez ao virar
+   * `--project-pad-y` em `row-gap`. Ele serve às duas orientações: acima de
+   * `md` separa as colunas, abaixo é o vão entre elas empilhadas.
+   *
+   * Em `em`, então precisa de contêiner com `text-body` — mesma exigência
+   * registrada na seção "experiência".
+   */
+  --contact-col-gap: var(--exp-group-gap);
+  --contact-row-gap: var(--stack-row-gap);
+  --contact-label-gap: var(--project-row-gap);
+  --contact-field-gap: var(--exp-body-gap);
+  --contact-actions-gap: var(--exp-entry-gap);
+  --contact-measure: var(--about-measure);
+
+  /**
+   * Respiro abaixo do texto de um campo, até a régua que o sublinha. Apelido
+   * de `--project-row-gap` pela mesma razão de `--contact-label-gap`: 12px é
+   * o vão justo do projeto, e o campo não pede um número próprio.
+   */
+  --contact-field-pad: var(--project-row-gap);
+
+  /**
+   * Vão entre o botão e a linha de resultado. **Token próprio de propósito,
+   * mesmo tendo a mesma definição de `--contact-field-gap`.**
+   *
+   * `em` resolve contra o font-size de cada elemento, e os dois vivem em
+   * escalas diferentes: entre campos o vão cai sobre `text-field` (19,2px a
+   * 1440) e rende 31,68px; sobre a linha de resultado cai sobre
+   * `text-project-meta` (11px) e rende 18,15px. Os dois números estão certos
+   * — cada um é uma linha em branco do texto a que pertence —, mas
+   * compartilhar o nome faria parecer que um deles está quebrado. Medido:
+   * 31,68px e 18,15px.
+   */
+  --contact-result-gap: var(--about-para-gap);
 }
 
 .light .theme-terminal {
@@ -708,4 +754,150 @@ body:has(.theme-terminal) {
       align-items: baseline;
     }
   }
+}
+
+/**
+ * Seção "contato" — canais à esquerda, formulário à direita.
+ *
+ * **Decisão de 375px: as duas colunas viram uma, canais acima do
+ * formulário.** Mesmo breakpoint (`md`, 768px) e mesma mecânica de "stack" e
+ * "experiência": media query, nunca render condicional.
+ *
+ * O `<dl>` de canais é a gramática da seção "stack" sem uma linha nova —
+ * `max-content minmax(0, 1fr)` acima de `md`, rótulo empilhado sobre o valor
+ * abaixo. `display: contents` no `<div>` de agrupamento é o que alinha a
+ * coluna de rótulos entre os dois pares sem largura fixa inventada. O
+ * elemento dissolvido é um `<div>` sem semântica a perder — a ressalva do
+ * `<li>` registrada na seção "experiência" não se aplica aqui.
+ */
+.theme-terminal [data-contact-cols] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--contact-col-gap);
+}
+
+.theme-terminal [data-contact-channels] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--contact-row-gap);
+}
+
+.theme-terminal [data-contact-pair] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--contact-label-gap);
+}
+
+.theme-terminal [data-contact-links] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--contact-label-gap);
+  align-items: flex-start;
+}
+
+@media (min-width: 768px) {
+  .theme-terminal [data-contact-cols] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--contact-col-gap);
+    /* `start`, não `baseline`: as duas colunas têm alturas muito diferentes
+       e o baseline alinharia só a primeira linha de cada, deixando a coluna
+       curta flutuando. */
+    align-items: start;
+  }
+
+  .theme-terminal [data-contact-channels] {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: var(--project-gap);
+    row-gap: var(--contact-row-gap);
+    align-items: baseline;
+  }
+
+  .theme-terminal [data-contact-pair] {
+    display: contents;
+  }
+}
+
+/**
+ * Formulário. Zero grid: uma coluna de campos em qualquer largura — dois
+ * campos lado a lado (o `nome`/`email` do componente antigo) não sobrevivem
+ * à meia coluna que o md+ dá a este bloco.
+ */
+.theme-terminal [data-contact-form] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--contact-field-gap);
+}
+
+.theme-terminal [data-contact-field] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--contact-label-gap);
+}
+
+/**
+ * Campo sublinhado, sem caixa: é a régua de `--line` que o protótipo usa em
+ * toda troca de superfície, aqui como base do campo. `background:
+ * transparent` porque a seção é `--bg` e uma caixa preenchida introduziria
+ * uma terceira superfície que os tokens não têm.
+ */
+.theme-terminal [data-contact-input] {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  padding-bottom: var(--contact-field-pad);
+  color: var(--text);
+  transition: border-color 0.35s var(--ease);
+}
+
+.theme-terminal [data-contact-input]::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
+/**
+ * Foco: `outline`, não só troca de cor da régua. Outline não entra no
+ * layout, então o indicador não custa shift — e um `border-width` maior
+ * custaria. A cor sozinha nunca é o indicador: o anel é uma forma nova.
+ */
+.theme-terminal [data-contact-input]:focus-visible {
+  border-bottom-color: var(--accent);
+  outline: 1px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.theme-terminal [data-contact-input]:disabled {
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.theme-terminal textarea[data-contact-input] {
+  resize: vertical;
+}
+
+.theme-terminal [data-contact-actions] {
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--contact-actions-gap);
+  align-items: flex-start;
+}
+
+/**
+ * Linha de resultado. As duas regiões vivem no DOM desde o primeiro render,
+ * vazias: região viva criada só na hora do erro corre o risco de o leitor de
+ * tela não a ter registrado a tempo.
+ *
+ * `:empty` zera a margem em vez de `display: none` — esconder a região a
+ * tiraria da árvore e devolveria justamente o problema acima. Elemento vazio
+ * não forma linha, então a altura é zero e o custo em CLS também.
+ */
+.theme-terminal [data-contact-result] {
+  margin-top: var(--contact-result-gap);
+}
+
+.theme-terminal [data-contact-result]:empty {
+  margin-top: 0;
 }

@@ -14,6 +14,7 @@ import { StackSection } from "@/src/components/site/stack-section";
 import { ExperienceSection } from "@/src/components/site/experience-section";
 import { ProjectsSection } from "@/src/components/site/projects-section";
 import { CommandSection } from "@/src/components/site/command-section";
+import { ContactSection } from "@/src/components/site/contact-section";
 
 /**
  * Página de staging do redesign. As seções de conteúdo entram no `<main>`,
@@ -116,6 +117,17 @@ export default async function V2Page({
           JavaScript de cliente — a digitação vive dentro do `TypedCommand`,
           não aqui. */}
       <CommandSection />
+
+      {/* Última seção antes do rodapé, e a que fecha a banda `--surface` do
+          comando: o `border-t` dela é a borda de baixo daquela banda, que até
+          agora era desenhada pelo `border-t` do rodapé. Sem ela ali a troca
+          de superfície ficaria sem régua.
+
+          Mesmo requisito estrutural das outras: fora do `<main>`, e landmark
+          `region` pelo `aria-labelledby` no `<h2>`. É a segunda seção com
+          JavaScript de cliente — o formulário vive dentro do `ContactForm`,
+          não aqui. */}
+      <ContactSection />
 
       <SiteFooter />
     </>
