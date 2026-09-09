@@ -6,6 +6,7 @@ import { SiteFooter } from "@/src/components/site/site-footer";
 import { HeroSection } from "@/src/components/site/hero-section";
 import { MarqueeSection } from "@/src/components/site/marquee-section";
 import { AboutSection } from "@/src/components/site/about-section";
+import { StackSection } from "@/src/components/site/stack-section";
 import { ProjectsSection } from "@/src/components/site/projects-section";
 import { CommandSection } from "@/src/components/site/command-section";
 
@@ -51,11 +52,12 @@ export default async function V2Page({
           com o header, que por sua vez precisa ficar fora dele para continuar
           sendo landmark `banner`, e tags não se sobrepõem.
 
-          Ficar fora do `<main>` não deixa a faixa fora de landmark: um
-          `<section>` com nome acessível é ele próprio um landmark `region`, e
-          é por isso que o `aria-label` do marquee é requisito estrutural, não
-          enfeite. Toda seção que entrar aqui embaixo precisa do mesmo — nome
-          acessível ou nada de landmark. */}
+          A faixa é `aria-hidden` desde que a seção "stack" passou a listar as
+          mesmas doze tecnologias — o porquê está no docblock dela. Isso a tira
+          da árvore de acessibilidade, então a questão de landmark não se
+          aplica a ela. **Vale para todas as outras:** um `<section>` fora do
+          `<main>` só é landmark `region` se tiver nome acessível. Nome ou
+          nada de landmark — e a faixa escolheu nada, de propósito. */}
       <MarqueeSection />
 
       {/* Derivada, não portada: o protótipo não tem seção de prosa. Fica
@@ -68,6 +70,16 @@ export default async function V2Page({
           quem carrega `porto velho · ro` abaixo de 768px, onde o header a
           esconde — consequência registrada daquela decisão, não opcional. */}
       <AboutSection />
+
+      {/* Derivada como a de cima. Fica entre "sobre" e "projetos" na ordem do
+          site antigo — quem eu sou, o que eu uso, o que eu construí.
+
+          É ela que tornou a faixa `aria-hidden`: as doze tecnologias vivem
+          aqui agora, com nome de região vindo do `<h2>`, e a faixa deixou de
+          duplicá-las na árvore de acessibilidade. Nenhuma régua a separa de
+          "sobre" nem de "projetos" — as três dividem o mesmo `--bg`, e régua
+          marca troca de superfície, não fronteira de seção. */}
+      <StackSection />
 
       {/* Também fora do `<main>`, pelo mesmo motivo da faixa — e com o mesmo
           requisito: `aria-labelledby` no `<section>` a torna landmark

@@ -355,17 +355,35 @@ Tailwind põe `line-height: 1.5` no `html`, herdado até a faixa, e 1.5 × 54.4p
 engordava a banda em 10,6px. Com o token explícito a banda mede 141px a
 1440px — o número exato do protótipo.
 
-Um `<section>` com nome acessível é landmark `region`. É por isso que o
-`aria-label` do marquee é requisito estrutural: a faixa vive fora do `<main>`
-(que mora dentro do shell `min-h-svh` para dividir a coluna flex com o header,
-e o header precisa ficar fora do `<main>` para ser `banner`), e sem nome ela
-seria conteúdo fora de landmark. **Toda seção que entrar abaixo do hero
-precisa do mesmo tratamento.**
+Um `<section>` com nome acessível é landmark `region`, e a faixa vive fora do
+`<main>` (que mora dentro do shell `min-h-svh` para dividir a coluna flex com o
+header, e o header precisa ficar fora do `<main>` para ser `banner`). **Toda
+seção que entrar abaixo do hero precisa de nome acessível — ou de sair da
+árvore.**
+
+**A faixa saiu da árvore, e isso reverte a decisão original.** Ela nasceu com
+`aria-label` porque era a única portadora da lista de tecnologias. Quando a
+seção "stack" passou a listar as mesmas doze, o `aria-label` virou defeito:
+doze itens duplicados na árvore e duas `region` com o nome "Tecnologias",
+indistinguíveis numa lista de landmarks. Hoje a faixa inteira é
+`aria-hidden="true"` — textura, não informação.
+
+`aria-hidden` sobre texto visível só é legítimo enquanto a cobertura for total,
+e a condição é **verificada, não suposta**: `STACK_COVERS_MARQUEE`, em
+`src/lib/stack.ts`, quebra o build se um dos lados ganhar tecnologia que o
+outro não tem. A faixa também não tem elemento focável, que é o outro
+requisito.
 
 Sem movimento (`prefers-reduced-motion`) a faixa vira texto corrido: trilho
 solta o `max-content`, a lista quebra linha dentro do gutter, a cópia-eco e o
 separador final somem. Marquee parado esconderia a maior parte da lista atrás
-da borda, e informação que só existe enquanto algo se move não é informação.
+da borda.
+
+O argumento original — "informação que só existe enquanto algo se move não é
+informação" — perdeu metade da força quando a seção "stack" passou a carregar
+a lista: hoje nada de fato se perde. **O reflow fica assim mesmo**, porque a
+outra metade continua de pé: faixa parada e cortada no meio de uma palavra
+parece defeito de render, e defeito aparente é o que o usuário reporta.
 
 ### Comando — medido (30/08/2026)
 
@@ -562,6 +580,100 @@ build acusa, e o HTML tem os textos novos embutidos no payload RSC, então
 **Medir `/v2` exige `rm -rf .next` antes do build**, ou conferir
 `x-nextjs-cache` na resposta. Conferir por `id=` de landmark, e não por texto,
 porque o payload RSC mente.
+
+### Stack — medido (08/09/2026)
+
+```
+Performance 99 · Acessibilidade 100
+FCP 1.2s · LCP 2.2s · TBT 0ms · CLS 0.000 · SI 1.2s · 212 KiB
+```
+
+Rota parada em 3,65 KiB. Server component, zero JS.
+
+**O conteúdo desta seção já estava na página inteiro — o marquee lista as
+mesmas doze.** Não existe dado de stack que a página não mostrasse. O que a
+seção acrescenta é a única coisa que uma faixa em movimento não consegue:
+**estrutura**. O agrupamento por domínio já existia implícito na ordem da faixa
+(o docblock dela dizia em voz alta que "Tailwind fecha a corrida de front-end")
+e aqui virou informação visível.
+
+O preço foi duplicar doze nomes na tela, e a contrapartida foi tirar a faixa da
+árvore de acessibilidade — está registrado acima, na seção do marquee.
+
+#### Categoria, e só categoria
+
+**Nada de nível de proficiência.** Esse dado não existe no banco nem no
+`technologies.tsx`, e escala de senioridade inventada é a coisa mais fácil de
+um recrutador desmentir. Os rótulos `./frontend`, `./backend` e `./infra` são
+jargão de terminal e valem igual em PT e EN, pelo mesmo precedente do `exit 0`
+— nenhuma chave nova em `messages/*.json`.
+
+#### `src/lib/stack.ts` guarda duas ordens, e a segunda quebra o build
+
+A lista vivia dentro de `marquee-section.tsx`. Com duas telas consumindo-a,
+duas cópias divergiriam na primeira edição de um lado só.
+
+**As duas ordens são diferentes e as duas são intencionais.** A faixa segue a
+do protótipo (`:95`), que não é agrupada — back-end abre com Node.js/NestJS,
+front-end vem no meio e .NET/Spring voltam depois. Derivar a ordem da faixa dos
+grupos reordenaria a faixa, então `MARQUEE_ORDER` é lista própria.
+
+O risco disso é uma ganhar item que a outra não tem, e `STACK_COVERS_MARQUEE`
+transforma esse risco em erro de type-check por igualdade de conjuntos:
+
+```ts
+type Exact<A, B> = [A] extends [B] ? ([B] extends [A] ? true : never) : never;
+export const STACK_COVERS_MARQUEE: Exact<GroupedTechnology, MarqueeTechnology> = true;
+```
+
+**Guarda foi vista falhando antes de ser aceita.** Tirando `Git` do grupo
+`infra` e deixando na faixa: `stack.ts(77,14): error TS2322: Type 'boolean' is
+not assignable to type 'never'`. Guarda que ninguém viu falhar não é guarda —
+é a lista do `twMerge` em `src/lib/utils.ts`, que depende de alguém lembrar.
+
+#### Procedência dos doze, conferida contra o código
+
+Não de memória. Diferenças de conjunto, calculadas:
+
+| Comparação | Resultado |
+|---|---|
+| marquee − agrupada | nenhum |
+| agrupada − marquee | nenhum |
+| `technologies.tsx` − agrupada | nenhum |
+| agrupada − `technologies.tsx` | `NestJS` |
+| duplicado entre grupos | nenhum |
+
+`NestJS` é a única diferença e não é invenção: veio do protótipo, e a origem
+real já estava registrada — descrição do cargo na Biggelo, em `messages/*.json`.
+
+#### A coluna de rótulos é `max-content`, não um px medido a olho
+
+Acima de `md`, `display: contents` dissolve o `<div>` de agrupamento e as seis
+células viram itens diretos de um grid só. **É isso que alinha a coluna entre os
+três grupos sem largura fixa** — um grid por grupo não compartilharia coluna, e
+a alternativa seria cravar um número. Medido a 1440px: os três `<dt>` com
+81,41px idênticos, as três listas começando em 140,60px.
+
+Os dois vãos são apelidos, não números novos: `--stack-row-gap` é
+`--project-pad-y` (o respiro de uma linha de projeto, aqui como `row-gap`
+porque não há borda para o padding encostar) e `--stack-label-gap` é
+`--project-row-gap` (que só existe abaixo de `md`, exatamente esta situação).
+
+#### 375px: o rótulo sobe, a lista ocupa a linha inteira
+
+Lado a lado, `./frontend` come 81px dos 335px úteis e a coluna restante não
+sustenta a lista — `TYPESCRIPT` sozinho mede 86px no piso da escala. Medido a
+375px: os três grupos empilhados, listas de 20px a 355px, `./frontend` em duas
+linhas e os outros dois em uma, vão rótulo→lista de 12px, `scrollWidth` igual a
+`innerWidth`, cabeçalho sem quebra (96,80 + 96,80 + 16 = 209,6 de 335).
+
+#### Rótulos alinhados à esquerda, não à direita
+
+A coluna deixa vão maior depois de `./infra` que depois de `./frontend`.
+Alinhar à direita fecharia o vão, e foi descartado: saída de terminal alinha
+coluna à esquerda, e a lista de projetos faz o mesmo com o índice. **Decisão,
+não descuido** — é o tipo de irregularidade que alguém "conserta" sem saber que
+foi escolhida.
 
 ### Decisão revista: header em 375px
 

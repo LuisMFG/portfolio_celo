@@ -131,6 +131,21 @@
   --body-leading: 1.65;
   --about-measure: 72ch;
   --about-para-gap: calc(var(--body-leading) * 1em);
+
+  /**
+   * Seção "stack". Os dois vãos são **apelidos**, não números novos: a seção
+   * repete o ritmo vertical da lista de projetos, e reescrever os clamps aqui
+   * criaria duas verdades para o mesmo espaçamento.
+   *
+   * `--project-pad-y` é o respiro de uma linha de projeto; aqui ele vira
+   * `row-gap` porque não existe borda para o padding encostar.
+   *
+   * `--project-row-gap` só existe abaixo de `md`, onde a linha de projeto
+   * empilha — que é exatamente a situação do rótulo sobre a lista aqui, no
+   * mesmo breakpoint.
+   */
+  --stack-row-gap: var(--project-pad-y);
+  --stack-label-gap: var(--project-row-gap);
 }
 
 .light .theme-terminal {
@@ -491,6 +506,50 @@ body:has(.theme-terminal) {
 }
 
 /**
+ * Seção "stack" — três duplas rótulo/lista.
+ *
+ * **Decisão de 375px: o rótulo sobe, a lista ocupa a linha inteira.** Lado a
+ * lado, `./frontend` come 81px dos 335px úteis e a coluna restante não sustenta
+ * a lista: `TYPESCRIPT` sozinho mede 86px no piso da escala. Empilhado, cada
+ * grupo recebe a linha toda. Mesmo breakpoint do colapso da linha de projeto, e
+ * pela media query, nunca por render condicional.
+ *
+ * Acima de `md`, `display: contents` dissolve o `<div>` de agrupamento e as
+ * seis células viram itens diretos de um grid só. É isso que alinha a coluna de
+ * rótulos entre os três grupos **sem largura fixa**: `max-content` a deixa larga
+ * como o maior rótulo e nada além. Um grid por grupo não compartilharia coluna,
+ * e a alternativa seria cravar um px medido a olho.
+ *
+ * `baseline`, como a linha de projeto: rótulo de 11px e lista no corpo têm
+ * alturas diferentes, e é a primeira linha das duas que precisa casar.
+ */
+.theme-terminal [data-stack-list] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-row-gap);
+}
+
+.theme-terminal [data-stack-group] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-label-gap);
+}
+
+@media (min-width: 768px) {
+  .theme-terminal [data-stack-list] {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: var(--project-gap);
+    row-gap: var(--stack-row-gap);
+    align-items: baseline;
+  }
+
+  .theme-terminal [data-stack-group] {
+    display: contents;
+  }
+}
+
+/**
  * Linha de terminal digitada (`prototype.html:142-143`).
  *
  * O cursor **não pode entrar no fluxo do texto.** Entre o trecho já digitado
@@ -531,3 +590,4 @@ body:has(.theme-terminal) {
 .theme-terminal [data-caret-ghost] {
   opacity: 0;
 }
+

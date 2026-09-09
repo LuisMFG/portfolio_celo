@@ -1,34 +1,5 @@
-import { getTranslations } from "next-intl/server";
+import { MARQUEE_ORDER } from "@/src/lib/stack";
 
-/**
- * A pilha real, na ordem do protótipo (`prototype.html:95`).
- *
- * O protótipo lista dez itens e a fonte do conteúdo — `src/components/
- * technologies.tsx` — lista onze; a interseção não é total nos dois sentidos.
- * O protótipo acrescenta NestJS (que é real: aparece na descrição do cargo na
- * Biggelo, em `messages/*.json`) e deixa de fora Tailwind e Git. Redesign é
- * visual, então nada de conteúdo se perde: as duas voltam, encaixadas onde a
- * ordem do protótipo já agrupava — Tailwind fecha a corrida de front-end,
- * antes do bloco .NET/Spring, e Git fecha a de infraestrutura.
- *
- * A grafia é a da fonte (`Node.js`, `.NET`), não o caixa-alta do desenho: o
- * versalete é `text-transform`, então leitor de tela, busca e cópia do usuário
- * recebem o nome como ele se escreve.
- */
-const TECHNOLOGIES = [
-  "Node.js",
-  "NestJS",
-  "TypeScript",
-  "Next.js",
-  "React",
-  "Angular",
-  "Tailwind",
-  ".NET",
-  "Spring",
-  "Docker",
-  "PostgreSQL",
-  "Git",
-] as const;
 
 type MarqueeSectionProps = {
   /** Sobrescreve a pilha exibida. Só existe para teste e reuso. */
@@ -43,9 +14,24 @@ type MarqueeSectionProps = {
  * ajustável no editor — aqui ela é token. Zero bytes no cliente.
  *
  * O conteúdo é duplicado de propósito: `translate3d(-50%)` desloca exatamente
- * uma cópia, então o último quadro coincide com o primeiro. A segunda cópia é
- * `aria-hidden` — é redundância visual, não informação — e os `·` também, para
- * a lista ser lida como lista e não como pontuação.
+ * uma cópia, então o último quadro coincide com o primeiro.
+ *
+ * ### A faixa inteira é `aria-hidden`, e isso é uma reversão deliberada
+ *
+ * Ela nasceu como landmark `region` nomeada por `aria-label`, porque era a
+ * única portadora da lista de tecnologias. **A seção "stack" passou a listar
+ * as mesmas doze**, e aí a faixa virou dois defeitos de uma vez: doze itens
+ * duplicados na árvore de acessibilidade e uma segunda `region` com o mesmo
+ * nome ("Tecnologias") — indistinguível da outra numa lista de landmarks.
+ *
+ * Sem informação exclusiva, ela é textura. `aria-hidden` numa faixa de texto
+ * visível só é legítimo sob essa condição, e a condição é verificada em vez de
+ * suposta: `STACK_COVERS_MARQUEE`, em `src/lib/stack.ts`, quebra o build se um
+ * dos lados ganhar tecnologia que o outro não tem. A faixa também não tem
+ * nenhum elemento focável, que é o outro requisito de `aria-hidden`.
+ *
+ * O `aria-hidden` da cópia-eco e o dos `·` ficam por redundância: se alguém um
+ * dia devolver a faixa à árvore, eles continuam corretos sozinhos.
  *
  * A faixa sangra de ponta a ponta, sem gutter: é a única seção que ignora a
  * margem lateral, e é isso que faz a régua do grid parecer interrompida.
@@ -60,15 +46,9 @@ type MarqueeSectionProps = {
  * ficou atrás de `@media (hover: hover)` para não grudar depois do tap, e o
  * recorte usa `clip` para não virar contêiner de scroll horizontal.
  */
-export async function MarqueeSection({
-  items = TECHNOLOGIES,
+export function MarqueeSection({
+  items = MARQUEE_ORDER,
 }: MarqueeSectionProps) {
-  // Reaproveita o rótulo que já existe traduzido ("Tecnologias" / "Technologies")
-  // em vez de inventar chave nova. Dá nome à região: sem ele a seção seria um
-  // bloco de texto anônimo, e o `aria-label` é o único texto da faixa que não é
-  // nome próprio.
-  const t = await getTranslations("SkillsSection");
-
   const run = (echo: boolean) => (
     <ul
       data-marquee-list
@@ -96,7 +76,7 @@ export async function MarqueeSection({
   return (
     <section
       data-marquee
-      aria-label={t("title")}
+      aria-hidden="true"
       className="border-y border-term-line bg-term-surface py-marquee [overflow-x:clip]"
     >
       {/* `w-max` explícito: o trilho é `inline-flex` no protótipo e depende de
