@@ -109,6 +109,28 @@
    * reintroduz o reflow que a posição absoluta existe para evitar.
    */
   --caret-reserve: calc(var(--caret-gap) + var(--caret-width));
+
+  /**
+   * Seção "sobre".
+   *
+   * **O protótipo não tem escala de leitura.** O maior texto não-display dele
+   * é o prompt do hero — assinatura de rodapé de tela, não corpo de sessenta
+   * palavras. Estes três números são a derivação, e é aqui que ela mora.
+   *
+   * `--body-leading` vive neste arquivo, e não só no `theme.extend`, porque o
+   * vão entre parágrafos deriva dele: bloco de prosa em terminal se separa por
+   * uma linha em branco, não por meia. Duas cópias de 1.65 divergiriam na
+   * primeira edição de um lado só. Mesma razão do `spacing.gutter`.
+   *
+   * A medida é em `ch` de propósito: em monoespaçada `ch` é literalmente
+   * coluna. 72 é a largura de wrap convencional de texto em terminal e cai
+   * dentro do teto de 75 caracteres de legibilidade. Abaixo de ~830px de
+   * coluna ela não morde, e é por isso que o mobile não precisa de media
+   * query — a prosa simplesmente ocupa a linha inteira.
+   */
+  --body-leading: 1.65;
+  --about-measure: 72ch;
+  --about-para-gap: calc(var(--body-leading) * 1em);
 }
 
 .light .theme-terminal {

@@ -106,6 +106,22 @@ layout de locale, senão o /v2 baixaria 36 KiB de uma fonte que não desenha.
   efetiva (`#151515` no escuro é exatamente `#1F1F1F` a 50% sobre `#0A0A0A`),
   o que tira o valor mágico do componente.
 
+#### Régua marca troca de superfície, não fronteira de seção
+
+**Linha (`--line`) marca mudança de superfície, não fronteira de seção.** Ela
+aparece no topo/base do marquee e no topo da seção de comando porque as duas
+trocam o fundo para `--surface`, e nas bordas da lista de projetos porque a
+lista é uma tabela. Entre seções que compartilham o mesmo `--bg`, o separador é
+o espaço vertical (`clamp(64px, 9vw, 140px)`) — o vão generoso é intencional,
+não ausência de acabamento.
+
+Vale para as três seções derivadas que ainda faltam (stack, experiência,
+contato) e é o que decide, sozinho, se cada uma leva régua: a pergunta não é
+"onde acaba a seção anterior", é "esta seção troca de fundo?". Se não troca,
+não leva. O impulso a corrigir é justamente o de quem vê 280px de vão e lê
+falta de acabamento — foi o que aconteceu entre "sobre" e "projetos", e a
+resposta foi manter.
+
 ### Movimento — números exatos do protótipo
 
 - Entrada `rise`: `translateY(100%) → 0`. Hero h1 `1.05s`; demais `0.9s`.
@@ -457,6 +473,95 @@ sessão, e duas cópias divergiriam na primeira edição de um lado só. Rótulo
 comando são jargão de terminal e têm o mesmo valor em PT e EN, como o
 `exit 0` do rodapé — a seção é a primeira que renderiza idêntica nos dois
 idiomas, e isso é intencional, não chave faltando.
+
+### Sobre — medido (08/09/2026)
+
+```
+Performance 99 · Acessibilidade 100
+FCP 1.2s · LCP 2.2s · TBT 0ms · CLS 0.000 · SI 1.2s · 211 KiB
+```
+
+Rota de 3,65 KiB para 3,65 KiB — server component puro, zero JS acrescentado.
+Orçamento de 280ms de TBT e 300ms de LCP segue intacto.
+
+**Ela não existe no protótipo.** Foi derivada, e o que ela precisou inventar
+foi uma coisa só: **escala de leitura**. O maior texto não-display do protótipo
+é o prompt do hero — assinatura de rodapé de tela, não corpo de sessenta
+palavras. Todo o resto é empréstimo declarado:
+
+- cabeçalho de dois rótulos de 11px `.2em` e o vão de `pb-projects-head`, da
+  lista de projetos (`:101`)
+- **sem régua sob o cabeçalho**, da seção comando (`:141`): régua ali fecha um
+  `<ol>`, e isto é prosa. A única régua da seção separa prosa de dado, no fim
+- fundo `--bg`, e por consequência **sem `border-top`**: o marquee logo acima é
+  `--surface` e a borda de baixo dele já faz o corte. Duas faixas de superfície
+  coladas apagariam a banda
+
+O `whoami` do rótulo direito vem de `HeroSection.prompt.command`, não de uma
+cópia — a seção é literalmente a resposta ao comando do hero, mesma decisão do
+`prompt.path` reaproveitado pela `CommandSection`.
+
+Zero chave nova em `messages/*.json`. A localização entra como `<dl>`, com o
+rótulo de `ContactSection.location` (traduzido de verdade) e o valor de
+`Header.location` — a mesma string que o header desenha. É requisito registrado
+da seção, não enfeite: abaixo de 768px o header a esconde.
+
+#### A medida é em `ch`, e é isso que dispensa media query no mobile
+
+`ch` em monoespaçada é literalmente coluna. 72 é a largura de wrap convencional
+de terminal e cai dentro do teto de 75 caracteres de legibilidade. Medido a
+1440px: prosa de **829,44px = 72,0ch exatos**. A 375px a coluna útil é 335px, a
+medida não morde e a prosa ocupa a linha inteira — **38,8 colunas**, sem uma
+linha de CSS condicional.
+
+O vão entre parágrafos é **uma linha em branco, não meia**: prosa em terminal
+separa blocos assim. `--about-para-gap` deriva de `--body-leading` em vez de
+repetir 1.65, e o `lineHeight` do token `body` no Tailwind lê a mesma variável —
+mesma razão do `spacing.gutter`. Medido: vão de 31,67px contra entrelinha de
+31,68px a 1440px, e 23,75 contra 23,76 a 375px.
+
+#### 375px: nenhum colapso estrutural, e isso foi medido
+
+Diferente da lista de projetos, não há grid para reprojetar — é uma coluna de
+prosa. Contra os 335px de linha útil, medido nos dois idiomas:
+
+| Par | PT | EN | Cabe |
+|---|---|---|---|
+| `SOBRE MIM` + `$ WHOAMI` | 79,20 + 70,42 + 16 | 70,41 + 70,42 + 16 | ✓ |
+| `LOCALIZAÇÃO` + `PORTO VELHO · RO` | 96,81 + 140,81 + 16 | 70,41 + 140,81 + 16 | ✓ |
+
+`headWraps` e `dlWraps` falsos nos quatro casos, `scrollWidth == innerWidth`.
+O `flex-wrap` dos dois pares é rede, não layout — nas larguras onde tudo cabe
+ele nunca dispara.
+
+#### Nenhuma entrada animada, de propósito
+
+Mesma regra da lista de projetos: o protótipo só anima o hero, e entrada por
+scroll pede IntersectionObserver, que é a fase de movimento. Por isso a seção é
+server component sem uma linha de cliente.
+
+#### Decidido: sem régua entre "sobre" e "projetos"
+
+Duas seções `--bg` vizinhas, cada uma com `py-section`, somam até **280px** — o
+maior vão da página, e ele fica. Nenhuma das duas troca de fundo, então nenhuma
+leva régua: é a aplicação direta de "régua marca troca de superfície, não
+fronteira de seção", registrada em **Espaço**. O vão generoso é o separador.
+
+O que enganava era comparar com projetos → comando, que tem `border-top` — mas
+lá a régua existe porque o comando vira `--surface`, não porque uma seção
+terminou.
+
+#### Armadilha de medição: cache ISR entre builds
+
+A primeira medição serviu uma página **anterior às seções de projetos e
+comando** — `x-nextjs-cache: HIT` numa entrada prerenderizada que sobreviveu em
+`.next/cache` de um build passado (a rota tem `revalidate: 3600`). Nada no
+build acusa, e o HTML tem os textos novos embutidos no payload RSC, então
+`grep` por conteúdo passa mesmo com o DOM velho.
+
+**Medir `/v2` exige `rm -rf .next` antes do build**, ou conferir
+`x-nextjs-cache` na resposta. Conferir por `id=` de landmark, e não por texto,
+porque o payload RSC mente.
 
 ### Decisão revista: header em 375px
 

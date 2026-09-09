@@ -60,6 +60,17 @@ const config: Config = {
           'clamp(1rem,3.2vw,2.6rem)',
           { letterSpacing: '-0.03em', lineHeight: '1.2' },
         ],
+        // Corpo de leitura da seção "sobre" — a escala que o protótipo não
+        // tem. Meio degrau acima do `prompt` e bem abaixo do `command`: a
+        // prosa não pode competir com a linha digitada. Tracking `0` como o
+        // `prompt`, porque o negativo do protótipo é de display.
+        //
+        // `lineHeight` vem de `tokens.css` porque o vão entre parágrafos
+        // deriva do mesmo número — mesma razão do `spacing.gutter`.
+        body: [
+          'clamp(0.9rem,1.35vw,1.2rem)',
+          { letterSpacing: '0', lineHeight: 'var(--body-leading)' },
+        ],
       },
       spacing: {
         // Definido em `tokens.css`: regras de lá também consomem o gutter, e
@@ -88,6 +99,14 @@ const config: Config = {
         // Entre o rótulo `session · stdin` e a linha digitada
         // (prototype.html:141). Fixo no protótipo, não um clamp.
         'command-head': '26px',
+        // Entre parágrafos da seção "sobre": uma linha do corpo, definida em
+        // `tokens.css`. Em `em`, então resolve contra o `text-body` do
+        // contêiner e acompanha o clamp da fonte em vez de virar vão fixo.
+        'about-para': 'var(--about-para-gap)',
+        // Ar de cada lado da régua que fecha a seção "sobre". Simétrico e com
+        // clamp próprio: o vão entre parágrafos é ritmo de prosa e seria
+        // pouco para separar prosa de dado.
+        'about-meta': 'clamp(30px,3.4vw,48px)',
       },
       height: {
         // O grid pertence à primeira tela, não ao documento: o shell cresce
@@ -113,6 +132,12 @@ const config: Config = {
       },
       minWidth: {
         tap: '44px',
+      },
+      maxWidth: {
+        // Medida da prosa da seção "sobre" — 72 colunas, definidas em
+        // `tokens.css`. Em `ch`, a unidade nativa do conceito: em
+        // monoespaçada `ch` é literalmente coluna.
+        about: 'var(--about-measure)',
       },
       colors: {
         // Namespace próprio: `muted` e `accent` já pertencem ao shadcn e são
