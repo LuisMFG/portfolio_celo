@@ -1,0 +1,885 @@
+/**
+ * Tokens do conceito "Dev Terminal".
+ *
+ * Escopados em `.theme-terminal` de propósito: `globals.css` já define
+ * `--muted` e `--accent` como triplas HSL do shadcn, consumidas via
+ * `hsl(var(--muted))` pelo painel admin inteiro. Redefinir esses nomes em
+ * `:root` produziria `hsl(#828282)` — inválido — e quebraria o admin.
+ *
+ * Orientação: o escuro é o default sem classe e o claro é o override. O
+ * `next-themes` roda com `defaultTheme="dark"` e há uma janela transitória
+ * em que o `<html>` fica sem classe nenhuma (o `classList.remove` roda antes
+ * do `add`, e o script engole falha de localStorage). Nessa janela cai-se no
+ * escuro, que é o pretendido. Na orientação inversa o bug seria silencioso.
+ *
+ * Contrastes WCAG 2.1 de cada par estão em CLAUDE.md, com a conta.
+ */
+
+.theme-terminal {
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --line: #1f1f1f;
+  /* Cor efetiva do grid do protótipo (#1F1F1F a 50% sobre #0A0A0A).
+     Token próprio para que o `opacity: .5` — valor mágico — saia do
+     componente, e porque --line também desenha bordas em opacidade cheia. */
+  --grid: #151515;
+  --text: #ededed;
+  /* #7A7A7A do protótipo reprova AA sobre --surface (4.40:1). #828282
+     dá 5.15 sobre --bg e 4.91 sobre --surface. */
+  --muted: #828282;
+  --accent: #00e676;
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Gutter lateral. Vive aqui, e não só no `theme.extend` do Tailwind, porque
+     regras deste arquivo também precisam dele — o `spacing.gutter` do config
+     aponta para cá, então `px-gutter` e `var(--gutter)` são o mesmo valor. */
+  --gutter: clamp(20px, 3vw, 44px);
+
+  /**
+   * Marquee. O que o protótipo fixa é **velocidade**, não duração: os 28s
+   * dele valem para o trilho dele, de 2908,09px por cópia a 1440px — 103,86
+   * px/s. Este trilho tem 12 tecnologias em vez de 10 e mede 3409,09px, então
+   * 28s aqui correriam 17% mais rápido.
+   *
+   *   3409,09 / 103,86 = 32,82s
+   *
+   * A razão não depende do viewport: fonte, tracking e o padding do separador
+   * são todos em `em`, então as duas larguras escalam pelo mesmo clamp e
+   * 1,1723 vale em qualquer largura de tela — uma constante basta.
+   *
+   * **Mexeu na lista, refaça a conta.** Medir a largura de uma cópia e
+   * dividir por 103,86. Herdar os 28s como número absoluto é o erro.
+   *
+   * No hover a duração vira duração / 0.6 (prototype.html:185) — duração
+   * maior é faixa mais lenta, o hover freia.
+   */
+  --marquee-duration: 32.82s;
+  --marquee-duration-hover: 54.7s;
+
+  /**
+   * Lista de projetos (`prototype.html:100-137`).
+   *
+   * As duas colunas fixas, o gap, o padding e o deslocamento do hover são os
+   * números do protótipo (`:107` e `:26`), aqui e não no componente.
+   */
+  --project-col-index: 64px;
+  --project-col-status: 84px;
+  --project-gap: 16px;
+  --project-pad-y: clamp(20px, 2.6vw, 34px);
+  --project-pad-x: 4px;
+  --project-shift: 14px;
+
+  /**
+   * Só existe abaixo de `md`, onde a linha vira três faixas empilhadas — o
+   * protótipo é de uma linha só e não tem esse vão. Menor que o piso de
+   * `--project-pad-y` (20px), que é o respiro entre projetos vizinhos: as
+   * faixas de uma mesma linha têm que se ler mais juntas que duas linhas.
+   */
+  --project-row-gap: 12px;
+
+  /**
+   * Entrelinha do nome quando ele quebra, e quebra só na pilha do mobile:
+   * "Spacetime - Shai Gilgeous Alexander" mede ~35 caracteres contra ~27 de
+   * linha útil a 375px. O `lineHeight: 1` do token `project` é do protótipo,
+   * onde todo nome cabe em uma linha; em duas, ascender e descender da
+   * JetBrains Mono somam ~1.02em e encostariam.
+   */
+  --project-name-leading-stacked: 1.1;
+
+  /**
+   * Cursor da linha digitada (`prototype.html:143`). Os três números são os
+   * do protótipo: bloco de 0.55em de largura por 1em de altura, 0.12em de
+   * respiro depois do último caractere e 0.12em de queda para assentar sobre
+   * a linha de base em vez de flutuar no topo da caixa.
+   */
+  --caret-width: 0.55em;
+  --caret-gap: 0.12em;
+  --caret-drop: 0.12em;
+
+  /**
+   * Espaço que a linha guarda no fim para o cursor pousar.
+   *
+   * O cursor é absoluto — não ocupa largura — e por isso não conta na quebra
+   * de linha. Sem esta reserva, medido a 375px: o texto termina exatamente em
+   * cima do gutter (355px) e o cursor pinta até 359px, 4px dentro da margem.
+   * Não gera scroll horizontal, mas atravessa o gutter, que é regra dura.
+   *
+   * A reserva é constante e não depende de onde o cursor está, então ela não
+   * reintroduz o reflow que a posição absoluta existe para evitar.
+   */
+  --caret-reserve: calc(var(--caret-gap) + var(--caret-width));
+
+  /**
+   * Seção "sobre".
+   *
+   * **O protótipo não tem escala de leitura.** O maior texto não-display dele
+   * é o prompt do hero — assinatura de rodapé de tela, não corpo de sessenta
+   * palavras. Estes três números são a derivação, e é aqui que ela mora.
+   *
+   * `--body-leading` vive neste arquivo, e não só no `theme.extend`, porque o
+   * vão entre parágrafos deriva dele: bloco de prosa em terminal se separa por
+   * uma linha em branco, não por meia. Duas cópias de 1.65 divergiriam na
+   * primeira edição de um lado só. Mesma razão do `spacing.gutter`.
+   *
+   * A medida é em `ch` de propósito: em monoespaçada `ch` é literalmente
+   * coluna. 72 é a largura de wrap convencional de texto em terminal e cai
+   * dentro do teto de 75 caracteres de legibilidade. Abaixo de ~830px de
+   * coluna ela não morde, e é por isso que o mobile não precisa de media
+   * query — a prosa simplesmente ocupa a linha inteira.
+   */
+  --body-leading: 1.65;
+  --about-measure: 72ch;
+  --about-para-gap: calc(var(--body-leading) * 1em);
+
+  /**
+   * Seção "stack". Os dois vãos são **apelidos**, não números novos: a seção
+   * repete o ritmo vertical da lista de projetos, e reescrever os clamps aqui
+   * criaria duas verdades para o mesmo espaçamento.
+   *
+   * `--project-pad-y` é o respiro de uma linha de projeto; aqui ele vira
+   * `row-gap` porque não existe borda para o padding encostar.
+   *
+   * `--project-row-gap` só existe abaixo de `md`, onde a linha de projeto
+   * empilha — que é exatamente a situação do rótulo sobre a lista aqui, no
+   * mesmo breakpoint.
+   */
+  --stack-row-gap: var(--project-pad-y);
+  --stack-label-gap: var(--project-row-gap);
+
+  /**
+   * Seção "experiência". O ritmo inteiro é uma família só: **linhas em
+   * branco**, derivadas de `--about-para-gap`. Prosa de terminal separa bloco
+   * assim, e a razão já vive na seção "sobre" — repetir clamps novos aqui
+   * criaria uma segunda verdade para o mesmo ritmo.
+   *
+   *   cargo → empresa      12px       (justo: são a mesma unidade de leitura)
+   *   cabeçalho → descrição 1 linha
+   *   entrada → entrada     2 linhas
+   *   grupo → grupo         3 linhas
+   *
+   * Os vãos em `em` resolvem contra a escala do corpo, então precisam de um
+   * contêiner com `text-body` — é o que o `<div data-exp-groups>` faz.
+   *
+   * `--exp-line-gap` é apelido de `--project-row-gap`, que só existe abaixo de
+   * `md` na linha de projeto; aqui vale nas duas larguras, porque cargo e
+   * empresa ficam empilhados em qualquer viewport.
+   *
+   * `--exp-measure` é apelido de `--about-measure`: mesmo tipo de texto, mesma
+   * largura de leitura. Apelido e não cópia, pela razão de sempre.
+   */
+  /**
+   * Ar entre o cabeçalho da seção e o rótulo do primeiro grupo.
+   *
+   * Sem ele os dois ficam com 22px acima e 22px abaixo — simétricos — e como
+   * ambos são 11px em `--muted`, "EXPERIÊNCIAS" e "PROFISSIONAL" se leem como
+   * um bloco de duas linhas em vez de título de seção seguido de rótulo de
+   * grupo. Nas outras seções `pb-projects-head` separa rótulo de *conteúdo*;
+   * aqui o conteúdo começa com outro rótulo, e dois rótulos em sequência
+   * pedem mais que o vão de rótulo → corpo.
+   *
+   * Uma linha em branco, da mesma família dos outros vãos. O segundo grupo
+   * não precisa: já tem `--exp-group-gap` (três linhas) acima.
+   */
+  --exp-head-gap: var(--about-para-gap);
+
+  --exp-line-gap: var(--project-row-gap);
+  --exp-body-gap: var(--about-para-gap);
+  --exp-entry-gap: calc(var(--about-para-gap) * 2);
+  --exp-group-gap: calc(var(--about-para-gap) * 3);
+  --exp-measure: var(--about-measure);
+
+  /**
+   * Seção "contato". Nenhum vão novo: a seção inteira é apelido dos ritmos
+   * que "sobre", "stack" e "experiência" já fixaram. Reescrever clamps aqui
+   * criaria uma segunda verdade para o mesmo espaçamento.
+   *
+   *   coluna -> coluna     3 linhas   (--exp-group-gap, horizontal no md+)
+   *   campo  -> campo      1 linha    (--exp-body-gap)
+   *   rótulo -> campo      12px       (--project-row-gap)
+   *   campos -> botão      2 linhas   (--exp-entry-gap)
+   *
+   * `--contact-col-gap` é o mesmo vão de grupo da seção "experiência" usado
+   * na horizontal — o mesmo movimento que a "stack" fez ao virar
+   * `--project-pad-y` em `row-gap`. Ele serve às duas orientações: acima de
+   * `md` separa as colunas, abaixo é o vão entre elas empilhadas.
+   *
+   * Em `em`, então precisa de contêiner com `text-body` — mesma exigência
+   * registrada na seção "experiência".
+   */
+  --contact-col-gap: var(--exp-group-gap);
+  --contact-row-gap: var(--stack-row-gap);
+  --contact-label-gap: var(--project-row-gap);
+  --contact-field-gap: var(--exp-body-gap);
+  --contact-actions-gap: var(--exp-entry-gap);
+  --contact-measure: var(--about-measure);
+
+  /**
+   * Respiro abaixo do texto de um campo, até a régua que o sublinha. Apelido
+   * de `--project-row-gap` pela mesma razão de `--contact-label-gap`: 12px é
+   * o vão justo do projeto, e o campo não pede um número próprio.
+   */
+  --contact-field-pad: var(--project-row-gap);
+
+  /**
+   * Vão entre o botão e a linha de resultado. **Token próprio de propósito,
+   * mesmo tendo a mesma definição de `--contact-field-gap`.**
+   *
+   * `em` resolve contra o font-size de cada elemento, e os dois vivem em
+   * escalas diferentes: entre campos o vão cai sobre `text-field` (19,2px a
+   * 1440) e rende 31,68px; sobre a linha de resultado cai sobre
+   * `text-project-meta` (11px) e rende 18,15px. Os dois números estão certos
+   * — cada um é uma linha em branco do texto a que pertence —, mas
+   * compartilhar o nome faria parecer que um deles está quebrado. Medido:
+   * 31,68px e 18,15px.
+   */
+  --contact-result-gap: var(--about-para-gap);
+}
+
+.light .theme-terminal {
+  --bg: #ededed;
+  --surface: #ffffff;
+  --line: #d4d4d4;
+  --grid: #dcdcdc;
+  --text: #0a0a0a;
+  --muted: #636363;
+  --accent: #007a3d;
+}
+
+.theme-terminal {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+.theme-terminal ::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/**
+ * Entrada `rise` do protótipo: translateY(100%) → 0, com a cascata de delays
+ * de CLAUDE.md. Só `transform`, nunca layout. O pai precisa de overflow
+ * hidden para recortar.
+ */
+@keyframes term-rise {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes term-fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/** Cursor de bloco/underscore do protótipo (`prototype.html:18`). */
+@keyframes term-blink {
+  0%,
+  48% {
+    opacity: 1;
+  }
+  49%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/**
+ * Marquee (`prototype.html:21`, `:93-98`).
+ *
+ * O trilho carrega duas cópias idênticas da faixa, então `-50%` desloca
+ * exatamente uma cópia: o último quadro é pixel a pixel igual ao primeiro e o
+ * loop não tem costura. Quem mexer no número tem que mexer no número de
+ * cópias junto.
+ */
+@keyframes term-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.theme-terminal [data-marquee-track] {
+  animation: term-marquee var(--marquee-duration) linear infinite;
+  /* O trilho anima do primeiro ao último quadro da página, sem intervalo em
+     que a promoção de camada seja desperdício. É o caso que `will-change`
+     existe para atender. */
+  will-change: transform;
+}
+
+/* `@media (hover: hover)`: em toque o `:hover` gruda depois do tap e a faixa
+   ficaria lenta para sempre, sem gesto que desfaça. Trocar a duração no meio
+   da animação salta a posição, porque o tempo decorrido é preservado e só a
+   fração do ciclo muda — o protótipo tem o mesmo salto, pelo mesmo motivo
+   (`prototype.html:185` mexe em `style.animationDuration`). */
+@media (hover: hover) {
+  .theme-terminal [data-marquee]:hover [data-marquee-track] {
+    animation-duration: var(--marquee-duration-hover);
+  }
+}
+
+/** Dica de scroll: a barra desce e volta a esmaecer (`prototype.html:22`). */
+@keyframes term-scroll-hint {
+  0% {
+    transform: translateY(0);
+    opacity: 0.25;
+  }
+  45% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(12px);
+    opacity: 0.25;
+  }
+}
+
+/**
+ * Recorte da entrada `rise`. O pai precisa esconder o texto deslocado, mas
+ * `overflow: hidden` puro corta pelo topo da caixa de conteúdo — e com
+ * `line-height: .9` no display essa caixa fica *abaixo* do ascender da
+ * fonte: medido, o acento de "LUÍS" projeta 0.125em de tinta acima dela e
+ * sumia do desenho. O protótipo tem o mesmo recorte e o mesmo defeito.
+ *
+ * A folga vem de `padding-top`, devolvida por margem negativa de igual
+ * valor: a altura de layout e a posição do texto ficam idênticas, e só a
+ * borda de cima do recorte sobe. A borda de baixo — a que de fato esconde o
+ * texto durante a entrada — não se move.
+ *
+ * 0.2em contra os 0.125em medidos: sobra para o fallback métrico, cujos
+ * acentos não têm por que ter a mesma altura. Nada pinta nessa faixa em
+ * repouso, então folga a mais é invisível.
+ *
+ * Quem usa isso precisa de contexto de formatação próprio (`flow-root`),
+ * senão a margem negativa do primeiro filho colapsa com a do pai e arrasta
+ * o bloco inteiro para cima.
+ */
+.theme-terminal .term-clip {
+  overflow: hidden;
+  padding-top: 0.2em;
+  margin-top: -0.2em;
+}
+
+.theme-terminal [data-rise] {
+  animation: term-rise 0.9s var(--ease) both;
+}
+
+/* O display do hero entra em 1.05s; todo o resto em 0.9s
+   (`prototype.html:69` contra `:62`). */
+.theme-terminal [data-rise-display] {
+  animation-duration: 1.05s;
+}
+
+.theme-terminal [data-fade] {
+  animation: term-fadein 0.8s linear both;
+}
+
+.theme-terminal [data-blink] {
+  animation: term-blink 1.05s steps(1) infinite;
+}
+
+.theme-terminal [data-scroll-hint] {
+  animation: term-scroll-hint 1.9s var(--ease) infinite;
+}
+
+/**
+ * Cascata única de delays (a régua de CLAUDE.md). O passo é um eixo separado
+ * da animação de propósito: `data-rise` e `data-fade` são intercalados no
+ * mesmo ritmo — o header ocupa a..d e o hero continua em d..h — e um atributo
+ * por eixo evita duplicar a régua em cada tipo de entrada.
+ */
+.theme-terminal [data-delay="a"] {
+  animation-delay: 0.05s;
+}
+.theme-terminal [data-delay="b"] {
+  animation-delay: 0.09s;
+}
+.theme-terminal [data-delay="c"] {
+  animation-delay: 0.13s;
+}
+.theme-terminal [data-delay="d"] {
+  animation-delay: 0.16s;
+}
+.theme-terminal [data-delay="e"] {
+  animation-delay: 0.2s;
+}
+.theme-terminal [data-delay="f"] {
+  animation-delay: 0.28s;
+}
+.theme-terminal [data-delay="g"] {
+  animation-delay: 0.5s;
+}
+.theme-terminal [data-delay="h"] {
+  animation-delay: 0.62s;
+}
+
+/**
+ * Linha da lista de projetos (`prototype.html:107`).
+ *
+ * **Decisão de 375px: o grid de quatro colunas não é espremido, é
+ * substituído.** `64px 1.6fr 1.4fr 84px` a 335px de linha útil deixaria ~150px
+ * para um nome de até 35 caracteres. Abaixo de `md` a linha vira três faixas:
+ * os dois rótulos de 11px dividem a primeira (índice à esquerda, status à
+ * direita), o nome ocupa a largura inteira na segunda e a pilha de tecnologias
+ * fecha na terceira. O nome ganha a linha toda em vez de uma fração dela, e a
+ * ordem de leitura é a mesma do desktop.
+ *
+ * O breakpoint é o `md` do Tailwind (768px), o mesmo que header e hero usam
+ * para colapsar. Colapso por media query, nunca por render condicional.
+ *
+ * Sem `will-change`, ao contrário do protótipo: são nove linhas, e promover
+ * nove camadas de forma permanente para um deslocamento que só acontece sob o
+ * ponteiro é pagar memória de GPU o tempo todo por um efeito ocasional. O
+ * marquee tem `will-change` porque anima do primeiro ao último quadro.
+ */
+.theme-terminal [data-project-row] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "index status"
+    "name  name"
+    "tech  tech";
+  column-gap: var(--project-gap);
+  row-gap: var(--project-row-gap);
+  padding: var(--project-pad-y) var(--project-pad-x);
+  border-bottom: 1px solid var(--line);
+  transition:
+    transform 0.6s var(--ease),
+    color 0.35s var(--ease);
+}
+
+.theme-terminal [data-project-cell="index"] {
+  grid-area: index;
+}
+.theme-terminal [data-project-cell="name"] {
+  grid-area: name;
+  line-height: var(--project-name-leading-stacked);
+}
+.theme-terminal [data-project-cell="tech"] {
+  grid-area: tech;
+}
+.theme-terminal [data-project-cell="status"] {
+  grid-area: status;
+}
+
+@media (min-width: 768px) {
+  .theme-terminal [data-project-row] {
+    grid-template-columns:
+      var(--project-col-index) minmax(0, 1.6fr) minmax(0, 1.4fr)
+      var(--project-col-status);
+    grid-template-areas: "index name tech status";
+    row-gap: 0;
+    /* `baseline`, como o protótipo: a pilha de tecnologias pode ocupar duas
+       linhas nas larguras intermediárias e é a primeira delas que tem que
+       casar com o nome. */
+    align-items: baseline;
+  }
+
+  .theme-terminal [data-project-cell="name"] {
+    line-height: 1;
+  }
+}
+
+/**
+ * Hover atrás de `@media (hover: hover)` pelo mesmo motivo do marquee: em
+ * toque o `:hover` gruda depois do tap e a linha ficaria deslocada e acesa
+ * para sempre, sem gesto que desfaça.
+ *
+ * A cor troca só o que herda — o nome. Índice, tecnologias e `[wip]` declaram
+ * `--muted` e `[ok]` declara `--accent`, então ficam parados. É o desenho do
+ * protótipo (`:26`), não um efeito colateral.
+ *
+ * Linha sem destino não é `<a>` e por isso não casa nenhuma das duas regras:
+ * o seletor pede o elemento interativo, não o atributo.
+ */
+@media (hover: hover) {
+  .theme-terminal a[data-project-row]:hover {
+    color: var(--accent);
+    transform: translate3d(var(--project-shift), 0, 0);
+  }
+}
+
+.theme-terminal a[data-project-row]:focus-visible {
+  color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Nada pulsa, nada repete. Sem `fill-mode`, cada elemento volta ao próprio
+     estado computado quando a animação encerra — o cursor fica aceso e a
+     barra do scroll, parada. Zerar a duração e não `animation: none` porque
+     `none` deixaria o `both` do rise sem estado final. */
+  .theme-terminal *,
+  .theme-terminal *::before,
+  .theme-terminal *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition: none !important;
+  }
+
+  /* Vence a regra acima por especificidade (0,2,0 contra 0,1,0), e o
+     shorthand devolve duração e iteração aos valores desta declaração. */
+  .theme-terminal [data-rise],
+  .theme-terminal [data-fade] {
+    animation: term-fadein 0.28s linear both !important;
+    animation-delay: 0s !important;
+  }
+
+  /**
+   * O marquee parado seria pior que inútil: a regra acima zera a duração, o
+   * trilho volta a `translate: none` e a faixa — que mede vários viewports —
+   * fica recortada, escondendo a maior parte das tecnologias atrás da borda.
+   * Informação que só existe enquanto algo se move não é informação.
+   *
+   * Sem movimento a faixa vira texto corrido: o trilho solta a largura
+   * `max-content`, a lista quebra linha dentro do gutter e a cópia-eco sai do
+   * desenho. O separador final — que só existe para costurar a emenda entre
+   * as duas cópias — some junto, senão sobraria um `·` órfão no fim.
+   */
+  .theme-terminal [data-marquee-track] {
+    width: auto;
+  }
+
+  .theme-terminal [data-marquee-list] {
+    flex-wrap: wrap;
+    padding-inline: var(--gutter);
+  }
+
+  .theme-terminal [data-marquee-echo] {
+    display: none;
+  }
+
+  .theme-terminal [data-marquee-list] > li:last-child [data-marquee-sep] {
+    display: none;
+  }
+
+  /**
+   * O deslocamento de 14px da linha de projeto é movimento, não estado: com o
+   * `transition: none` acima ele viraria um salto seco a cada passagem do
+   * ponteiro. A cor fica — ela é o que comunica o alvo.
+   *
+   * Vence a regra de `@media (hover: hover)` por vir depois com a mesma
+   * especificidade (0,2,1). Quem mover este bloco para cima quebra isso.
+   */
+  .theme-terminal a[data-project-row]:hover {
+    transform: none;
+  }
+}
+
+/**
+ * Seção "stack" — três duplas rótulo/lista.
+ *
+ * **Decisão de 375px: o rótulo sobe, a lista ocupa a linha inteira.** Lado a
+ * lado, `./frontend` come 81px dos 335px úteis e a coluna restante não sustenta
+ * a lista: `TYPESCRIPT` sozinho mede 86px no piso da escala. Empilhado, cada
+ * grupo recebe a linha toda. Mesmo breakpoint do colapso da linha de projeto, e
+ * pela media query, nunca por render condicional.
+ *
+ * Acima de `md`, `display: contents` dissolve o `<div>` de agrupamento e as
+ * seis células viram itens diretos de um grid só. É isso que alinha a coluna de
+ * rótulos entre os três grupos **sem largura fixa**: `max-content` a deixa larga
+ * como o maior rótulo e nada além. Um grid por grupo não compartilharia coluna,
+ * e a alternativa seria cravar um px medido a olho.
+ *
+ * `baseline`, como a linha de projeto: rótulo de 11px e lista no corpo têm
+ * alturas diferentes, e é a primeira linha das duas que precisa casar.
+ */
+.theme-terminal [data-stack-list] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-row-gap);
+}
+
+.theme-terminal [data-stack-group] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-label-gap);
+}
+
+@media (min-width: 768px) {
+  .theme-terminal [data-stack-list] {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: var(--project-gap);
+    row-gap: var(--stack-row-gap);
+    align-items: baseline;
+  }
+
+  .theme-terminal [data-stack-group] {
+    display: contents;
+  }
+}
+
+/**
+ * Linha de terminal digitada (`prototype.html:142-143`).
+ *
+ * O cursor **não pode entrar no fluxo do texto.** Entre o trecho já digitado
+ * e o que falta, um `inline-block` seria um átomo inline: ele acrescenta
+ * largura e, pior, cria oportunidade de quebra de linha no meio de uma
+ * palavra. Como ele caminha um caractere por vez, a linha passaria a quebrar
+ * em pontos diferentes ao longo da digitação — reflow a cada tecla, e uma
+ * linha a mais no mobile.
+ *
+ * A âncora é um inline vazio: não ocupa largura, não cria ponto de quebra e
+ * só serve de bloco contentor para o cursor absoluto. O resultado é que o
+ * texto quebra, em todo quadro, exatamente onde a string completa quebraria.
+ */
+.theme-terminal [data-typed] {
+  padding-right: var(--caret-reserve);
+}
+
+.theme-terminal [data-caret-anchor] {
+  position: relative;
+}
+
+.theme-terminal [data-caret] {
+  position: absolute;
+  top: 0;
+  left: var(--caret-gap);
+  width: var(--caret-width);
+  height: 1em;
+  background: var(--accent);
+  transform: translateY(var(--caret-drop));
+}
+
+/**
+ * O que ainda não foi digitado: continua no fluxo, segurando a caixa, e
+ * continua na árvore de acessibilidade — `opacity`, não `visibility` nem
+ * `display`, porque as outras duas tirariam o texto do leitor de tela e
+ * devolveriam o CLS que este elemento existe para evitar.
+ */
+.theme-terminal [data-caret-ghost] {
+  opacity: 0;
+}
+
+/**
+ * Seção "experiência" — trilha de períodos à esquerda, entrada à direita.
+ *
+ * **Decisão de 375px: o período sobe, a entrada ocupa a linha inteira.** É o
+ * mesmo colapso da seção "stack", no mesmo breakpoint (`md`, 768px) e pela
+ * mesma razão: lado a lado, `ABR DE 2025 - NOV DE 2025` come ~204px dos 335px
+ * úteis e a coluna restante não sustenta nem o cargo nem a descrição. Media
+ * query, nunca render condicional.
+ *
+ * ### Por que `subgrid`, e não `display: contents`
+ *
+ * A trilha de períodos só alinha entre entradas se todas dividirem o mesmo
+ * grid — um grid por `<li>` daria um `max-content` diferente para cada uma. O
+ * caminho curto seria `display: contents` no `<li>`, como a seção "stack" faz
+ * no `<div>` de agrupamento. A diferença é que lá o elemento dissolvido não
+ * tem semântica a perder, e aqui ele é um item de lista: `display: contents`
+ * em `<li>` já removeu semântica de lista em navegador de produção, e este
+ * projeto **já foi mordido** por perda de semântica de lista via CSS — é por
+ * isso que a seção "stack" carrega um `role="list"` explícito.
+ *
+ * Com `subgrid` o `<li>` continua gerando caixa e nada na árvore de
+ * acessibilidade é tocado. O `@supports` não é enfeite: onde subgrid não
+ * existe, cai-se no empilhado — que é o layout do mobile, já desenhado e já
+ * necessário. Degradação para um estado projetado, não para um quebrado.
+ */
+.theme-terminal [data-exp-groups] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--exp-group-gap);
+  padding-top: var(--exp-head-gap);
+}
+
+.theme-terminal [data-exp-list] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--exp-entry-gap);
+}
+
+.theme-terminal [data-exp-entry] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--exp-line-gap);
+}
+
+.theme-terminal [data-exp-body] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--exp-body-gap);
+}
+
+.theme-terminal [data-exp-head] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--exp-line-gap);
+}
+
+@media (min-width: 768px) {
+  @supports (grid-template-columns: subgrid) {
+    .theme-terminal [data-exp-list] {
+      display: grid;
+      grid-template-columns: max-content minmax(0, 1fr);
+      column-gap: var(--project-gap);
+      row-gap: var(--exp-entry-gap);
+    }
+
+    .theme-terminal [data-exp-entry] {
+      display: grid;
+      grid-column: 1 / -1;
+      grid-template-columns: subgrid;
+      /* `baseline`, como a linha de projeto e a seção "stack": período de
+         11px e cargo no corpo têm alturas diferentes, e é a primeira linha
+         dos dois que precisa casar. */
+      align-items: baseline;
+    }
+  }
+}
+
+/**
+ * Seção "contato" — canais à esquerda, formulário à direita.
+ *
+ * **Decisão de 375px: as duas colunas viram uma, canais acima do
+ * formulário.** Mesmo breakpoint (`md`, 768px) e mesma mecânica de "stack" e
+ * "experiência": media query, nunca render condicional.
+ *
+ * O `<dl>` de canais é a gramática da seção "stack" sem uma linha nova —
+ * `max-content minmax(0, 1fr)` acima de `md`, rótulo empilhado sobre o valor
+ * abaixo. `display: contents` no `<div>` de agrupamento é o que alinha a
+ * coluna de rótulos entre os dois pares sem largura fixa inventada. O
+ * elemento dissolvido é um `<div>` sem semântica a perder — a ressalva do
+ * `<li>` registrada na seção "experiência" não se aplica aqui.
+ */
+.theme-terminal [data-contact-cols] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--contact-col-gap);
+}
+
+.theme-terminal [data-contact-channels] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--contact-row-gap);
+}
+
+.theme-terminal [data-contact-pair] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--contact-label-gap);
+}
+
+.theme-terminal [data-contact-links] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--contact-label-gap);
+  align-items: flex-start;
+}
+
+@media (min-width: 768px) {
+  .theme-terminal [data-contact-cols] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--contact-col-gap);
+    /* `start`, não `baseline`: as duas colunas têm alturas muito diferentes
+       e o baseline alinharia só a primeira linha de cada, deixando a coluna
+       curta flutuando. */
+    align-items: start;
+  }
+
+  .theme-terminal [data-contact-channels] {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: var(--project-gap);
+    row-gap: var(--contact-row-gap);
+    align-items: baseline;
+  }
+
+  .theme-terminal [data-contact-pair] {
+    display: contents;
+  }
+}
+
+/**
+ * Formulário. Zero grid: uma coluna de campos em qualquer largura — dois
+ * campos lado a lado (o `nome`/`email` do componente antigo) não sobrevivem
+ * à meia coluna que o md+ dá a este bloco.
+ */
+.theme-terminal [data-contact-form] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--contact-field-gap);
+}
+
+.theme-terminal [data-contact-field] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--contact-label-gap);
+}
+
+/**
+ * Campo sublinhado, sem caixa: é a régua de `--line` que o protótipo usa em
+ * toda troca de superfície, aqui como base do campo. `background:
+ * transparent` porque a seção é `--bg` e uma caixa preenchida introduziria
+ * uma terceira superfície que os tokens não têm.
+ */
+.theme-terminal [data-contact-input] {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  padding-bottom: var(--contact-field-pad);
+  color: var(--text);
+  transition: border-color 0.35s var(--ease);
+}
+
+.theme-terminal [data-contact-input]::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
+/**
+ * Foco: `outline`, não só troca de cor da régua. Outline não entra no
+ * layout, então o indicador não custa shift — e um `border-width` maior
+ * custaria. A cor sozinha nunca é o indicador: o anel é uma forma nova.
+ */
+.theme-terminal [data-contact-input]:focus-visible {
+  border-bottom-color: var(--accent);
+  outline: 1px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.theme-terminal [data-contact-input]:disabled {
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.theme-terminal textarea[data-contact-input] {
+  resize: vertical;
+}
+
+.theme-terminal [data-contact-actions] {
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--contact-actions-gap);
+  align-items: flex-start;
+}
+
+/**
+ * Linha de resultado. As duas regiões vivem no DOM desde o primeiro render,
+ * vazias: região viva criada só na hora do erro corre o risco de o leitor de
+ * tela não a ter registrado a tempo.
+ *
+ * `:empty` zera a margem em vez de `display: none` — esconder a região a
+ * tiraria da árvore e devolveria justamente o problema acima. Elemento vazio
+ * não forma linha, então a altura é zero e o custo em CLS também.
+ */
+.theme-terminal [data-contact-result] {
+  margin-top: var(--contact-result-gap);
+}
+
+.theme-terminal [data-contact-result]:empty {
+  margin-top: 0;
+}

@@ -1,9 +1,40 @@
 {
+  "Header": {
+    "identity": "LM",
+    "identitySuffix": "— full-stack",
+    "location": "porto velho · ro",
+    "version": "v.2026",
+    "switchTo": {
+      "pt-BR": "View the site in Portuguese",
+      "en": "View the site in English"
+    },
+    "theme": {
+      "dark": "Enable dark theme",
+      "light": "Enable light theme"
+    }
+  },
+  "Footer": {
+    "links": {
+      "github": "GitHub profile, opens in a new tab",
+      "linkedin": "LinkedIn profile, opens in a new tab",
+      "mail": "Send an email to lmfg10@gmail.com"
+    },
+    "exit": "exit 0"
+  },
   "HeroSection": {
     "greeting": "Hi, I'm Luis Marcelo!",
     "alt": "Profile photo of Luis Marcelo",
     "subtitle": "Full Stack Developer",
-    "description": "Turning ideas into innovative digital solutions"
+    "description": "Turning ideas into innovative digital solutions",
+    "name": {
+      "first": "LUÍS",
+      "last": "MARCELO"
+    },
+    "prompt": {
+      "path": "~/luis-marcelo",
+      "command": "whoami"
+    },
+    "scroll": "scroll"
   },
   "AboutSection": {
     "title": "About Me",
@@ -58,6 +89,12 @@
   },
   "ProjectsSection": {
     "title": "Projects",
+    "index": "index",
+    "newTab": "opens in a new tab",
+    "status": {
+      "done": "Completed",
+      "wip": "In development"
+    },
     "items": {
       "coneci-ro": {
         "title": "CONECI - RO (In development)",
@@ -96,6 +133,10 @@
         "description": "An interactive time capsule to showcase memories along a timeline, creating a visual and responsive experience."
       }
     }
+  },
+  "CommandSection": {
+    "label": "session · stdin",
+    "command": "ls ./projects --all"
   },
   "ContactSection": {
     "title": "Contact",

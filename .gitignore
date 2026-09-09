@@ -34,3 +34,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+baseline.html
+baseline.html
+v2-fundacao.html
+v2-*.html
+*.report.json
+.env*
+
+# claude code — configuração de máquina. O sufixo .local é a convenção do
+# Claude Code para o que não sai deste clone: o arquivo acumula concessões de
+# permissão dadas nesta máquina, e permissão concedida aqui não é decisão do
+# projeto. Regra que vale para o projeto vai em .claude/settings.json.
+.claude/settings.local.json

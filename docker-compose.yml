@@ -1,0 +1,38 @@
+# Postgres de desenvolvimento.
+#
+# A major version acompanha produção de propósito: testar migration num engine
+# e aplicar em outro é como não ter testado. Produção é Neon, PostgreSQL
+# 17.10, região sa-east-1 — confirmado por `SELECT version()` no SQL Editor do
+# branch production (01/08/2026). Ao subir a major de produção, suba esta
+# junto.
+#
+# A senha aqui é descartável e serve só a este container local. Ela pode ir
+# versionada exatamente por isso: não abre nada, não é reusada em lugar
+# nenhum, e o `.env` — que guarda os segredos de verdade — continua fora do
+# git (`.gitignore:28`).
+services:
+  db:
+    image: postgres:17
+    container_name: portfolio_celo_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: portfolio_celo
+    ports:
+      - "5432:5432"
+    volumes:
+      # Volume nomeado, não bind mount nem anônimo: o dado sobrevive a
+      # `docker compose down`. Para zerar de fato é preciso pedir por escrito,
+      # com `docker compose down -v`.
+      - portfolio_celo_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      # Sem isto, `up -d` volta assim que o container inicia e o primeiro
+      # `prisma migrate` bate num Postgres que ainda está subindo.
+      test: ["CMD-SHELL", "pg_isready -U postgres -d portfolio_celo"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  portfolio_celo_pgdata:

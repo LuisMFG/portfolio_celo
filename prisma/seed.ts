@@ -2,6 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+// Mesma derivação usada pelo fallback de content.ts — uma regra só.
+import { deriveStatusFromTitle } from "../src/lib/project-status";
 
 const prisma = new PrismaClient();
 
@@ -168,6 +170,7 @@ async function seedProjects(pt: Messages, en: Messages) {
         titleEn: enItem.title,
         descriptionPt: ptItem.description,
         descriptionEn: enItem.description,
+        status: deriveStatusFromTitle(ptItem.title),
       },
     });
   }

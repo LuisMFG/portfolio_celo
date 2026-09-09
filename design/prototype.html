@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Luís Marcelo — protótipo de direção visual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0A0A;--surface:#111111;--line:#1F1F1F;--text:#EDEDED;--muted:#7A7A7A;--accent:#00E676;--ease:cubic-bezier(0.16,1,0.3,1);}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#0A0A0A;color:#EDEDED;font-family:'JetBrains Mono',ui-monospace,monospace;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{cursor:none}
+a{color:#EDEDED;text-decoration:none}
+a:hover{color:#00E676}
+::selection{background:#00E676;color:#0A0A0A}
+@keyframes blink{0%,48%{opacity:1}49%,100%{opacity:0}}
+@keyframes rise{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes marquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+@keyframes hint{0%{transform:translateY(0);opacity:.25}45%{opacity:1}100%{transform:translateY(12px);opacity:.25}}
+
+/* hover states — precisam de !important para vencer os style inline,
+   exatamente como o runtime do Design Component fazia */
+.prow:hover{color:var(--accent)!important;transform:translate3d(14px,0,0)!important}
+.flink:hover{color:var(--accent)!important}
+
+@media (pointer:coarse){
+  body{cursor:auto}
+  [data-cursor-dot],[data-cursor-ring],[data-preview]{display:none!important}
+}
+@media (prefers-reduced-motion: reduce){
+  body{cursor:auto}
+  *,*::before,*::after{animation:none !important;transition:none !important}
+  [data-rise]{animation:fadein .28s linear both !important}
+  [data-fade]{animation:fadein .28s linear both !important}
+}
+</style>
+</head>
+<body>
+
+<div style="background:var(--bg);color:var(--text);position:relative;width:100%">
+
+  <section data-screen-label="Hero" style="position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:space-between;padding:28px clamp(20px,3vw,44px) 32px;overflow:hidden">
+    <div aria-hidden="true" style="position:absolute;inset:0;display:grid;grid-template-columns:repeat(12,1fr);pointer-events:none;opacity:.5;z-index:0">
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line)"></div>
+      <div style="border-left:1px solid var(--line);border-right:1px solid var(--line)"></div>
+    </div>
+
+    <header style="position:relative;z-index:1;display:flex;justify-content:space-between;align-items:baseline;gap:16px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)">
+      <div style="overflow:hidden"><div data-rise style="animation:rise .9s var(--ease) both;animation-delay:.05s">LM — full-stack</div></div>
+      <div style="overflow:hidden"><div data-rise style="animation:rise .9s var(--ease) both;animation-delay:.09s">porto velho · ro</div></div>
+      <div style="overflow:hidden"><div data-rise style="animation:rise .9s var(--ease) both;animation-delay:.13s">v.2026</div></div>
+    </header>
+
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;gap:0;padding:6vh 0 2vh">
+      <div style="overflow:hidden;line-height:0.9">
+        <h1 data-rise style="margin:0;font-size:clamp(3.5rem,13vw,15rem);letter-spacing:-0.04em;line-height:0.9;font-weight:500;animation:rise 1.05s var(--ease) both;animation-delay:.16s">LUÍS</h1>
+      </div>
+      <div style="overflow:hidden;line-height:0.9">
+        <h1 data-rise style="margin:0;font-size:clamp(3.5rem,13vw,15rem);letter-spacing:-0.04em;line-height:0.9;font-weight:500;animation:rise 1.05s var(--ease) both;animation-delay:.2s">MARCELO</h1>
+      </div>
+      <div style="overflow:hidden;margin-top:clamp(18px,2.5vw,34px)">
+        <p data-rise style="margin:0;font-size:clamp(.8rem,1.1vw,1rem);letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:300;animation:rise .9s var(--ease) both;animation-delay:.28s">full-stack developer</p>
+      </div>
+    </div>
+
+    <div style="position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap">
+      <div data-fade style="display:flex;align-items:center;gap:10px;font-size:clamp(.8rem,1.15vw,1rem);animation:fadein .8s linear both;animation-delay:.5s">
+        <span style="color:var(--accent)">~/luis-marcelo</span>
+        <span style="color:var(--muted)">$</span>
+        <span style="color:var(--text)">whoami</span>
+        <span style="color:var(--accent);animation:blink 1.05s steps(1) infinite">_</span>
+      </div>
+      <div data-fade style="display:flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);animation:fadein .8s linear both;animation-delay:.62s">
+        <span>scroll</span>
+        <span style="display:inline-block;width:1px;height:34px;background:linear-gradient(var(--muted),transparent);animation:hint 1.9s var(--ease) infinite"></span>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Marquee" data-marquee style="border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface);overflow:hidden;padding:clamp(18px,2.4vw,34px) 0">
+    <div data-marquee-track style="display:inline-flex;white-space:nowrap;will-change:transform;animation:marquee 28s linear infinite">
+      <span style="display:inline-flex;font-size:clamp(1.4rem,4vw,3.4rem);letter-spacing:-0.03em;font-weight:300;white-space:nowrap">NODE.JS<span style="color:var(--accent);padding:0 .45em">·</span>NESTJS<span style="color:var(--accent);padding:0 .45em">·</span>TYPESCRIPT<span style="color:var(--accent);padding:0 .45em">·</span>NEXT.JS<span style="color:var(--accent);padding:0 .45em">·</span>REACT<span style="color:var(--accent);padding:0 .45em">·</span>ANGULAR<span style="color:var(--accent);padding:0 .45em">·</span>.NET<span style="color:var(--accent);padding:0 .45em">·</span>SPRING<span style="color:var(--accent);padding:0 .45em">·</span>DOCKER<span style="color:var(--accent);padding:0 .45em">·</span>POSTGRESQL<span style="color:var(--accent);padding:0 .45em">·</span></span>
+      <span aria-hidden="true" style="display:inline-flex;font-size:clamp(1.4rem,4vw,3.4rem);letter-spacing:-0.03em;font-weight:300;white-space:nowrap">NODE.JS<span style="color:var(--accent);padding:0 .45em">·</span>NESTJS<span style="color:var(--accent);padding:0 .45em">·</span>TYPESCRIPT<span style="color:var(--accent);padding:0 .45em">·</span>NEXT.JS<span style="color:var(--accent);padding:0 .45em">·</span>REACT<span style="color:var(--accent);padding:0 .45em">·</span>ANGULAR<span style="color:var(--accent);padding:0 .45em">·</span>.NET<span style="color:var(--accent);padding:0 .45em">·</span>SPRING<span style="color:var(--accent);padding:0 .45em">·</span>DOCKER<span style="color:var(--accent);padding:0 .45em">·</span>POSTGRESQL<span style="color:var(--accent);padding:0 .45em">·</span></span>
+    </div>
+  </section>
+
+  <section data-screen-label="Projects" style="padding:clamp(64px,9vw,140px) clamp(20px,3vw,44px)">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding-bottom:22px">
+      <span>selected work</span>
+      <span>005 / index</span>
+    </div>
+
+    <div style="border-top:1px solid var(--line)">
+      <a href="#" class="prow" data-cursor="link" data-project data-color="#1E3A2A" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform">
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted)">001</span>
+        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">CONECI-RO</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">react · typescript · tailwind</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-align:right">[wip]</span>
+      </a>
+      <a href="#" class="prow" data-cursor="link" data-project data-color="#2A2A2A" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform">
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted)">002</span>
+        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">ESTUDANTE AUDITOR</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">c# · asp.net core · sql server</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-align:right">[wip]</span>
+      </a>
+      <a href="#" class="prow" data-cursor="link" data-project data-color="#153025" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform">
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted)">003</span>
+        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">WIKI.CGE</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">next.js · typescript · postgresql</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-align:right">[wip]</span>
+      </a>
+      <a href="#" class="prow" data-cursor="link" data-project data-color="#1A1A22" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform">
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted)">004</span>
+        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">GERENCIADOR DE HORÁRIOS</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">php · codeigniter · mysql</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--accent);text-align:right">[ok]</span>
+      </a>
+      <a href="#" class="prow" data-cursor="link" data-project data-color="#24301C" style="display:grid;grid-template-columns:64px minmax(0,1.6fr) minmax(0,1.4fr) 84px;align-items:baseline;gap:16px;padding:clamp(20px,2.6vw,34px) 4px;border-bottom:1px solid var(--line);color:var(--text);transition:transform .6s var(--ease),color .35s var(--ease);will-change:transform">
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted)">005</span>
+        <span style="font-size:clamp(1.3rem,3.4vw,2.9rem);letter-spacing:-0.035em;font-weight:400;line-height:1">3D CARD CHAEWON</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase">next.js · three.js · gsap</span>
+        <span style="font-size:11px;letter-spacing:.14em;color:var(--accent);text-align:right">[ok]</span>
+      </a>
+    </div>
+  </section>
+
+  <section data-screen-label="Command" data-type-section style="padding:clamp(70px,11vw,180px) clamp(20px,3vw,44px);border-top:1px solid var(--line);background:var(--surface)">
+    <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding-bottom:26px">session · stdin</div>
+    <div style="display:flex;align-items:center;flex-wrap:wrap;gap:0;font-size:clamp(1rem,3.2vw,2.6rem);letter-spacing:-0.03em;line-height:1.2;min-height:1.3em">
+      <span data-typed style="color:var(--text);white-space:pre-wrap;word-break:break-word"></span><span style="display:inline-block;width:.55em;height:1em;background:var(--accent);margin-left:.12em;transform:translateY(.12em);animation:blink 1.05s steps(1) infinite"></span>
+    </div>
+  </section>
+
+  <footer style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:28px clamp(20px,3vw,44px) 40px;border-top:1px solid var(--line);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)">
+    <a href="#" class="flink" data-cursor="link" style="color:var(--muted)">github</a>
+    <a href="#" class="flink" data-cursor="link" style="color:var(--muted)">linkedin</a>
+    <a href="#" class="flink" data-cursor="link" style="color:var(--muted)">mail</a>
+    <span>exit 0</span>
+  </footer>
+
+  <div data-preview aria-hidden="true" style="position:fixed;top:0;left:0;width:240px;height:160px;background:#1E3A2A;border:1px solid var(--line);pointer-events:none;opacity:0;z-index:9998;transition:opacity .35s var(--ease);will-change:transform,opacity"></div>
+  <div data-cursor-ring aria-hidden="true" style="position:fixed;top:0;left:0;width:34px;height:34px;border:1px solid var(--muted);border-radius:50%;pointer-events:none;z-index:9999;will-change:transform;transition:opacity .3s linear"></div>
+  <div data-cursor-dot aria-hidden="true" style="position:fixed;top:0;left:0;width:6px;height:6px;border-radius:50%;background:var(--accent);pointer-events:none;z-index:9999;will-change:transform"></div>
+
+</div>
+
+<script>
+/* Parâmetros que no Design Component eram props ajustáveis no editor.
+   Mantidos aqui como constantes, com os mesmos valores default. */
+var ACCENT = '#00E676';      // opções testadas: #00E676 · #7AF0C0 · #E6E6E6 · #FF6A3D
+var MARQUEE_SECONDS = 28;    // 10–60
+var TYPE_SPEED = 28;         // 10–90 ms por caractere
+
+(function () {
+  function boot() {
+    var root = document.documentElement;
+    if (ACCENT) root.style.setProperty('--accent', ACCENT);
+
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var coarse = window.matchMedia('(pointer: coarse)').matches;
+    var q = function (s) { return document.querySelector(s); };
+    var dot = q('[data-cursor-dot]'), ring = q('[data-cursor-ring]'), prev = q('[data-preview]');
+    var track = q('[data-marquee-track]'), marquee = q('[data-marquee]');
+    var typed = q('[data-typed]'), typeSection = q('[data-type-section]');
+    var full = '~/luis-marcelo $ ls ./projects --all';
+
+    var base = Math.max(6, MARQUEE_SECONDS);
+    if (track) track.style.animationDuration = base + 's';
+    if (marquee && track && !reduced) {
+      marquee.addEventListener('mouseenter', function () {
+        track.style.transition = 'none';
+        track.style.animationDuration = (base / 0.6).toFixed(2) + 's';
+      });
+      marquee.addEventListener('mouseleave', function () {
+        track.style.animationDuration = base + 's';
+      });
+    }
+
+    // typed command — uma vez só, ao entrar no viewport
+    if (typed) {
+      if (reduced) {
+        typed.textContent = full;
+      } else {
+        var run = function () {
+          var i = 0;
+          var step = function () {
+            typed.textContent = full.slice(0, i);
+            if (i++ <= full.length) setTimeout(step, TYPE_SPEED + (Math.random() * 46 - 12));
+          };
+          step();
+        };
+        var io = new IntersectionObserver(function (es) {
+          es.forEach(function (e) { if (e.isIntersecting) { io.disconnect(); run(); } });
+        }, { threshold: 0.35 });
+        io.observe(typeSection);
+      }
+    }
+
+    if (reduced || coarse) {
+      [dot, ring, prev].forEach(function (el) { if (el) el.style.display = 'none'; });
+      document.body.style.cursor = 'auto';
+      return;
+    }
+
+    // cursor customizado + preview inclinado pela velocidade
+    var mx = window.innerWidth / 2, my = window.innerHeight / 2;
+    var rx = mx, ry = my, px = mx, py = my, vel = 0, rot = 0, hover = 0, on = 0;
+
+    window.addEventListener('mousemove', function (e) {
+      vel = vel * 0.55 + (e.clientX - mx) * 0.45;
+      mx = e.clientX; my = e.clientY;
+    }, { passive: true });
+
+    document.querySelectorAll('[data-cursor="link"]').forEach(function (el) {
+      el.addEventListener('mouseenter', function () { hover = 1; });
+      el.addEventListener('mouseleave', function () { hover = 0; });
+    });
+    document.querySelectorAll('[data-project]').forEach(function (el) {
+      el.addEventListener('mouseenter', function () {
+        on = 1;
+        prev.style.background = el.getAttribute('data-color') || '#1E3A2A';
+        prev.style.opacity = '1';
+      });
+      el.addEventListener('mouseleave', function () { on = 0; prev.style.opacity = '0'; });
+    });
+
+    (function tick() {
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      px += (mx + 34 - px) * 0.16; py += (my - 96 - py) * 0.16;
+      var target = Math.max(-14, Math.min(14, vel * 0.5));
+      rot += (target - rot) * 0.12; vel *= 0.86;
+      dot.style.transform = 'translate3d(' + mx + 'px,' + my + 'px,0) translate(-50%,-50%) scale(' + (hover ? 0.4 : 1) + ')';
+      ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0) translate(-50%,-50%) scale(' + (hover ? 1.9 : 1) + ')';
+      ring.style.opacity = hover ? '1' : '0.55';
+      prev.style.transform = 'translate3d(' + px + 'px,' + py + 'px,0) rotate(' + rot.toFixed(2) + 'deg) scale(' + (on ? 1 : 0.9) + ')';
+      requestAnimationFrame(tick);
+    })();
+  }
+
+  if (document.readyState !== 'loading') boot();
+  else document.addEventListener('DOMContentLoaded', boot);
+})();
+</script>
+</body>
+</html>

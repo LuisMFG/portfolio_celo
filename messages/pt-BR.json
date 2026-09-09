@@ -1,9 +1,40 @@
 {
+  "Header": {
+    "identity": "LM",
+    "identitySuffix": "— full-stack",
+    "location": "porto velho · ro",
+    "version": "v.2026",
+    "switchTo": {
+      "pt-BR": "Ver o site em português",
+      "en": "Ver o site em inglês"
+    },
+    "theme": {
+      "dark": "Ativar tema escuro",
+      "light": "Ativar tema claro"
+    }
+  },
+  "Footer": {
+    "links": {
+      "github": "Perfil no GitHub, abre em nova aba",
+      "linkedin": "Perfil no LinkedIn, abre em nova aba",
+      "mail": "Enviar e-mail para lmfg10@gmail.com"
+    },
+    "exit": "exit 0"
+  },
   "HeroSection": {
     "greeting": "Oi, eu sou Luis Marcelo!",
     "alt": "Foto de perfil de Luis Marcelo",
     "subtitle": "Desenvolvedor Full Stack",
-    "description": "Transformando ideias em soluções digitais inovadoras"
+    "description": "Transformando ideias em soluções digitais inovadoras",
+    "name": {
+      "first": "LUÍS",
+      "last": "MARCELO"
+    },
+    "prompt": {
+      "path": "~/luis-marcelo",
+      "command": "whoami"
+    },
+    "scroll": "scroll"
   },
   "AboutSection": {
     "title": "Sobre Mim",
@@ -58,6 +89,12 @@
   },
   "ProjectsSection": {
     "title": "Projetos",
+    "index": "index",
+    "newTab": "abre em nova aba",
+    "status": {
+      "done": "Concluído",
+      "wip": "Em andamento"
+    },
     "items": {
       "coneci-ro": {
         "title": "CONECI - RO (Em Construção)",
@@ -96,6 +133,10 @@
         "description": "Uma cápsula do tempo interativa para exibir memórias ao longo de uma linha do tempo, criando uma experiência visual e responsiva."
       }
     }
+  },
+  "CommandSection": {
+    "label": "session · stdin",
+    "command": "ls ./projects --all"
   },
   "ContactSection": {
     "title": "Contato",

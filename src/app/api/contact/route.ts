@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import { NextRequest, NextResponse } from 'next/server';
+import { rateLimit, clientIp } from '@/src/lib/rate-limit';
 
 interface ContactFormData {
     name: string;
@@ -10,6 +11,30 @@ interface ContactFormData {
 
 export async function POST(request: NextRequest) {
     try {
+        // Antes de qualquer outra coisa, inclusive da checagem de env: uma
+        // enxurrada não deve custar nem leitura de variável nem parse de body.
+        //
+        // Os números são os mesmos do login do admin (5 por 15 min), e são
+        // reuso deliberado do precedente que já existe no projeto — inventar
+        // uma segunda política para o mesmo helper criaria duas verdades.
+        //
+        // **Ressalva registrada:** `rate-limit.ts` guarda os buckets num `Map`
+        // em memória. Em serverless isso é por instância e evapora no cold
+        // start, então isto é um quebra-molas, não um limite de verdade. A
+        // mesma limitação já vale para o login do admin. Limite real exigiria
+        // store compartilhado (Redis/Upstash), que é outra decisão.
+        const ip = clientIp(request.headers);
+        const limit = rateLimit(`contact:${ip}`, 5, 15 * 60);
+        if (!limit.allowed) {
+            return NextResponse.json(
+                { error: 'Muitas tentativas. Tente novamente em alguns minutos.' },
+                {
+                    status: 429,
+                    headers: { 'Retry-After': String(limit.retryAfterSeconds) },
+                }
+            );
+        }
+
         if (!process.env.RESEND_API_KEY) {
             console.error('RESEND_API_KEY is not configured');
             return NextResponse.json(
