@@ -1030,14 +1030,29 @@ de 335**, mesma linha confirmada pelo topo dos dois rótulos.
   do componente antigo não volta — era literal cravado no JSX, nunca uma
   chave traduzida.
 
-### Pendente: `/api/contact` não tem proteção anti-spam
+### `/api/contact` com rate limit (09/09/2026)
 
-Verificado, e **nada foi inventado na seção**: a rota não tem honeypot, nem
-rate limit, nem captcha. `src/lib/rate-limit.ts` existe e é consumido só pelo
-login do admin (5 tentativas por 15 min) — o mesmo helper serve, é só aplicar.
+`rateLimit(\`contact:${ip}\`, 5, 15 * 60)` no topo do `POST`, **antes da
+checagem de env e do parse do body**: enxurrada não deve custar nem leitura de
+variável. Responde `429` com `Retry-After`.
 
-Não é escopo da seção de contato, e por isso não foi feito ali. Fica anotado
-para quando a rota for mexida: um formulário público sem limite é convite.
+Os números são os do login do admin, reusados de propósito — inventar uma
+segunda política para o mesmo helper criaria duas verdades sobre a mesma
+pergunta.
+
+**Ressalva, e ela é a parte que importa:** `rate-limit.ts` guarda os buckets
+num `Map` em memória. Em serverless isso é **por instância** e evapora no cold
+start. Isto é um quebra-molas, não um limite. A mesma limitação já valia para
+o login do admin e continua valendo — limite de verdade exige store
+compartilhado (Redis/Upstash), que é outra decisão e não foi tomada.
+
+Não entrou no commit de promoção de propósito: são problemas independentes, e
+**se a promoção precisar ser revertida o rate limit não deve voltar junto** —
+a exposição existe com qualquer uma das duas homes.
+
+O cliente não distingue `429` de outros erros: cai em `form.errorDefault`
+("Erro ao enviar mensagem"). Aceito por ora — distinguir exigiria chave nova
+em `messages/*.json`, e o caso é raro o bastante para não pagar isso agora.
 
 ### `<Toaster />` removido do site público (09/09/2026)
 
