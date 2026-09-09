@@ -1,5 +1,9 @@
 import { setRequestLocale } from "next-intl/server";
-import { fetchProjects, type Locale } from "@/src/lib/content";
+import {
+  fetchExperiences,
+  fetchProjects,
+  type Locale,
+} from "@/src/lib/content";
 import { BackgroundGrid } from "@/src/components/site/background-grid";
 import { SiteHeader } from "@/src/components/site/site-header";
 import { SiteFooter } from "@/src/components/site/site-footer";
@@ -7,6 +11,7 @@ import { HeroSection } from "@/src/components/site/hero-section";
 import { MarqueeSection } from "@/src/components/site/marquee-section";
 import { AboutSection } from "@/src/components/site/about-section";
 import { StackSection } from "@/src/components/site/stack-section";
+import { ExperienceSection } from "@/src/components/site/experience-section";
 import { ProjectsSection } from "@/src/components/site/projects-section";
 import { CommandSection } from "@/src/components/site/command-section";
 
@@ -30,7 +35,12 @@ export default async function V2Page({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const projects = await fetchProjects(locale as Locale);
+  // Em paralelo: as duas leituras são independentes e ambas passam por
+  // `unstable_cache`. Em série, a segunda esperaria a primeira à toa.
+  const [projects, experiences] = await Promise.all([
+    fetchProjects(locale as Locale),
+    fetchExperiences(locale as Locale),
+  ]);
 
   return (
     <>
@@ -80,6 +90,21 @@ export default async function V2Page({
           "sobre" nem de "projetos" — as três dividem o mesmo `--bg`, e régua
           marca troca de superfície, não fronteira de seção. */}
       <StackSection />
+
+      {/* Derivada, como as duas de cima. Entra entre "stack" e "projetos" na
+          ordem do site antigo — quem eu sou, o que eu uso, onde eu trabalhei,
+          o que eu construí.
+
+          Mesmo requisito estrutural das outras: fora do `<main>`, e landmark
+          `region` pelo `aria-labelledby` no `<h2>`. Nenhuma régua a separa das
+          vizinhas — "sobre", "stack", esta e "projetos" dividem o mesmo
+          `--bg`, e régua marca troca de superfície, não fronteira de seção.
+
+          Os grupos profissional e acadêmico saem da **mesma** consulta:
+          `fetchExperiences` filtra só por `isPublished`, sem `where` por tipo.
+          A ordem dos grupos é fixada no componente porque o banco ordena por
+          `type: "asc"` e "academic" viria primeiro no alfabeto. */}
+      <ExperienceSection experiences={experiences} />
 
       {/* Também fora do `<main>`, pelo mesmo motivo da faixa — e com o mesmo
           requisito: `aria-labelledby` no `<section>` a torna landmark

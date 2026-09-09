@@ -675,6 +675,140 @@ coluna à esquerda, e a lista de projetos faz o mesmo com o índice. **Decisão,
 não descuido** — é o tipo de irregularidade que alguém "conserta" sem saber que
 foi escolhida.
 
+### Experiência — medido (09/09/2026)
+
+```
+Performance 99 · Acessibilidade 100
+FCP 1.2s · LCP 2.2s · TBT 0ms · CLS 0.000 · SI 1.2s · 214 KiB
+```
+
+Rota parada em 3,65 KiB. Server component, zero JS. Orçamento de 280ms de TBT
+e 300ms de LCP segue intacto — é a quarta seção seguida que não custa nada,
+porque nenhuma delas tem cliente.
+
+**Não existe no protótipo.** Derivada, e diferente de "sobre" ela não precisou
+inventar escala nenhuma: a hierarquia é **cor**, não tamanho. Cargo e
+descrição dividem o mesmo `text-body` e se separam por `--text` contra
+`--muted` — comando aceso, saída apagada. Período e empresa são
+`text-project-meta`, os mesmos 11px `.14em` do índice e da pilha da linha de
+projeto. Empréstimos: cabeçalho de dois rótulos com `pb-projects-head` e
+contador derivado do tamanho da lista (`006 / log`), da lista de projetos; grid
+`max-content minmax(0,1fr)` com `--project-gap` e `align-items: baseline`, da
+seção "stack"; fundo `--bg` e por isso **sem `border-top`**.
+
+Zero chave nova em `messages/*.json`: `ExperienceSection.title`,
+`.professional` e `.academic` já existiam traduzidas e são exatamente os três
+rótulos necessários. `log` é jargão de terminal, como `stack` e `exit 0`.
+
+#### Sem régua entre entradas, e o vão é uma família de linhas em branco
+
+Régua marca troca de superfície; e mesmo dentro da seção, a lista de projetos
+tem régua porque é tabela — isto é prosa em blocos, que "sobre" já decidiu
+separar por espaço. Régua aqui desenharia uma segunda tabela competindo com a
+lista de projetos.
+
+Todos os vãos derivam de `--about-para-gap`, nenhum clamp novo. Medido a
+1440px, contra uma linha de 31,68px:
+
+```
+cargo → empresa        12px      (--project-row-gap)
+cabeçalho → descrição  31,68px   1 linha
+entrada → entrada      63,36px   2 linhas
+grupo → grupo          95,04px   3 linhas
+```
+
+`--exp-measure` é apelido de `--about-measure`: a descrição mede **829,44px =
+72,0ch exatos**, o mesmo número da prosa de "sobre". Mesmo tipo de texto,
+mesma largura de leitura.
+
+#### `--exp-head-gap` existe porque dois rótulos de 11px seguidos colidem
+
+Sem ele, "EXPERIÊNCIAS" e "PROFISSIONAL" ficam com 22px acima e 22px abaixo —
+simétricos — e como os dois são 11px em `--muted`, o rótulo do grupo se lê como
+subtítulo da seção, não como cabeçalho da lista dele. Nas outras seções
+`pb-projects-head` separa rótulo de *conteúdo*; aqui o conteúdo começa com
+outro rótulo. Uma linha em branco resolve: 70,2px acima contra 50,2px abaixo,
+e o rótulo passa a se ligar para baixo. **Só o primeiro grupo precisa** — o
+segundo já tem três linhas de `--exp-group-gap` acima.
+
+#### `subgrid`, e não `display: contents`
+
+A trilha de períodos só alinha se todas as entradas dividirem o mesmo grid; um
+grid por `<li>` daria um `max-content` diferente para cada uma. O caminho curto
+seria `display: contents` no `<li>`, como a seção "stack" faz no `<div>` de
+agrupamento — mas lá o elemento dissolvido não tem semântica a perder, e aqui
+ele é item de lista. Este projeto **já foi mordido** por perda de semântica de
+lista via CSS: é por isso que a "stack" carrega `role="list"` explícito.
+
+Com `subgrid` o `<li>` continua gerando caixa e nada na árvore de
+acessibilidade é tocado. O `@supports` não é enfeite: onde subgrid não existe
+cai-se no empilhado, que é o layout do mobile — **degradação para um estado
+projetado, não para um quebrado**.
+
+#### A trilha alinha por grupo, não entre grupos — e isso é dado, não CSS
+
+Cada `<ol>` é um grid próprio. Medido: as duas trilhas coincidem nos dois
+idiomas (203,5px em PT, 154,7px em EN) porque o período mais longo tem o mesmo
+número de caracteres dos dois lados — 25 em PT, 19 em EN. **Propriedade dos
+dados, não da folha de estilo:** um período editado no admin pode desalinhar.
+
+Fica assim. Unificar exigiria subgrid aninhado em três níveis para ganhar
+alinhamento entre blocos já separados por três linhas em branco e um rótulo.
+Registrado porque é diferença que alguém vê depois e lê como bug.
+
+#### A partição por tipo é total, de propósito
+
+`Experience.type` é `String` livre no schema, não enum — mesma armadilha de
+`Project.status`, e `content.ts` faz `r.type as "professional" | "academic"`
+sem guard. Dois filtros por igualdade descartariam em silêncio qualquer valor
+fora da lista e uma entrada publicada sumiria da página sem nada acusar. O
+desconhecido cai em `professional`, o mesmo default que `content.ts` já usa.
+
+**A trilha acadêmica sai da mesma consulta:** `fetchExperiences` filtra só por
+`isPublished`, sem `where` por tipo. Verificado no DOM servido — IFRO e IFAM
+presentes, 6 entradas em 2 grupos (4 + 2).
+
+A ordem dos grupos é array explícito no componente, não ordem de chegada: o
+banco ordena por `type: "asc"` e `"academic"` vem antes de `"professional"` no
+alfabeto, então na ordem do banco a formação abriria a seção.
+
+#### Três ornamentos recusados
+
+- **Hash curto de commit** (`a3f9c21`) ao lado do cargo, à la `git log
+  --oneline`. Fica fora **mesmo derivado deterministicamente do conteúdo**: o
+  problema não é o sorteio — que quebraria a hidratação por divergir entre
+  servidor e cliente — é que o glifo finge endereçar um commit inexistente.
+  Não há repositório onde "Coordenador de Transparência Ativa" seja um objeto.
+- **`[atual]`** nas posições em curso, na gramática de colchetes do protótipo.
+  Exigiria copy nova e inferir "em andamento" procurando `"Presente"`/
+  `"Present"` numa string livre e traduzida — a armadilha que `toProjectStatus`
+  existe para fechar. O período já diz "Presente".
+- **Nível de proficiência ou senioridade**, pela mesma razão registrada em
+  `stack.ts`.
+
+#### 375px: o período sobe, a entrada ocupa a linha inteira
+
+Mesmo colapso e mesmo breakpoint (`md`) da "stack". Lado a lado, `ABR DE 2025 -
+NOV DE 2025` come ~204px dos 335px úteis e a coluna restante não sustenta cargo
+nem descrição. Medido a 375px: entrada empilhada em 335px, período em uma linha,
+descrição em 38,8 colunas, `scrollWidth == innerWidth`, cabeçalho sem quebra
+(105,6 + 79,2 + 16 = 200,8 de 335). Empresa quebra em duas linhas — é meta,
+mesma tolerância da pilha de tecnologias na linha de projeto.
+
+#### Armadilha de medição, de novo — e desta vez não era o ISR
+
+Uma correção de CSS não apareceu no navegador por três tentativas. O cache ISR
+levou a culpa (`rm -rf .next` antes do build, como manda a seção "sobre"), mas
+a causa era outra: **um `next-server` antigo continuava segurando a porta**.
+`pkill -f "next start"` não casa nada — o processo se chama `next-server`.
+Servidor velho serve HTML velho apontando para um bundle de CSS que nem existe
+mais no disco.
+
+O sintoma que fecha o diagnóstico em um passo: comparar o hash do CSS que a
+página carrega com o que existe em `.next/static/css`. Se o arquivo carregado
+não está no disco, o servidor é de outro build. Matar por
+`lsof -ti :PORTA`, nunca por nome.
+
 ### Decisão revista: header em 375px
 
 A regra anterior — manter `LM — FULL-STACK` e os dois controles em 375px — era
@@ -824,6 +958,19 @@ Não foi validado em produção porque **o código do formulário não está lá
 a última implantação de produção é de 29 dias atrás e as mudanças do campo
 seguem sem commit. O dado está certo em produção; a interface para editá-lo,
 não. Conferir depois do próximo deploy.
+
+### Pendente: `toExperienceType()`, o par que falta
+
+`content.ts` guarda `ProjectStatus` com `toProjectStatus()` mas **assere**
+`Experience.type` com `r.type as "professional" | "academic"`. As duas colunas
+são `String` livre no schema e correm o mesmo risco; só uma tem porta de
+entrada. A partição total da seção "experiência" cobre a **exibição** — nada
+some da página —, mas o par assimétrico é dívida: o tipo continua mentindo
+sobre o que a coluna pode conter, e o próximo consumidor de `ExperienceView`
+não herda a defesa do componente.
+
+Ao mexer em experiências de novo, criar o `toExperienceType()` correspondente,
+espelhando `src/lib/project-status.ts`.
 
 ## Permissões do Claude Code
 

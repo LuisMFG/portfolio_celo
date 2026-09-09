@@ -146,6 +146,48 @@
    */
   --stack-row-gap: var(--project-pad-y);
   --stack-label-gap: var(--project-row-gap);
+
+  /**
+   * Seção "experiência". O ritmo inteiro é uma família só: **linhas em
+   * branco**, derivadas de `--about-para-gap`. Prosa de terminal separa bloco
+   * assim, e a razão já vive na seção "sobre" — repetir clamps novos aqui
+   * criaria uma segunda verdade para o mesmo ritmo.
+   *
+   *   cargo → empresa      12px       (justo: são a mesma unidade de leitura)
+   *   cabeçalho → descrição 1 linha
+   *   entrada → entrada     2 linhas
+   *   grupo → grupo         3 linhas
+   *
+   * Os vãos em `em` resolvem contra a escala do corpo, então precisam de um
+   * contêiner com `text-body` — é o que o `<div data-exp-groups>` faz.
+   *
+   * `--exp-line-gap` é apelido de `--project-row-gap`, que só existe abaixo de
+   * `md` na linha de projeto; aqui vale nas duas larguras, porque cargo e
+   * empresa ficam empilhados em qualquer viewport.
+   *
+   * `--exp-measure` é apelido de `--about-measure`: mesmo tipo de texto, mesma
+   * largura de leitura. Apelido e não cópia, pela razão de sempre.
+   */
+  /**
+   * Ar entre o cabeçalho da seção e o rótulo do primeiro grupo.
+   *
+   * Sem ele os dois ficam com 22px acima e 22px abaixo — simétricos — e como
+   * ambos são 11px em `--muted`, "EXPERIÊNCIAS" e "PROFISSIONAL" se leem como
+   * um bloco de duas linhas em vez de título de seção seguido de rótulo de
+   * grupo. Nas outras seções `pb-projects-head` separa rótulo de *conteúdo*;
+   * aqui o conteúdo começa com outro rótulo, e dois rótulos em sequência
+   * pedem mais que o vão de rótulo → corpo.
+   *
+   * Uma linha em branco, da mesma família dos outros vãos. O segundo grupo
+   * não precisa: já tem `--exp-group-gap` (três linhas) acima.
+   */
+  --exp-head-gap: var(--about-para-gap);
+
+  --exp-line-gap: var(--project-row-gap);
+  --exp-body-gap: var(--about-para-gap);
+  --exp-entry-gap: calc(var(--about-para-gap) * 2);
+  --exp-group-gap: calc(var(--about-para-gap) * 3);
+  --exp-measure: var(--about-measure);
 }
 
 .light .theme-terminal {
@@ -591,3 +633,79 @@ body:has(.theme-terminal) {
   opacity: 0;
 }
 
+/**
+ * Seção "experiência" — trilha de períodos à esquerda, entrada à direita.
+ *
+ * **Decisão de 375px: o período sobe, a entrada ocupa a linha inteira.** É o
+ * mesmo colapso da seção "stack", no mesmo breakpoint (`md`, 768px) e pela
+ * mesma razão: lado a lado, `ABR DE 2025 - NOV DE 2025` come ~204px dos 335px
+ * úteis e a coluna restante não sustenta nem o cargo nem a descrição. Media
+ * query, nunca render condicional.
+ *
+ * ### Por que `subgrid`, e não `display: contents`
+ *
+ * A trilha de períodos só alinha entre entradas se todas dividirem o mesmo
+ * grid — um grid por `<li>` daria um `max-content` diferente para cada uma. O
+ * caminho curto seria `display: contents` no `<li>`, como a seção "stack" faz
+ * no `<div>` de agrupamento. A diferença é que lá o elemento dissolvido não
+ * tem semântica a perder, e aqui ele é um item de lista: `display: contents`
+ * em `<li>` já removeu semântica de lista em navegador de produção, e este
+ * projeto **já foi mordido** por perda de semântica de lista via CSS — é por
+ * isso que a seção "stack" carrega um `role="list"` explícito.
+ *
+ * Com `subgrid` o `<li>` continua gerando caixa e nada na árvore de
+ * acessibilidade é tocado. O `@supports` não é enfeite: onde subgrid não
+ * existe, cai-se no empilhado — que é o layout do mobile, já desenhado e já
+ * necessário. Degradação para um estado projetado, não para um quebrado.
+ */
+.theme-terminal [data-exp-groups] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--exp-group-gap);
+  padding-top: var(--exp-head-gap);
+}
+
+.theme-terminal [data-exp-list] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--exp-entry-gap);
+}
+
+.theme-terminal [data-exp-entry] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--exp-line-gap);
+}
+
+.theme-terminal [data-exp-body] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--exp-body-gap);
+}
+
+.theme-terminal [data-exp-head] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--exp-line-gap);
+}
+
+@media (min-width: 768px) {
+  @supports (grid-template-columns: subgrid) {
+    .theme-terminal [data-exp-list] {
+      display: grid;
+      grid-template-columns: max-content minmax(0, 1fr);
+      column-gap: var(--project-gap);
+      row-gap: var(--exp-entry-gap);
+    }
+
+    .theme-terminal [data-exp-entry] {
+      display: grid;
+      grid-column: 1 / -1;
+      grid-template-columns: subgrid;
+      /* `baseline`, como a linha de projeto e a seção "stack": período de
+         11px e cargo no corpo têm alturas diferentes, e é a primeira linha
+         dos dois que precisa casar. */
+      align-items: baseline;
+    }
+  }
+}

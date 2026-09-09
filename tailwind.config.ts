@@ -138,6 +138,9 @@ const config: Config = {
         // `tokens.css`. Em `ch`, a unidade nativa do conceito: em
         // monoespaçada `ch` é literalmente coluna.
         about: 'var(--about-measure)',
+        // Medida da descrição de cada experiência. Apelido de `--about-measure`
+        // em `tokens.css`: mesmo tipo de texto, mesma largura de leitura.
+        exp: 'var(--exp-measure)',
       },
       colors: {
         // Namespace próprio: `muted` e `accent` já pertencem ao shadcn e são
