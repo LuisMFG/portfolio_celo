@@ -62,12 +62,30 @@ interface LayoutProps {
  * Root layout do site público. Tem o próprio `<html>` para que `lang`
  * acompanhe o locale — o admin tem o seu em `(admin)/layout.tsx`.
  *
- * `jetbrainsMono.variable` apenas expõe `--font-mono` — declarar a variável
- * não aplica a fonte. Quem aplica é o `font-family` de `.theme-terminal`.
+ * `.theme-terminal` mora no **`<body>`**, não num wrapper interno como era no
+ * `v2/layout.tsx`. É essa subida que mata o `--term-doc-bg`: aquele token só
+ * existia porque `--bg` vivia dentro do wrapper e o `<body>` ficava de fora,
+ * pintado pelo shadcn. Com a classe no `<body>`, `background-color: var(--bg)`
+ * já é a regra de `.theme-terminal` e não há segunda cópia das duas cores.
  *
- * O `<body>` não tem família própria de propósito: a Sora vive só na home
- * antiga, que é quem ainda a usa. Deixá-la aqui fazia o /v2 baixar e
- * precarregar ~36 KiB de uma fonte que ele nem desenha.
+ * O `<div>` interno continua existindo, mas só com responsabilidade de
+ * layout — `overflow-x: clip` no `<body>` propagaria para o viewport, que é
+ * exatamente o que se quer evitar.
+ *
+ * `jetbrainsMono.variable` no `<html>` apenas expõe `--font-mono`; quem aplica
+ * a fonte e os tokens é o `font-family` de `.theme-terminal`.
+ *
+ * Regras de scroll, decididas antes da fase de movimento e mantidas na
+ * promoção: **o `<body>` é quem rola.** Nenhum `h-screen` + `overflow-y-auto`
+ * em wrapper, nenhum `scroll-snap` — os dois quebrariam o Lenis (que assume
+ * `window`) e o IntersectionObserver com `root: null`.
+ *
+ * `overflow-x: clip` no wrapper, não em `html`: `clip` recorta sem criar
+ * contexto de scroll, enquanto `hidden` transformaria o elemento em contêiner
+ * de scroll e mataria `position: sticky`.
+ *
+ * A Sora saiu junto com a home antiga — ela vivia na `page.tsx` velha
+ * justamente para não ser baixada por quem não a desenha.
  */
 export default async function LocaleLayout({ params, children }: LayoutProps) {
   const resolvedParams = await params;
@@ -87,7 +105,7 @@ export default async function LocaleLayout({ params, children }: LayoutProps) {
       suppressHydrationWarning
       className={jetbrainsMono.variable}
     >
-      <body>
+      <body className="theme-terminal">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -95,7 +113,9 @@ export default async function LocaleLayout({ params, children }: LayoutProps) {
           disableTransitionOnChange
         >
           <NextIntlClientProvider locale={locale} messages={messages}>
-            {children}
+            <div className="relative min-h-svh [overflow-x:clip]">
+              {children}
+            </div>
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

@@ -246,24 +246,6 @@
   --accent: #007a3d;
 }
 
-/**
- * Fundo do documento. Enquanto o /v2 é staging, o `<body>` ainda é pintado
- * pelo `body { @apply bg-background }` do shadcn, que só coincide com --bg
- * no escuro. Nome namespaced para não colidir com o shadcn — some quando a
- * promoção levar o terminal para o site inteiro.
- */
-:root {
-  --term-doc-bg: #0a0a0a;
-}
-
-.light {
-  --term-doc-bg: #ededed;
-}
-
-body:has(.theme-terminal) {
-  background-color: var(--term-doc-bg);
-}
-
 .theme-terminal {
   background-color: var(--bg);
   color: var(--text);

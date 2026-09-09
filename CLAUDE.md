@@ -198,20 +198,54 @@ Para conter overflow horizontal use `overflow-x: clip`, nunca `hidden` —
 e o smooth scroll. O protótipo usa `hidden` em `html,body` por ser um arquivo
 solto; não copie isso.
 
-### Promoção do /v2 — um commit só
+### Promoção do /v2 — feita (09/09/2026)
 
-Quando as seções estiverem portadas:
+Os seis passos registrados, executados em um commit só. `/` responde 200 por
+rewrite, `/pt-BR` 307 → `/` (um hop exato), `/en` 200, `/v2` 404. First Load
+da home: **236 kB → 133 kB**.
 
-1. `git mv src/app/(site)/[locale]/v2/page.tsx src/app/(site)/[locale]/page.tsx`
-2. absorver o `v2/layout.tsx` no layout de locale (incluindo o wrapper
-   `.theme-terminal`) e apagar o diretório `v2/`
-3. trocar Sora por JetBrains Mono no `<body>` do layout de locale
-4. deletar `home-shell.tsx`, `particles-background.tsx`, `loadingscreen.tsx`,
-   `sidebar.tsx`, `sections/*` e `locale-switcher.tsx`
-5. desinstalar `tsparticles`, `react-tsparticles`, `typewriter-effect`,
-   `react-typewriter-effect` (os dois últimos já estão instalados sem uso)
-6. remover `--term-doc-bg` de `tokens.css` — só existe porque o `<body>` ainda
-   é pintado pelo shadcn enquanto o /v2 é staging
+Duas coisas saíram diferente do que o roteiro previa, e as duas são decisão:
+
+**`.theme-terminal` foi para o `<body>`, não para um wrapper.** O passo 6
+mandava remover `--term-doc-bg`, mas aquele token existia por uma razão
+estrutural que a promoção sozinha não resolvia: `--bg` vive dentro de
+`.theme-terminal` e o `<body>` ficava fora dele. Subir a classe para o
+`<body>` é o que de fato mata o token — `background-color: var(--bg)` já é
+regra de `.theme-terminal`, e as duas cores deixam de ter segunda cópia.
+Medido nos dois temas: `body` em `#0a0a0a` / `#ededed`, mono aplicada.
+
+O `<div>` interno continua existindo com `relative min-h-svh
+[overflow-x:clip]`, e **isso não é redundância**: `overflow-x` no `<body>`
+propaga para o viewport. Verificado que `body { overflow-x }` computa
+`visible` e `scrollWidth == innerWidth`.
+
+**A desinstalação precisou de `--legacy-peer-deps`.** O projeto tem um
+conflito de peer deps **pré-existente e latente**: `cmdk@1.0.0` pede React 18
+e o projeto usa React 19. Sem a flag, `npm uninstall` aborta com ERESOLVE — e
+não tem nada a ver com os pacotes removidos.
+
+Não existe `.npmrc` nem `vercel.json` no repositório: **a build de produção
+funciona porque a Vercel cai sozinha para `--legacy-peer-deps` ao detectar
+ERESOLVE.** Isso é dependência de um comportamento implícito da plataforma, e
+qualquer `npm install` local sem a flag falha. Registrado como dívida, não
+resolvido aqui — a correção é subir `cmdk` ou fixar a política num `.npmrc`,
+e as duas mexem em resolução de dependência, que não é assunto de promoção.
+
+O diff do lock foi conferido antes de aceitar, e é **puramente subtrativo**:
+366 pacotes removidos, **0 adicionados, 0 mudanças de versão**. Os 319 que não
+são os quatro nomeados são a árvore transitiva deles (o `typewriter-effect`
+arrastava uma cadeia velha de webpack).
+
+#### Plano de rollback
+
+`git revert` do commit de promoção devolve a home antiga **inteira**: o commit
+inclui `package.json` e `package-lock.json`, então os pacotes voltam junto e o
+build seguinte (`npm ci`) os reinstala. Nenhuma migration entra aqui — não há
+estado de banco para desfazer.
+
+**Mas revert não é o primeiro movimento.** Se algo quebrar em produção, o
+caminho é o **Instant Rollback da Vercel** — repromover o deployment anterior.
+Segundos, sem git, sem build. O revert vem depois, com calma.
 
 ### Não negociável
 
