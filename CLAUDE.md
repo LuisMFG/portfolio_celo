@@ -289,6 +289,37 @@ O redesign precisa atingir, medido do mesmo jeito:
 | LCP | 2.8 s | **< 2.5 s** |
 | CLS | 0.005 | **manter < 0.01** |
 
+#### VEREDITO — medido em produção (09/09/2026)
+
+Redesign no ar, `/` em `luismarceloportfolio.vercel.app`, mesma rota e mesmo
+cache do baseline. Quatro execuções, a primeira descartada:
+
+```
+Performance 99 · Acessibilidade 100 · Best Practices 100 · SEO 100
+FCP 1.07–1.48s · LCP 1.82–1.98s · TBT 22–80ms · CLS 0.000 · SI 2.50–2.67s
+doc 13.417 B (estável, abaixo do limiar de 14.600)
+```
+
+| Métrica | Baseline | Meta | Produção | |
+|---|---|---|---|---|
+| Performance | 81 | ≥ 90 | **99** | ✓ |
+| Acessibilidade | 96 | 100 | **100** | ✓ |
+| Best Practices | 100 | manter | **100** | ✓ |
+| SEO | 100 | manter | **100** | ✓ |
+| TBT | 560 ms | < 300 ms | **22–80 ms** | ✓ |
+| LCP | 2.8 s | < 2.5 s | **~1.9 s** | ✓ |
+| CLS | 0.005 | < 0.01 | **0.000** | ✓ |
+
+**Todas as metas batidas.** O LCP entrou com quase 600ms de folga, não na
+borda — e isso vale como correção de tudo que se mediu no localhost: as
+séries de 2,3s e 2,5s eram do simulador, não do site. First Load da home:
+236 kB → 133 kB.
+
+O gargalo diagnosticado no baseline era JavaScript, e é onde está o ganho: o
+TBT caiu de 560ms para dezenas. Sobrou espaço real para a fase de movimento —
+**mas o orçamento agora se mede contra estes números, não contra os de
+localhost.**
+
 #### Estes números são de produção. As medições de seção não são.
 
 **A tabela acima foi medida no site publicado na Vercel, atrás de CDN. O piso
@@ -1343,15 +1374,46 @@ Antes disso, os 9 títulos de produção foram comparados com
 derivação era válida para todas as linhas. Título editado invalidaria a regra
 para aquela linha.
 
-### Pendente: verificar o campo no admin de produção
+### Admin em produção — rotas e auth confirmadas, UI logada não (09/09/2026)
 
-O `<Select>` de status foi validado **localmente**: renderiza o rótulo certo
-(`done` → "Concluído", `wip` → "Em andamento") e persiste na ida e volta.
+O merge levou a produção a reestruturação em route groups, que **moveu o
+admin inteiro de diretório**. Era o maior risco do deploy. Verificado logo
+depois:
 
-Não foi validado em produção porque **o código do formulário não está lá** —
-a última implantação de produção é de 29 dias atrás e as mudanças do campo
-seguem sem commit. O dado está certo em produção; a interface para editá-lo,
-não. Conferir depois do próximo deploy.
+```
+/admin              307 -> /admin/login
+/admin/login        200, com <form> real (email + password)
+/admin/dashboard    307 -> /admin/login
+/admin/projects     307 -> /admin/login
+/admin/experiences  307 -> /admin/login
+/admin/hero         307 -> /admin/login
+/admin/about        307 -> /admin/login
+
+POST /api/admin/auth/login com credencial inválida -> 401 {"error":"Credenciais inválidas"}
+```
+
+O `401` é a prova que importa: a rota resolveu, o handler rodou, consultou o
+banco e rejeitou. **Route group não quebrou o admin.**
+
+**Armadilha registrada:** o HTML de `/admin/login` contém as strings `404` e
+`This page could not be found`. Não é 404 — é o slot `notFound` que o Next
+sempre embute no payload RSC. Conferir por `<title>` e pelo `<form>`, nunca
+por `grep` dessas strings.
+
+#### O que continua pendente, e por quê
+
+**O `<Select>` de status ainda não foi validado em produção.** Os três
+cheques da UI logada — listar projetos, ver o `<Select>` renderizando o
+rótulo certo (`done` → "Concluído", `wip` → "Em andamento") e salvar na ida e
+volta — **exigem sessão autenticada**, e a verificação foi feita sem
+credenciais de produção.
+
+O que mudou desde o último registro: o código do formulário **agora está em
+produção** (era esse o bloqueio). O que falta é só alguém logar e conferir os
+três passos. O dado já estava certo desde 30/08 — 6 `done`, 3 `wip`.
+
+Idem `/admin/experiences`: a rota redireciona corretamente para o login, mas
+a página logada não foi aberta.
 
 ### Pendente: `toExperienceType()`, o par que falta
 
