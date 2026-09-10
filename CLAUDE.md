@@ -140,7 +140,8 @@ resposta foi manter.
 - PROIBIDO: GSAP, Three.js, AOS, qualquer lib de animação extra.
 - O protótipo roda inteiro com CSS + um único `requestAnimationFrame`.
   Framer Motion só entra se resolver algo que CSS não resolve — não por hábito.
-- Exceção já aprovada: Lenis (~2kb) para smooth scroll.
+- ~~Exceção já aprovada: Lenis (~2kb) para smooth scroll.~~ **REVOGADA** pela
+  auditoria da fase de movimento: o protótipo nunca teve smooth scroll.
 - Só animar `transform` e `opacity`. Nunca `top`/`left`/`width`/`height`.
 - Todo componente animado respeita `prefers-reduced-motion: reduce`.
 - Zero valor mágico em componente: cor, spacing, duração e easing sempre via token.
@@ -1223,6 +1224,96 @@ algum dia entrar qualquer elemento que cubra a página:
 - **A saída tem que ser CSS, não JS.** Overlay renderizado no servidor com JS
   desabilitado cobre o site para sempre. O `@keyframes` limitado no tempo é
   quem garante a correção; o JS só antecipa.
+
+### Fase de movimento — escopo auditado (09/09/2026)
+
+**São duas peças, não a lista do briefing.** Auditado contra
+`design/prototype.html`, não de memória.
+
+#### Inventário completo do movimento do protótipo
+
+| Peça | Mecanismo | Estado |
+|---|---|---|
+| `rise` — entrada do hero | `@keyframes` | pronto |
+| `fadein` — prompt e dica do hero | `@keyframes` | pronto |
+| `blink` — cursor da linha digitada | `@keyframes` | pronto |
+| `hint` — barra do indicador de scroll | `@keyframes` | pronto |
+| `marquee` + freada no hover | `@keyframes` + `:hover` | pronto |
+| digitação | `setTimeout` + IntersectionObserver | pronto |
+| hover da linha de projeto | `transition: transform, color` | pronto |
+| **cursor (dot + anel)** | `mousemove` + `rAF` com lerp | **falta** |
+| **preview flutuante** | `rAF` + rotação por velocidade | **falta** |
+
+São **sete** peças prontas, não quatro — `fadein`, `blink` e `hint` são fáceis
+de esquecer numa enumeração rápida, e quem auditar depois sem esta tabela vai
+"descobrir" três animações e achar que apareceram sozinhas.
+
+O protótipo tem **um único `rAF`**, e ele serve cursor e preview juntos. Um
+único IntersectionObserver, para a digitação. Três pares
+`mouseenter`/`mouseleave`: marquee (já resolvido em CSS), `[data-cursor="link"]`
+(cursor) e `[data-project]` (preview).
+
+#### Smooth scroll descartado — e Lenis com ele
+
+`scroll-behavior` não existe no protótipo. `lenis`, `smooth` e `inertia`: zero
+ocorrências (o único match de "smooth" é `-webkit-font-smoothing`). Nenhum
+reveal por scroll, nenhum hover magnético. **Tudo isso veio do briefing
+original, não do arquivo aprovado** — mesma procedência do boot, cortado pela
+mesma razão.
+
+Os motivos de descartar, além da procedência:
+
+- **Sequestra o scroll nativo** e briga com a inércia do trackpad.
+- **É o único item que rodaria `rAF` contínuo por si só**, e o orçamento de
+  movimento já vai ser gasto pelo cursor.
+- A exceção "Lenis (~2kb) aprovada" registrada em **Stack** fica **revogada**
+  por esta auditoria. Ela foi concedida antes de o protótipo virar fonte da
+  verdade.
+
+#### O preview mostra a imagem do projeto, não uma cor
+
+Os `data-color` do protótipo (`#1E3A2A`, `#2A2A2A`, `#153025`, `#1A1A22`,
+`#24301C`) são **placeholder**, não especificação: quando o protótipo foi
+achatado de Design Component para HTML puro não havia as imagens dos projetos,
+e retângulos sólidos entraram no lugar. **Preview de projeto mostra o
+projeto.**
+
+`Project.image` já existe — `String` obrigatório no schema, já exposto em
+`ProjectView`. Nenhum campo novo, nenhuma migration, nenhuma cor inventada.
+
+**Medido antes de implementar:** as nove imagens somam ~11,7 MB a ~1900×920.
+`projeto_catedog.png` tem 4,2 MB sozinho. O preview é 240×160 — a fonte tem
+~50× a área de pixels do destino. Três consequências:
+
+- **`<img>` apontando para o arquivo está fora.** Tem que passar pelo
+  otimizador do Next, ou um hover baixa 4,2 MB.
+- **A proporção não bate**: fontes a ~2,07:1 contra 1,5:1 do preview, então
+  `object-fit: cover` corta **26–28% da largura**. Aceitável num preview
+  decorativo, mas é corte real.
+- Os PNGs de 2–4 MB são desperdício em repouso mesmo com entrega otimizada.
+  Não é escopo desta fase; anotado.
+
+Regras de execução do preview:
+
+1. **Nada de nove imagens no payload inicial.** O preview só existe em
+   `pointer: fine` e a maioria do tráfego é mobile — pagar por imagem que
+   nunca aparece contradiz tudo que a fase de performance fez. `src` no
+   primeiro hover.
+2. **Dimensões declaradas** (240×160) mesmo com contêiner fixo.
+3. **`--surface` é o estado de carregamento**, não um design alternativo:
+   resolve o vão do primeiro hover sem skeleton.
+4. **`aria-hidden`** — o preview duplica o que a linha já diz.
+5. **Medir**, com a auditoria de entrega de imagem do Lighthouse: é a
+   primeira vez que imagem entra no caminho do redesign.
+
+#### Orçamento, contra produção real
+
+LCP 1,9s de 2,5s e TBT 22–80ms de 300ms — folga de ~600ms e ~220ms.
+
+**O TBT de produção já não é zero, e oscila 3,6×.** O `rAF` contínuo do cursor
+entra sobre uma base instável, e é a primeira vez que este projeto roda loop
+por quadro. A ressalva registrada continua de pé: **verificar com CPU
+throttling 4x antes de considerar pronto.**
 
 ### Estado do redesign (09/09/2026)
 
