@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/src/i18n/routing";
 import { ThemeProvider } from "@/src/components/theme-provider";
 import { jetbrainsMono } from "@/src/lib/fonts";
+import { Cursor } from "@/src/components/site/cursor";
 import { SITE_URL, localePath, languageAlternates } from "@/src/lib/site";
 
 const COPY = {
@@ -116,6 +117,10 @@ export default async function LocaleLayout({ params, children }: LayoutProps) {
             <div className="relative min-h-svh [overflow-x:clip]">
               {children}
             </div>
+            {/* Fora do wrapper com `overflow-x: clip`: o cursor é
+                `position: fixed` e um ancestral com `clip` o recortaria nas
+                bordas da viewport. */}
+            <Cursor />
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

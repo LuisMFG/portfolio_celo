@@ -1344,6 +1344,74 @@ nunca voltar a cortar. A proporção é do conteúdo; o tamanho é de gosto.
 da altura do preview. Com 116, preservar essa relação pede **−70**. Manter −96
 jogaria o cursor a 83% da altura, quase na borda de baixo.
 
+#### Cursor — medido (09/09/2026), e o Lighthouse não serve sozinho
+
+**Lighthouse (localhost, 3 execuções, a primeira descartada):**
+
+```
+Performance 99 · FCP 1,21s · LCP 2,15s · TBT 0–4ms · CLS 0,000
+```
+
+**Este número é necessário e insuficiente, e a razão é estrutural: o
+Lighthouse não move o mouse.** O `rAF` roda a auditoria inteira, mas
+convergindo para um alvo que nunca muda — matemática a 60fps sem recálculo de
+estilo, porque os transforms resultantes são idênticos quadro a quadro. O
+trabalho caro só existe quando os valores **mudam**.
+
+É a mesma família da ressalva da seção "comando": `setTimeout` esparso não
+prevê `rAF` contínuo, e **`rAF` ocioso não prevê `rAF` com o ponteiro em
+movimento.**
+
+**Profile manual — CDP, CPU throttling 4x, 10s de mouse contínuo, 600
+eventos:**
+
+| | estilo | layout | paint |
+|---|---|---|---|
+| A · cursor + varre linhas de projeto | 567,0 ms | 44,3 ms | 183,7 ms (1741×) |
+| **B · cursor + varre prosa** | **126,6 ms** | **0 ms** | **0 ms (0×)** |
+| C · **sem JS nenhum** + varre linhas | 650,4 ms | 41,3 ms | 170,6 ms (1761×) |
+
+**O cursor custa 126,6ms de recálculo de estilo em 10s, com zero layout e zero
+paint** — ~1,3% de uma CPU já 4× lenta. `position: fixed` + só `transform` +
+`will-change` entrega o que promete: sobre prosa, o cursor não pinta um pixel.
+
+**Layout e paint não são dele.** Vêm do `:hover` das linhas de projeto, que é
+CSS puro e pré-existente — a medição C, com **JavaScript inteiramente
+desabilitado**, custa *mais* que A. Quem for otimizar aquela tela depois deve
+olhar a transição de `color` das linhas, não o cursor.
+
+**Orçamento de quadro cumprido:** frame máximo **17,8ms**, **zero frames acima
+de 33ms**, 62 fps sustentados sob throttling 4x.
+
+#### Três armadilhas de medição de movimento
+
+Todas custaram medição inválida antes de virarem regra:
+
+- **Página em segundo plano estrangula `rAF` para 1 Hz.** O primeiro profile
+  deu "frames de 1016ms" e 10 frames em 10s. Não era o cursor — faltava
+  `bringToFront()`. Sintoma: fps ≈ 1 e pouquíssimos eventos processados.
+- **`prefers-reduced-motion` não serve de controle.** Ele desliga o cursor,
+  mas `tokens.css` também desliga o hover das linhas de projeto no mesmo
+  bloco — o "controle" media *duas* ausências e não isolava nada. O controle
+  correto é `Emulation.setScriptExecutionDisabled`, que tira o JS e mantém o
+  `:hover` do CSS.
+- **`Tracing` é de navegador, não de aba.** Sessão CDP que desanexa sem
+  `Tracing.end` deixa o tracing preso, e toda sessão nova falha com "Tracing
+  has already been started". Só reiniciar o navegador resolve.
+
+#### O `var()` no transform: mantido por raciocínio, não por medição
+
+A primeira versão escrevia `scale(var(--cursor-dot-hover))` no transform
+inline, para não cravar 0.4 e 1.9 no componente. Foi trocada por leitura única
+do token no mount.
+
+**O ganho não foi comprovado.** A comparação que sugeria −31% (763 → 528ms) não
+sobrevive à decomposição: C mede 650ms **sem cursor algum**, então a variação
+entre execuções é maior que o efeito reivindicado. O fix fica porque resolver
+custom property a cada quadro é trabalho real e o código não piorou — não
+porque o número tenha sido medido. **Registrado como não verificado de
+propósito**, para ninguém citar os 31% depois.
+
 #### Orçamento, contra produção real
 
 LCP 1,9s de 2,5s e TBT 22–80ms de 300ms — folga de ~600ms e ~220ms.
