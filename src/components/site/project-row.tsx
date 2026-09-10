@@ -16,6 +16,15 @@ export type ProjectRowProps = {
   newTabLabel: string;
   /** Destino do projeto, ou `null` quando não existe nenhum. */
   href: string | null;
+  /**
+   * Caminho da imagem do projeto, lido pelo `PointerLayer` no primeiro hover.
+   *
+   * Vai como `data-` e **não** como `<img>`: o atributo custa ~40 bytes por
+   * linha no documento e nenhuma requisição. A imagem só é buscada quando o
+   * ponteiro entra na linha, e só em `pointer: fine` — a maioria do tráfego é
+   * mobile e nunca vê o preview.
+   */
+  image: string;
 };
 
 /**
@@ -44,6 +53,7 @@ export function ProjectRow({
   statusLabel,
   newTabLabel,
   href,
+  image,
 }: ProjectRowProps) {
   const cells = (
     <>
@@ -86,7 +96,7 @@ export function ProjectRow({
 
   if (!href) {
     return (
-      <li data-project-row className="text-term-text">
+      <li data-project-row data-preview-src={image} className="text-term-text">
         {cells}
       </li>
     );
@@ -99,6 +109,7 @@ export function ProjectRow({
         target="_blank"
         rel="noopener noreferrer"
         data-project-row
+        data-preview-src={image}
         className="text-term-text outline-term-accent focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4"
       >
         {cells}

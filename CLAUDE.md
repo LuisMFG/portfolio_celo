@@ -1383,6 +1383,53 @@ olhar a transição de `color` das linhas, não o cursor.
 **Orçamento de quadro cumprido:** frame máximo **17,8ms**, **zero frames acima
 de 33ms**, 62 fps sustentados sob throttling 4x.
 
+#### Preview flutuante — medido (09/09/2026)
+
+Segunda e última peça. **Reusa o `rAF` do cursor**, não abre um segundo: dois
+loops competiriam pelo mesmo quadro e dobrariam o agendamento sem ganho. Por
+isso `cursor.tsx` virou `pointer-layer.tsx` — o componente é a camada guiada
+pelo ponteiro, não só o cursor.
+
+**Primeiro hover** (o que o visitante encontra):
+
+```
+218 ms até a imagem pintada
+1 requisição /_next/image: 188 ms, 4,5 KB
+frame máximo 17,5 ms · zero frames acima de 33 ms
+```
+
+**Hovers seguintes** (uso normal, cache quente, 10s, 600 eventos):
+
+```
+63,5 fps · estilo 375,8 ms · layout 114,4 ms · paint 235,5 ms (1350×)
+raster 28,3 ms · decode 3,5 ms
+frame máximo 17,7 ms · p95 17,5 ms · zero frames acima de 33 ms
+```
+
+**O paint saiu de zero, e isso não é regressão — é a natureza da peça.** O
+critério é frame, não paint: **nenhum quadro passou de 17,7ms e nenhum foi
+descartado** (frame perdido a 60Hz apareceria como ~33ms). Os "188 frames
+acima de 16,9ms" são o vsync de 16,67ms, não jank.
+
+**4,5 KB entregues contra 4,2 MB de fonte** no pior caso. `next/image` serve
+a derivada a `w=256`; apontar para o arquivo cru baixaria a fonte inteira.
+
+Layout subiu de 44 para 114ms contra a linha de base do cursor. A causa é a
+troca de `src`, que insere/atualiza o `<img>` — acontece **uma vez por projeto
+visitado**, não por quadro. Aceito: nenhum quadro é perdido.
+
+#### As cinco regras do preview, e onde cada uma vive
+
+1. **Nenhuma imagem no payload inicial.** Verificado no HTML servido: zero
+   `<img>`, zero `/_next/image`. O que vai no documento é `data-preview-src`
+   por linha — ~40 bytes, nenhuma requisição. O `src` só é definido no
+   primeiro hover, e o componente só monta em `pointer: fine`.
+2. **Dimensões declaradas** (240×116) mesmo com contêiner fixo.
+3. **`--surface` é o estado de carregamento**, não um desenho alternativo:
+   cobre os 218ms entre o primeiro hover e a imagem, sem skeleton.
+4. **`aria-hidden`** — duplica o que a linha já diz por extenso.
+5. **Medido**, com o primeiro hover separado dos seguintes.
+
 #### Três armadilhas de medição de movimento
 
 Todas custaram medição inválida antes de virarem regra:

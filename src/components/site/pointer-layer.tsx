@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
 /**
  * Constantes de movimento do protótipo (`prototype.html:241-250`). Ficam aqui
@@ -9,10 +10,40 @@ import { useEffect, useRef, useState } from "react";
  * primeira leitura de outra pessoa.
  */
 const RING_LERP = 0.12;
+const PREVIEW_LERP = 0.16;
+/** Offset horizontal do preview em relação ao ponteiro (`prototype.html:242`). */
+const PREVIEW_OFFSET_X = 34;
+/**
+ * Offset vertical. **Não são os −96 do protótipo.** Aqueles eram 60% dos 160px
+ * de altura que o preview tinha lá, o que punha o ponteiro a 60% da altura da
+ * peça. Com 116px de altura, preservar essa relação pede −70; manter −96
+ * jogaria o ponteiro a 83%, quase na borda de baixo. O porquê da altura ter
+ * mudado está em CLAUDE.md.
+ */
+const PREVIEW_OFFSET_Y = -70;
+/** Velocidade horizontal → inclinação, com teto e decaimento do protótipo. */
+const VEL_SMOOTH = 0.55;
+const VEL_INPUT = 0.45;
+const VEL_DECAY = 0.86;
+const ROT_FACTOR = 0.5;
+const ROT_MAX = 14;
+const ROT_LERP = 0.12;
+/**
+ * Dimensões do preview. **240×116, não os 240×160 do protótipo**: lá o preview
+ * era um retângulo de cor sólida, onde proporção é arbitrária. Com a imagem do
+ * projeto dentro, 240×160 cortaria 26–28% da largura e tiraria a leitura de
+ * "isso é um site". 240×116 dá ratio 2,069 contra mediana 2,073 das nove
+ * imagens. Medições por imagem em CLAUDE.md.
+ */
+const PREVIEW_W = 240;
+const PREVIEW_H = 116;
 
 /**
- * Cursor customizado — anel que persegue o ponteiro com atraso, mais um ponto
- * que o acompanha exato.
+ * Camada guiada pelo ponteiro: cursor (anel + ponto) e preview de projeto.
+ *
+ * **Um componente e um único `requestAnimationFrame` para as três peças**, como
+ * no protótipo (`prototype.html:241-250`). Dois loops independentes competiriam
+ * pelo mesmo quadro e dobrariam o custo de agendamento sem ganho nenhum.
  *
  * **É o primeiro `requestAnimationFrame` contínuo do projeto**, e o risco
  * disso está registrado no CLAUDE.md desde a fase de fundação.
@@ -61,10 +92,19 @@ const RING_LERP = 0.12;
  * ponteiro nativo volta neles, e o cursor customizado continua desenhado por
  * cima. A regra vive em `tokens.css`.
  */
-export function Cursor() {
+export function PointerLayer() {
   const [mounted, setMounted] = useState(false);
+  /**
+   * Caminho da imagem do projeto sob o ponteiro. `null` até o primeiro hover —
+   * é isso que garante que nenhuma das nove imagens entre no payload inicial.
+   *
+   * Este é o único estado que muda depois da montagem, e ele muda **uma vez por
+   * projeto visitado**, não por quadro. O movimento continua fora do React.
+   */
+  const [previewSrc, setPreviewSrc] = useState<string | null>(null);
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fine = window.matchMedia("(pointer: fine)");
@@ -83,7 +123,8 @@ export function Cursor() {
     if (!mounted) return;
     const dot = dotRef.current;
     const ring = ringRef.current;
-    if (!dot || !ring) return;
+    const preview = previewRef.current;
+    if (!dot || !ring || !preview) return;
 
     // Posição do ponteiro e posição perseguida pelo anel. Fora do React de
     // propósito: mudam a cada quadro e nenhuma delas pinta nada sozinha.
@@ -91,7 +132,12 @@ export function Cursor() {
     let my = -100;
     let rx = mx;
     let ry = my;
+    let px = mx;
+    let py = my;
+    let vel = 0;
+    let rot = 0;
     let hover = false;
+    let sobreProjeto = false;
 
     // Último transform escrito em cada nó. É o que permite pular a escrita
     // quando o valor não mudou — ver o docblock.
@@ -102,6 +148,9 @@ export function Cursor() {
     // igual — e ela tem `transition`, então reescrever o mesmo valor não é
     // no-op garantido.
     let lastHover: boolean | null = null;
+    let lastPreview = "";
+    let lastPreviewTransform = "";
+    let lastOn: boolean | null = null;
     let frame = 0;
 
     // As escalas de hover são lidas **uma vez**, do token, e viram número.
@@ -126,6 +175,8 @@ export function Cursor() {
     const ringIdle = raiz.getPropertyValue("--cursor-ring-idle-opacity").trim() || "0.55";
 
     function onMove(event: PointerEvent) {
+      // Média móvel do delta horizontal — é ela que inclina o preview.
+      vel = vel * VEL_SMOOTH + (event.clientX - mx) * VEL_INPUT;
       mx = event.clientX;
       my = event.clientY;
     }
@@ -146,6 +197,18 @@ export function Cursor() {
     function onOver(event: PointerEvent) {
       const target = event.target as Element | null;
       hover = !!target?.closest?.("a[href], button, [role='button']");
+
+      const linha = target?.closest?.("[data-project-row]") as
+        | HTMLElement
+        | undefined;
+      sobreProjeto = !!linha;
+      const src = linha?.dataset.previewSrc;
+      // `setState` só quando o projeto muda de fato. Sem esta comparação, cada
+      // `pointerover` dentro da mesma linha (são quatro células) re-renderizaria.
+      if (src && src !== lastPreview) {
+        lastPreview = src;
+        setPreviewSrc(src);
+      }
     }
 
     function tick() {
@@ -168,6 +231,22 @@ export function Cursor() {
         lastHover = hover;
       }
 
+      px += (mx + PREVIEW_OFFSET_X - px) * PREVIEW_LERP;
+      py += (my + PREVIEW_OFFSET_Y - py) * PREVIEW_LERP;
+      const alvo = Math.max(-ROT_MAX, Math.min(ROT_MAX, vel * ROT_FACTOR));
+      rot += (alvo - rot) * ROT_LERP;
+      vel *= VEL_DECAY;
+
+      const previewTransform = `translate3d(${px.toFixed(2)}px, ${py.toFixed(2)}px, 0) rotate(${rot.toFixed(2)}deg) scale(${sobreProjeto ? 1 : 0.9})`;
+      if (previewTransform !== lastPreviewTransform) {
+        preview!.style.transform = previewTransform;
+        lastPreviewTransform = previewTransform;
+      }
+      if (sobreProjeto !== lastOn) {
+        preview!.style.opacity = sobreProjeto ? "1" : "0";
+        lastOn = sobreProjeto;
+      }
+
       frame = requestAnimationFrame(tick);
     }
 
@@ -186,6 +265,26 @@ export function Cursor() {
 
   return (
     <>
+      {/* `aria-hidden`: o preview duplica o que a linha já diz por extenso.
+          O fundo `--surface` (em `tokens.css`) é o **estado de carregamento** —
+          ele cobre o vão entre o primeiro hover e a imagem chegar, sem
+          skeleton e sem um segundo desenho para manter. */}
+      <div ref={previewRef} data-preview aria-hidden="true">
+        {previewSrc ? (
+          <Image
+            src={previewSrc}
+            alt=""
+            width={PREVIEW_W}
+            height={PREVIEW_H}
+            // As fontes têm ~1900px de largura e 2–4 MB. `next/image` serve
+            // derivada no tamanho pedido; apontar para o arquivo cru baixaria
+            // 4,2 MB no pior caso.
+            sizes={`${PREVIEW_W}px`}
+            draggable={false}
+          />
+        ) : null}
+      </div>
+
       <div ref={ringRef} data-cursor-ring aria-hidden="true" />
       <div ref={dotRef} data-cursor-dot aria-hidden="true" />
     </>
