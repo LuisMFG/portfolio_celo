@@ -140,7 +140,8 @@ resposta foi manter.
 - PROIBIDO: GSAP, Three.js, AOS, qualquer lib de animação extra.
 - O protótipo roda inteiro com CSS + um único `requestAnimationFrame`.
   Framer Motion só entra se resolver algo que CSS não resolve — não por hábito.
-- Exceção já aprovada: Lenis (~2kb) para smooth scroll.
+- ~~Exceção já aprovada: Lenis (~2kb) para smooth scroll.~~ **REVOGADA** pela
+  auditoria da fase de movimento: o protótipo nunca teve smooth scroll.
 - Só animar `transform` e `opacity`. Nunca `top`/`left`/`width`/`height`.
 - Todo componente animado respeita `prefers-reduced-motion: reduce`.
 - Zero valor mágico em componente: cor, spacing, duração e easing sempre via token.
@@ -1223,6 +1224,249 @@ algum dia entrar qualquer elemento que cubra a página:
 - **A saída tem que ser CSS, não JS.** Overlay renderizado no servidor com JS
   desabilitado cobre o site para sempre. O `@keyframes` limitado no tempo é
   quem garante a correção; o JS só antecipa.
+
+### Fase de movimento — escopo auditado (09/09/2026)
+
+**São duas peças, não a lista do briefing.** Auditado contra
+`design/prototype.html`, não de memória.
+
+#### Inventário completo do movimento do protótipo
+
+| Peça | Mecanismo | Estado |
+|---|---|---|
+| `rise` — entrada do hero | `@keyframes` | pronto |
+| `fadein` — prompt e dica do hero | `@keyframes` | pronto |
+| `blink` — cursor da linha digitada | `@keyframes` | pronto |
+| `hint` — barra do indicador de scroll | `@keyframes` | pronto |
+| `marquee` + freada no hover | `@keyframes` + `:hover` | pronto |
+| digitação | `setTimeout` + IntersectionObserver | pronto |
+| hover da linha de projeto | `transition: transform, color` | pronto |
+| **cursor (dot + anel)** | `mousemove` + `rAF` com lerp | **falta** |
+| **preview flutuante** | `rAF` + rotação por velocidade | **falta** |
+
+São **sete** peças prontas, não quatro — `fadein`, `blink` e `hint` são fáceis
+de esquecer numa enumeração rápida, e quem auditar depois sem esta tabela vai
+"descobrir" três animações e achar que apareceram sozinhas.
+
+O protótipo tem **um único `rAF`**, e ele serve cursor e preview juntos. Um
+único IntersectionObserver, para a digitação. Três pares
+`mouseenter`/`mouseleave`: marquee (já resolvido em CSS), `[data-cursor="link"]`
+(cursor) e `[data-project]` (preview).
+
+#### Smooth scroll descartado — e Lenis com ele
+
+`scroll-behavior` não existe no protótipo. `lenis`, `smooth` e `inertia`: zero
+ocorrências (o único match de "smooth" é `-webkit-font-smoothing`). Nenhum
+reveal por scroll, nenhum hover magnético. **Tudo isso veio do briefing
+original, não do arquivo aprovado** — mesma procedência do boot, cortado pela
+mesma razão.
+
+Os motivos de descartar, além da procedência:
+
+- **Sequestra o scroll nativo** e briga com a inércia do trackpad.
+- **É o único item que rodaria `rAF` contínuo por si só**, e o orçamento de
+  movimento já vai ser gasto pelo cursor.
+- A exceção "Lenis (~2kb) aprovada" registrada em **Stack** fica **revogada**
+  por esta auditoria. Ela foi concedida antes de o protótipo virar fonte da
+  verdade.
+
+#### O preview mostra a imagem do projeto, não uma cor
+
+Os `data-color` do protótipo (`#1E3A2A`, `#2A2A2A`, `#153025`, `#1A1A22`,
+`#24301C`) são **placeholder**, não especificação: quando o protótipo foi
+achatado de Design Component para HTML puro não havia as imagens dos projetos,
+e retângulos sólidos entraram no lugar. **Preview de projeto mostra o
+projeto.**
+
+`Project.image` já existe — `String` obrigatório no schema, já exposto em
+`ProjectView`. Nenhum campo novo, nenhuma migration, nenhuma cor inventada.
+
+**Medido antes de implementar:** as nove imagens somam ~11,7 MB a ~1900×920.
+`projeto_catedog.png` tem 4,2 MB sozinho. O preview é 240×160 — a fonte tem
+~50× a área de pixels do destino. Três consequências:
+
+- **`<img>` apontando para o arquivo está fora.** Tem que passar pelo
+  otimizador do Next, ou um hover baixa 4,2 MB.
+- **A proporção do protótipo foi corrigida — ver abaixo.**
+- Os PNGs de 2–4 MB são desperdício em repouso mesmo com entrega otimizada.
+  Não é escopo desta fase; anotado.
+
+Regras de execução do preview:
+
+1. **Nada de nove imagens no payload inicial.** O preview só existe em
+   `pointer: fine` e a maioria do tráfego é mobile — pagar por imagem que
+   nunca aparece contradiz tudo que a fase de performance fez. `src` no
+   primeiro hover.
+2. **Dimensões declaradas** (240×116) mesmo com contêiner fixo.
+3. **`--surface` é o estado de carregamento**, não um design alternativo:
+   resolve o vão do primeiro hover sem skeleton.
+4. **`aria-hidden`** — o preview duplica o que a linha já diz.
+5. **Medir**, com a auditoria de entrega de imagem do Lighthouse: é a
+   primeira vez que imagem entra no caminho do redesign.
+
+#### O preview é 240×116, não os 240×160 do protótipo
+
+**Mudança deliberada. Não "restaurar o protótipo" depois.**
+
+Os 240×160 foram escolhidos quando o preview era um retângulo de cor sólida,
+e **proporção de retângulo de cor é arbitrária** — não há conteúdo para
+enquadrar. Com a imagem do projeto dentro, a proporção deixa de ser livre:
+screenshot de site tem informação nas laterais, e cortar 27% da largura tira
+justamente a leitura de "isso é um site".
+
+Medido contra as nove imagens reais:
+
+| Alvo | Ratio | Corte |
+|---|---|---|
+| 240×160 (protótipo) | 1,500 | **26–28% da largura** |
+| **240×116 (adotado)** | **2,069** | **8 de 9 abaixo de 2,5%** |
+| 260×126 (alternativa) | 2,063 | equivalente |
+
+A mediana das fontes é **2,073**, então 240×116 acerta a proporção do conteúdo
+quase exatamente. Os cortes por imagem:
+
+```
+coneci_ro           2,062   0,3% altura     catedog          2,093   1,1% largura
+estudanteauditor    2,077   0,4% largura    pokedex          2,343  11,7% largura
+wikicge             2,016   2,5% altura     receitasdomestre 2,073   0,2% largura
+gerenciadordehorar. 2,027   2,0% altura     capsuladotempo   2,079   0,5% largura
+chaewon_yugioh      2,030   1,9% altura
+```
+
+`pokedex` é **outlier** (2,343) e é a única que ainda corta de verdade — mas
+11,7% contra os 27% que todas pagariam a 240×160.
+
+**Se 116px parecer magro na tela, subir proporcionalmente para 260×126** —
+nunca voltar a cortar. A proporção é do conteúdo; o tamanho é de gosto.
+
+**Consequência no offset do cursor:** o protótipo posiciona o preview em
+`(+34x, −96y)`. Os −96 são 60% dos 160 de altura, o que deixa o cursor a 60%
+da altura do preview. Com 116, preservar essa relação pede **−70**. Manter −96
+jogaria o cursor a 83% da altura, quase na borda de baixo.
+
+#### Cursor — medido (09/09/2026), e o Lighthouse não serve sozinho
+
+**Lighthouse (localhost, 3 execuções, a primeira descartada):**
+
+```
+Performance 99 · FCP 1,21s · LCP 2,15s · TBT 0–4ms · CLS 0,000
+```
+
+**Este número é necessário e insuficiente, e a razão é estrutural: o
+Lighthouse não move o mouse.** O `rAF` roda a auditoria inteira, mas
+convergindo para um alvo que nunca muda — matemática a 60fps sem recálculo de
+estilo, porque os transforms resultantes são idênticos quadro a quadro. O
+trabalho caro só existe quando os valores **mudam**.
+
+É a mesma família da ressalva da seção "comando": `setTimeout` esparso não
+prevê `rAF` contínuo, e **`rAF` ocioso não prevê `rAF` com o ponteiro em
+movimento.**
+
+**Profile manual — CDP, CPU throttling 4x, 10s de mouse contínuo, 600
+eventos:**
+
+| | estilo | layout | paint |
+|---|---|---|---|
+| A · cursor + varre linhas de projeto | 567,0 ms | 44,3 ms | 183,7 ms (1741×) |
+| **B · cursor + varre prosa** | **126,6 ms** | **0 ms** | **0 ms (0×)** |
+| C · **sem JS nenhum** + varre linhas | 650,4 ms | 41,3 ms | 170,6 ms (1761×) |
+
+**O cursor custa 126,6ms de recálculo de estilo em 10s, com zero layout e zero
+paint** — ~1,3% de uma CPU já 4× lenta. `position: fixed` + só `transform` +
+`will-change` entrega o que promete: sobre prosa, o cursor não pinta um pixel.
+
+**Layout e paint não são dele.** Vêm do `:hover` das linhas de projeto, que é
+CSS puro e pré-existente — a medição C, com **JavaScript inteiramente
+desabilitado**, custa *mais* que A. Quem for otimizar aquela tela depois deve
+olhar a transição de `color` das linhas, não o cursor.
+
+**Orçamento de quadro cumprido:** frame máximo **17,8ms**, **zero frames acima
+de 33ms**, 62 fps sustentados sob throttling 4x.
+
+#### Preview flutuante — medido (09/09/2026)
+
+Segunda e última peça. **Reusa o `rAF` do cursor**, não abre um segundo: dois
+loops competiriam pelo mesmo quadro e dobrariam o agendamento sem ganho. Por
+isso `cursor.tsx` virou `pointer-layer.tsx` — o componente é a camada guiada
+pelo ponteiro, não só o cursor.
+
+**Primeiro hover** (o que o visitante encontra):
+
+```
+218 ms até a imagem pintada
+1 requisição /_next/image: 188 ms, 4,5 KB
+frame máximo 17,5 ms · zero frames acima de 33 ms
+```
+
+**Hovers seguintes** (uso normal, cache quente, 10s, 600 eventos):
+
+```
+63,5 fps · estilo 375,8 ms · layout 114,4 ms · paint 235,5 ms (1350×)
+raster 28,3 ms · decode 3,5 ms
+frame máximo 17,7 ms · p95 17,5 ms · zero frames acima de 33 ms
+```
+
+**O paint saiu de zero, e isso não é regressão — é a natureza da peça.** O
+critério é frame, não paint: **nenhum quadro passou de 17,7ms e nenhum foi
+descartado** (frame perdido a 60Hz apareceria como ~33ms). Os "188 frames
+acima de 16,9ms" são o vsync de 16,67ms, não jank.
+
+**4,5 KB entregues contra 4,2 MB de fonte** no pior caso. `next/image` serve
+a derivada a `w=256`; apontar para o arquivo cru baixaria a fonte inteira.
+
+Layout subiu de 44 para 114ms contra a linha de base do cursor. A causa é a
+troca de `src`, que insere/atualiza o `<img>` — acontece **uma vez por projeto
+visitado**, não por quadro. Aceito: nenhum quadro é perdido.
+
+#### As cinco regras do preview, e onde cada uma vive
+
+1. **Nenhuma imagem no payload inicial.** Verificado no HTML servido: zero
+   `<img>`, zero `/_next/image`. O que vai no documento é `data-preview-src`
+   por linha — ~40 bytes, nenhuma requisição. O `src` só é definido no
+   primeiro hover, e o componente só monta em `pointer: fine`.
+2. **Dimensões declaradas** (240×116) mesmo com contêiner fixo.
+3. **`--surface` é o estado de carregamento**, não um desenho alternativo:
+   cobre os 218ms entre o primeiro hover e a imagem, sem skeleton.
+4. **`aria-hidden`** — duplica o que a linha já diz por extenso.
+5. **Medido**, com o primeiro hover separado dos seguintes.
+
+#### Três armadilhas de medição de movimento
+
+Todas custaram medição inválida antes de virarem regra:
+
+- **Página em segundo plano estrangula `rAF` para 1 Hz.** O primeiro profile
+  deu "frames de 1016ms" e 10 frames em 10s. Não era o cursor — faltava
+  `bringToFront()`. Sintoma: fps ≈ 1 e pouquíssimos eventos processados.
+- **`prefers-reduced-motion` não serve de controle.** Ele desliga o cursor,
+  mas `tokens.css` também desliga o hover das linhas de projeto no mesmo
+  bloco — o "controle" media *duas* ausências e não isolava nada. O controle
+  correto é `Emulation.setScriptExecutionDisabled`, que tira o JS e mantém o
+  `:hover` do CSS.
+- **`Tracing` é de navegador, não de aba.** Sessão CDP que desanexa sem
+  `Tracing.end` deixa o tracing preso, e toda sessão nova falha com "Tracing
+  has already been started". Só reiniciar o navegador resolve.
+
+#### O `var()` no transform: mantido por raciocínio, não por medição
+
+A primeira versão escrevia `scale(var(--cursor-dot-hover))` no transform
+inline, para não cravar 0.4 e 1.9 no componente. Foi trocada por leitura única
+do token no mount.
+
+**O ganho não foi comprovado.** A comparação que sugeria −31% (763 → 528ms) não
+sobrevive à decomposição: C mede 650ms **sem cursor algum**, então a variação
+entre execuções é maior que o efeito reivindicado. O fix fica porque resolver
+custom property a cada quadro é trabalho real e o código não piorou — não
+porque o número tenha sido medido. **Registrado como não verificado de
+propósito**, para ninguém citar os 31% depois.
+
+#### Orçamento, contra produção real
+
+LCP 1,9s de 2,5s e TBT 22–80ms de 300ms — folga de ~600ms e ~220ms.
+
+**O TBT de produção já não é zero, e oscila 3,6×.** O `rAF` contínuo do cursor
+entra sobre uma base instável, e é a primeira vez que este projeto roda loop
+por quadro. A ressalva registrada continua de pé: **verificar com CPU
+throttling 4x antes de considerar pronto.**
 
 ### Estado do redesign (09/09/2026)
 

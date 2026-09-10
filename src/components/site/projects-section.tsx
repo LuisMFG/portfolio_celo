@@ -64,6 +64,7 @@ export async function ProjectsSection({ projects }: ProjectsSectionProps) {
             // O que o site tem para mostrar vem primeiro; o código é o
             // fallback. Projeto sem nenhum dos dois não vira link.
             href={project.liveUrl ?? project.githubUrl}
+            image={project.image}
           />
         ))}
       </ol>

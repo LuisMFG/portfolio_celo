@@ -222,6 +222,27 @@
   --contact-field-pad: var(--project-row-gap);
 
   /**
+   * Cursor customizado (`prototype.html:253-255`). Tamanhos, opacidade e
+   * escalas de hover vivem aqui; os lerps vivem no componente, porque são
+   * coeficientes do loop e não valores de estilo.
+   */
+  --cursor-dot-size: 6px;
+  --cursor-ring-size: 34px;
+  --cursor-dot-hover: 0.4;
+  --cursor-ring-hover: 1.9;
+  --cursor-ring-idle-opacity: 0.55;
+  --cursor-ring-fade: 0.3s;
+
+  /**
+   * Preview de projeto. 240×116 — a proporção é do conteúdo (mediana 2,073 das
+   * nove imagens), não do retângulo de cor do protótipo. O porquê está em
+   * CLAUDE.md, junto da tabela de corte por imagem.
+   */
+  --preview-w: 240px;
+  --preview-h: 116px;
+  --preview-fade: 0.35s;
+
+  /**
    * Vão entre o botão e a linha de resultado. **Token próprio de propósito,
    * mesmo tendo a mesma definição de `--contact-field-gap`.**
    *
@@ -882,4 +903,137 @@
 
 .theme-terminal [data-contact-result]:empty {
   margin-top: 0;
+}
+
+/**
+ * Cursor customizado. Os dois nós só existem quando o componente monta — e
+ * ele só monta em `pointer: fine` sem `prefers-reduced-motion`.
+ *
+ * `position: fixed` com `top/left: 0` e todo o posicionamento em `transform`:
+ * é a regra de só animar `transform` e `opacity`, e é o que mantém os dois
+ * fora do fluxo e sem provocar layout.
+ *
+ * `will-change: transform` promove os dois a camada própria, então mover o
+ * cursor não repinta a página atrás dele.
+ */
+.theme-terminal [data-cursor-dot],
+.theme-terminal [data-cursor-ring] {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.theme-terminal [data-cursor-dot] {
+  width: var(--cursor-dot-size);
+  height: var(--cursor-dot-size);
+  background: var(--accent);
+}
+
+.theme-terminal [data-cursor-ring] {
+  width: var(--cursor-ring-size);
+  height: var(--cursor-ring-size);
+  border: 1px solid var(--muted);
+  opacity: var(--cursor-ring-idle-opacity);
+  transition: opacity var(--cursor-ring-fade) linear;
+}
+
+/**
+ * `cursor: none` **só** enquanto o componente está montado — a classe entra
+ * no `<html>` no efeito e sai no cleanup. Nunca global no `<body>`: sem JS,
+ * em toque ou sob movimento reduzido o ponteiro nativo tem que continuar lá.
+ */
+.has-custom-cursor,
+.has-custom-cursor * {
+  cursor: none;
+}
+
+/**
+ * Exceção: campos de texto recuperam o ponteiro nativo.
+ *
+ * Não vem do protótipo — ele não tinha formulário. Esconder o I-beam dentro
+ * de um `<input>` tira a única affordance que diz onde o texto vai cair, e o
+ * ponto de 6px do cursor customizado não substitui isso: ele não mostra a
+ * altura da linha nem a posição de inserção.
+ */
+.has-custom-cursor input,
+.has-custom-cursor textarea,
+.has-custom-cursor select {
+  cursor: auto;
+}
+
+/**
+ * Rede de segurança. O componente já não monta sob movimento reduzido, mas a
+ * regra fica: se alguém trocar a condição de montagem sem lembrar disso, o
+ * `cursor: none` some junto e o usuário não fica sem ponteiro.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .has-custom-cursor,
+  .has-custom-cursor * {
+    cursor: auto;
+  }
+
+  .theme-terminal [data-cursor-dot],
+  .theme-terminal [data-cursor-ring] {
+    display: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .theme-terminal [data-cursor-dot],
+  .theme-terminal [data-cursor-ring] {
+    display: none;
+  }
+}
+
+/**
+ * Preview de projeto — segue o ponteiro com atraso e se inclina pela
+ * velocidade horizontal. Mesmas regras do cursor: `fixed`, só `transform` e
+ * `opacity`, `will-change` para não repintar a página atrás.
+ *
+ * **O fundo `--surface` é o estado de carregamento.** Entre o primeiro hover e
+ * a imagem otimizada chegar existe um vão real (o Next gera a derivada sob
+ * demanda). A superfície cobre esse vão sem skeleton — um segundo desenho para
+ * manter, que piscaria tanto quanto o vazio.
+ *
+ * `z-index` abaixo do cursor: o ponto e o anel passam por cima do preview.
+ */
+.theme-terminal [data-preview] {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--preview-w);
+  height: var(--preview-h);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 9998;
+  overflow: hidden;
+  transition: opacity var(--preview-fade) var(--ease);
+  will-change: transform, opacity;
+}
+
+/* `cover` recorta o excedente. Com 240×116 o corte fica abaixo de 2,5% em
+   oito das nove imagens — a Pokédex é outlier e perde 11,7% da largura. */
+.theme-terminal [data-preview] img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-terminal [data-preview] {
+    display: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .theme-terminal [data-preview] {
+    display: none;
+  }
 }
