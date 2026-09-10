@@ -1287,9 +1287,7 @@ projeto.**
 
 - **`<img>` apontando para o arquivo está fora.** Tem que passar pelo
   otimizador do Next, ou um hover baixa 4,2 MB.
-- **A proporção não bate**: fontes a ~2,07:1 contra 1,5:1 do preview, então
-  `object-fit: cover` corta **26–28% da largura**. Aceitável num preview
-  decorativo, mas é corte real.
+- **A proporção do protótipo foi corrigida — ver abaixo.**
 - Os PNGs de 2–4 MB são desperdício em repouso mesmo com entrega otimizada.
   Não é escopo desta fase; anotado.
 
@@ -1299,12 +1297,52 @@ Regras de execução do preview:
    `pointer: fine` e a maioria do tráfego é mobile — pagar por imagem que
    nunca aparece contradiz tudo que a fase de performance fez. `src` no
    primeiro hover.
-2. **Dimensões declaradas** (240×160) mesmo com contêiner fixo.
+2. **Dimensões declaradas** (240×116) mesmo com contêiner fixo.
 3. **`--surface` é o estado de carregamento**, não um design alternativo:
    resolve o vão do primeiro hover sem skeleton.
 4. **`aria-hidden`** — o preview duplica o que a linha já diz.
 5. **Medir**, com a auditoria de entrega de imagem do Lighthouse: é a
    primeira vez que imagem entra no caminho do redesign.
+
+#### O preview é 240×116, não os 240×160 do protótipo
+
+**Mudança deliberada. Não "restaurar o protótipo" depois.**
+
+Os 240×160 foram escolhidos quando o preview era um retângulo de cor sólida,
+e **proporção de retângulo de cor é arbitrária** — não há conteúdo para
+enquadrar. Com a imagem do projeto dentro, a proporção deixa de ser livre:
+screenshot de site tem informação nas laterais, e cortar 27% da largura tira
+justamente a leitura de "isso é um site".
+
+Medido contra as nove imagens reais:
+
+| Alvo | Ratio | Corte |
+|---|---|---|
+| 240×160 (protótipo) | 1,500 | **26–28% da largura** |
+| **240×116 (adotado)** | **2,069** | **8 de 9 abaixo de 2,5%** |
+| 260×126 (alternativa) | 2,063 | equivalente |
+
+A mediana das fontes é **2,073**, então 240×116 acerta a proporção do conteúdo
+quase exatamente. Os cortes por imagem:
+
+```
+coneci_ro           2,062   0,3% altura     catedog          2,093   1,1% largura
+estudanteauditor    2,077   0,4% largura    pokedex          2,343  11,7% largura
+wikicge             2,016   2,5% altura     receitasdomestre 2,073   0,2% largura
+gerenciadordehorar. 2,027   2,0% altura     capsuladotempo   2,079   0,5% largura
+chaewon_yugioh      2,030   1,9% altura
+```
+
+`pokedex` é **outlier** (2,343) e é a única que ainda corta de verdade — mas
+11,7% contra os 27% que todas pagariam a 240×160.
+
+**Se 116px parecer magro na tela, subir proporcionalmente para 260×126** —
+nunca voltar a cortar. A proporção é do conteúdo; o tamanho é de gosto.
+
+**Consequência no offset do cursor:** o protótipo posiciona o preview em
+`(+34x, −96y)`. Os −96 são 60% dos 160 de altura, o que deixa o cursor a 60%
+da altura do preview. Com 116, preservar essa relação pede **−70**. Manter −96
+jogaria o cursor a 83% da altura, quase na borda de baixo.
 
 #### Orçamento, contra produção real
 
