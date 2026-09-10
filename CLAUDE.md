@@ -1468,25 +1468,69 @@ entra sobre uma base instável, e é a primeira vez que este projeto roda loop
 por quadro. A ressalva registrada continua de pé: **verificar com CPU
 throttling 4x antes de considerar pronto.**
 
-### Estado do redesign (09/09/2026)
+### REDESIGN COMPLETO — fechamento (09/09/2026)
 
-**Oito seções, completas:** hero, marquee, sobre, stack, experiência,
-projetos, comando, contato — mais header e footer. Nenhuma seção nova
-planejada.
+Do protótipo à última peça de movimento. **Nada pendente de escopo.**
 
-Próximos passos, nesta ordem, **antes da fase de movimento**:
+Oito seções (hero, marquee, sobre, stack, experiência, projetos, comando,
+contato), header, footer, e as duas peças de movimento do protótipo (cursor e
+preview flutuante). Tudo em produção.
 
-1. **Medição em produção.** Nada de cirurgia de performance antes disso: todas
-   as medições de seção são localhost/Lantern e não dizem contra o que se está
-   otimizando. Ver "Estes números são de produção".
-2. **CSS crítico**, pendência aberta desde a fundação (~590ms de
-   render-blocking estimados, "reavaliar quando houver conteúdo" — agora há
-   conteúdo). O limiar de 14.600 B do documento entra na mesma passada: a
-   página oscila em cima dele.
-3. **Promoção do /v2**, a etapa de um commit só já descrita acima.
+#### Produção depois do movimento — 5 execuções, mediana
 
-Só depois disso a fase de movimento — que é onde entram cursor, Lenis e o
-`rAF`, e cujo risco de TBT continua registrado e não testado.
+```
+Performance 98 · Acessibilidade 100 · Best Practices 100 · SEO 100
+FCP 955ms · LCP 1705ms · TBT 10ms · CLS 0.000
+```
+
+Comparado com o estado imediatamente anterior ao movimento (99 · LCP ~1,9s ·
+TBT 22–80ms): **LCP e TBT melhoraram, CLS segue zero.** O primeiro `rAF`
+contínuo do projeto foi a produção sem custo mensurável nas Core Web Vitals.
+
+| Métrica | Baseline (site antigo) | Meta | Hoje |
+|---|---|---|---|
+| Performance | 81 | ≥ 90 | **98** |
+| Acessibilidade | 96 | 100 | **100** |
+| Best Practices | 100 | manter | **100** |
+| SEO | 100 | manter | **100** |
+| TBT | 560 ms | < 300 ms | **10 ms** |
+| LCP | 2.8 s | < 2.5 s | **1,71 s** |
+| CLS | 0.005 | < 0.01 | **0.000** |
+
+#### Aberto e não explicado: variância do Speed Index
+
+O score composto oscilou **90–99** entre execuções. Isolado: **é Speed Index e
+só ele.** FCP, LCP, TBT e CLS pontuam 0,99–1,00 em todas as medições; o SI
+varia **3926–9560ms** e sozinho derruba o composto.
+
+Antes do movimento o SI de produção era 2497–2671ms, estável. **Não foi
+possível atribuir a diferença ao movimento:** um controle com código
+pré-movimento, medido na mesma sessão, deu SI 4883–5756ms — mesma faixa
+elevada. Mas o controle é um deployment frio (LCP 8,8s, TBT 150–172) e o cold
+start confunde o resultado, então **também não foi possível descartar**.
+
+Registrado como pergunta aberta, não como conclusão. Quem for investigar:
+
+- Suspeito principal é o **marquee**, que anima continuamente desde o load — o
+  SI mede quão rápido a viewport se estabiliza visualmente, e ela nunca se
+  estabiliza. Isso é pré-existente, não do movimento.
+- O controle correto é medir **duas branches quentes**, não uma quente e uma
+  fria. Um preview esquecido há dias não é linha de base de nada.
+- Nenhuma Core Web Vital está em risco: o que oscila é um score composto.
+
+#### O que a fase de movimento provou sobre medição
+
+Três ressalvas da mesma família, cada uma descoberta quando a anterior já
+estava registrada:
+
+1. `setTimeout` esparso não prevê `rAF` contínuo. (seção "comando")
+2. **`rAF` ocioso não prevê `rAF` com o ponteiro em movimento** — o Lighthouse
+   não move o mouse, e deu TBT 0–4ms para um loop que o profile mostrou
+   custando 126,6ms de estilo. (cursor)
+3. **Medição quente não prevê medição fria**, e comparar as duas produz
+   conclusão errada nos dois sentidos. (este fechamento)
+
+A regra que sobrevive: **o número só vale com o método ao lado dele.**
 
 ### Decisão revista: header em 375px
 

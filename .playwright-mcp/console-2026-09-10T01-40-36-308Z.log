@@ -1,0 +1,16 @@
+[  828448ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:4311/_next/image?url=%2Fimages%2Fprojeto_estudanteauditor.png&w=256&q=75:0
+[  829779ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:4311/_next/image?url=%2Fimages%2Fprojeto_coneci_ro.jpeg&w=256&q=75:0
+[  831279ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:4311/_next/image?url=%2Fimages%2Fprojeto_estudanteauditor.png&w=256&q=75:0
+[  831412ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:4311/_next/image?url=%2Fimages%2Fprojeto_wikicge.png&w=256&q=75:0
+[  831778ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:4311/_next/image?url=%2Fimages%2Fprojeto_estudanteauditor.png&w=256&q=75:0
+[  831944ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:4311/_next/image?url=%2Fimages%2Fprojeto_wikicge.png&w=256&q=75:0
+[  832363ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:4311/_next/image?url=%2Fimages%2Fprojeto-gerenciadordehorarios.png&w=256&q=75:0
+[  924761ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:4311/_next/image?url=%2Fimages%2Fprojeto_wikicge.png&w=256&q=75:0
+[  925778ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:4311/_next/image?url=%2Fimages%2Fprojeto_estudanteauditor.png&w=256&q=75:0
+[  928480ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:4311/_next/image?url=%2Fimages%2Fprojeto_coneci_ro.jpeg&w=256&q=75:0
+[  928545ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:4311/_next/image?url=%2Fimages%2Fprojeto_estudanteauditor.png&w=256&q=75:0
+[  928829ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:4311/_next/image?url=%2Fimages%2Fprojeto_wikicge.png&w=256&q=75:0
+[  929145ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:4311/_next/image?url=%2Fimages%2Fprojeto-gerenciadordehorarios.png&w=256&q=75:0
+[  929261ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:4311/_next/image?url=%2Fimages%2Fprojeto_wikicge.png&w=256&q=75:0
+[  929294ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:4311/_next/image?url=%2Fimages%2Fprojeto_estudanteauditor.png&w=256&q=75:0
+[  929327ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:4311/_next/image?url=%2Fimages%2Fprojeto_coneci_ro.jpeg&w=256&q=75:0

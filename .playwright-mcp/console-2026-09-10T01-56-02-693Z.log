@@ -1,0 +1,11 @@
+[     748ms] Uncaught TypeError: Cannot redefine property: safeSessionStorage
+    at initializeStorage (https://documentservices.adobe.com/view-sdk/4.43.1_3.2.16-c8fdbf77/ViewSDKInterface.js:1:907016)
+    at +a/+ (https://documentservices.adobe.com/view-sdk/4.43.1_3.2.16-c8fdbf77/ViewSDKInterface.js:1:152087)
+    at __webpack_require__ (https://documentservices.adobe.com/view-sdk/4.43.1_3.2.16-c8fdbf77/ViewSDKInterface.js:1:1459897)
+    at haRa (https://documentservices.adobe.com/view-sdk/4.43.1_3.2.16-c8fdbf77/ViewSDKInterface.js:1:903770)
+    at __webpack_require__ (https://documentservices.adobe.com/view-sdk/4.43.1_3.2.16-c8fdbf77/ViewSDKInterface.js:1:1459897)
+    at EbfC (https://documentservices.adobe.com/view-sdk/4.43.1_3.2.16-c8fdbf77/ViewSDKInterface.js:1:409411)
+    at __webpack_require__ (https://documentservices.adobe.com/view-sdk/4.43.1_3.2.16-c8fdbf77/ViewSDKInterface.js:1:1459897)
+    at <anonymous> (https://documentservices.adobe.com/view-sdk/4.43.1_3.2.16-c8fdbf77/ViewSDKInterface.js:1:1489139)
+    at <anonymous> (https://documentservices.adobe.com/view-sdk/4.43.1_3.2.16-c8fdbf77/ViewSDKInterface.js:1:1568280)
+    at <anonymous> (https://documentservices.adobe.com/view-sdk/4.43.1_3.2.16-c8fdbf77/ViewSDKInterface.js:1:1568311)
